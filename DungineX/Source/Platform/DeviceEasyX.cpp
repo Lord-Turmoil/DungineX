@@ -1,0 +1,7 @@
+#if DGEX_EASYX
+
+DGEX_BEGIN
+
+DGEX_END
+
+#endif
