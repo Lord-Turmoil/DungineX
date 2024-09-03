@@ -1,0 +1,5 @@
+.vs/
+Build/
+Install/
+*.log
+TODO.txt
