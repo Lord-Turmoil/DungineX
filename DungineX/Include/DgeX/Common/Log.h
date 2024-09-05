@@ -33,20 +33,20 @@ class Log
     friend class LogGuard;
 
 public:
-    static void Init(LogLevel level, const wchar_t* logFile, bool console);
-    static void Init(LogLevel level, const wchar_t* logFile) { Init(level, logFile, false); }
+    static void Init(LogLevel level, const char* logFile, bool console);
+    static void Init(LogLevel level, const char* logFile) { Init(level, logFile, false); }
     static void Init(LogLevel level) { Init(level, nullptr, true); }
 
 
-    static void Fine(const wchar_t* format, ...);
-    static void Debug(const wchar_t* format, ...);
-    static void Info(const wchar_t* format, ...);
-    static void Warning(const wchar_t* format, ...);
-    static void Error(const wchar_t* format, ...);
-    static void Critical(const wchar_t* format, ...);
+    static void Fine(const char* format, ...);
+    static void Debug(const char* format, ...);
+    static void Info(const char* format, ...);
+    static void Warning(const char* format, ...);
+    static void Error(const char* format, ...);
+    static void Critical(const char* format, ...);
 
 private:
-    static void _Log(LogLevel level, const wchar_t* format, va_list args);
+    static void _Log(LogLevel level, const char* format, va_list args);
     static void _Close();
 
     static LogLevel _logLevel;

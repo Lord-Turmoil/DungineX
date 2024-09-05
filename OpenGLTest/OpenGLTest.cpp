@@ -72,7 +72,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         freopen_s(&fp, "CONIN$", "r", stdin);
     }
 
-    DgeX::Log::Init(DgeX::LogLevel::All, L"OpenGLTest.log", true);
+    DgeX::Log::Init(DgeX::LogLevel::All, "OpenGLTest.log", true);
 
     // Initialize GLFW
     if (!glfwInit())
@@ -93,7 +93,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Black and opaque
     glfwSwapInterval(1); // Enable vsync
 
-    DGEX_LOG_WARNING(L"Ready to roll!");
+    DGEX_LOG_WARNING("Ready to roll!");
 
     // Main loop
     while (!glfwWindowShouldClose(window))
@@ -114,7 +114,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         glfwPollEvents();
     }
 
-    DGEX_LOG_INFO(L"Window closed");
+    DGEX_LOG_INFO("Window closed");
 
     glfwTerminate();
 

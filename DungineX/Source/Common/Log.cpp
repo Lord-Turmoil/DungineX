@@ -6,8 +6,8 @@
 
 DGEX_BEGIN
 
-static const wchar_t* GetLogLevelString(LogLevel level);
-static const wchar_t* GetTimestamp();
+static const char* GetLogLevelString(LogLevel level);
+static const char* GetTimestamp();
 
 LogLevel Log::_logLevel = LogLevel::Debug;
 FILE* Log::_logFile = nullptr;
@@ -22,7 +22,7 @@ class LogGuard
 public:
     ~LogGuard()
     {
-        DGEX_LOG_FINE(L"Log closed");
+        DGEX_LOG_FINE("Log closed");
         Log::_Close();
     }
 };
@@ -32,24 +32,22 @@ static LogGuard logGuard;
 static std::mutex logMutex;
 
 
-void Log::Init(LogLevel level, const wchar_t* logFile, bool console)
+void Log::Init(LogLevel level, const char* logFile, bool console)
 {
     _logLevel = level;
     _console = console;
     if (logFile != nullptr)
     {
-        if (_logFile != nullptr)
+        fopen_s(&_logFile, logFile, "w");
+        if (_logFile == nullptr)
         {
-            fclose(_logFile);
+            // Error opening the log file, silently ignore.
         }
-        _wfopen_s(&_logFile, logFile, L"a");
     }
-
-    DGEX_LOG_INFO(L"Log ready at level '%s'", GetLogLevelString(level));
 }
 
 
-void Log::Fine(const wchar_t* format, ...)
+void Log::Fine(const char* format, ...)
 {
     va_list args;
     va_start(args, format);
@@ -58,7 +56,7 @@ void Log::Fine(const wchar_t* format, ...)
 }
 
 
-void Log::Debug(const wchar_t* format, ...)
+void Log::Debug(const char* format, ...)
 {
     va_list args;
     va_start(args, format);
@@ -67,7 +65,7 @@ void Log::Debug(const wchar_t* format, ...)
 }
 
 
-void Log::Info(const wchar_t* format, ...)
+void Log::Info(const char* format, ...)
 {
     va_list args;
     va_start(args, format);
@@ -76,7 +74,7 @@ void Log::Info(const wchar_t* format, ...)
 }
 
 
-void Log::Warning(const wchar_t* format, ...)
+void Log::Warning(const char* format, ...)
 {
     va_list args;
     va_start(args, format);
@@ -85,7 +83,7 @@ void Log::Warning(const wchar_t* format, ...)
 }
 
 
-void Log::Error(const wchar_t* format, ...)
+void Log::Error(const char* format, ...)
 {
     va_list args;
     va_start(args, format);
@@ -94,7 +92,7 @@ void Log::Error(const wchar_t* format, ...)
 }
 
 
-void Log::Critical(const wchar_t* format, ...)
+void Log::Critical(const char* format, ...)
 {
     va_list args;
     va_start(args, format);
@@ -103,7 +101,7 @@ void Log::Critical(const wchar_t* format, ...)
 }
 
 
-void Log::_Log(LogLevel level, const wchar_t* format, va_list args)
+void Log::_Log(LogLevel level, const char* format, va_list args)
 {
     if (level < _logLevel)
     {
@@ -114,16 +112,16 @@ void Log::_Log(LogLevel level, const wchar_t* format, va_list args)
 
     if (_console)
     {
-        fwprintf(stderr, L"[%s] [%s] ", GetTimestamp(), GetLogLevelString(level));
-        vfwprintf(stderr, format, args);
-        fwprintf(stderr, L"\n");
+        fprintf(stderr, "[%s] [%s] ", GetTimestamp(), GetLogLevelString(level));
+        vfprintf(stderr, format, args);
+        fprintf(stderr, "\n");
     }
 
     if (_logFile != nullptr)
     {
-        fwprintf(_logFile, L"[%s] [%s] ", GetTimestamp(), GetLogLevelString(level));
-        vfwprintf(_logFile, format, args);
-        fwprintf(_logFile, L"\n");
+        fprintf(_logFile, "[%s] [%s] ", GetTimestamp(), GetLogLevelString(level));
+        vfprintf(_logFile, format, args);
+        fprintf(_logFile, "\n");
 
         // Flush the log file to ensure that the log is written to disk
         fflush(_logFile);
@@ -141,41 +139,41 @@ void Log::_Close()
 }
 
 
-static const wchar_t* GetLogLevelString(LogLevel level)
+static const char* GetLogLevelString(LogLevel level)
 {
     switch (level)
     {
         using enum LogLevel;
     case All:
-        return L"ALL";
+        return "ALL";
     case Fine:
-        return L"FINE";
+        return "FINE";
     case Debug:
-        return L"DEBUG";
+        return "DEBUG";
     case Info:
-        return L"INFO";
+        return "INFO";
     case Warning:
-        return L"WARNING";
+        return "WARNING";
     case Error:
-        return L"ERROR";
+        return "ERROR";
     case Critical:
-        return L"CRITICAL";
+        return "CRITICAL";
     case Disabled:
-        return L"DISABLED";
+        return "DISABLED";
     }
-    return L"UNKNOWN";
+    return "UNKNOWN";
 }
 
 
-static const wchar_t* GetTimestamp()
+static const char* GetTimestamp()
 {
-    static wchar_t timestampBuffer[128];
+    static char timestampBuffer[128];
 
     const auto now = std::chrono::system_clock::now();
     const std::time_t now_c = std::chrono::system_clock::to_time_t(now);
     std::tm nowTm;
     localtime_s(&nowTm, &now_c);
-    wcsftime(timestampBuffer, sizeof(timestampBuffer), L"%Y-%m-%d %H:%M:%S", &nowTm);
+    strftime(timestampBuffer, sizeof(timestampBuffer), "%Y-%m-%d %H:%M:%S", &nowTm);
     return timestampBuffer;
 }
 
