@@ -1,32 +1,36 @@
 #pragma once
 
-#include <queue>
-#include <vector>
+#include <atomic>
+#include <condition_variable>
 #include <functional>
 #include <mutex>
-#include <condition_variable>
+#include <queue>
 #include <thread>
-#include <atomic>
+#include <vector>
 
-template <typename Event>
-class EventQueue {
+template <typename Event> class EventQueue
+{
 public:
-    EventQueue(std::function<void(const std::vector<Event>&)> processFunc)
-        : processFunc_(processFunc), stopFlag_(false) {
+    EventQueue(std::function<void(const std::vector<Event> &)> processFunc)
+        : processFunc_(processFunc), stopFlag_(false)
+    {
         workerThread_ = std::thread(&EventQueue::processLoop, this);
     }
 
-    ~EventQueue() {
+    ~EventQueue()
+    {
         // Stop the worker thread and clean up
         stopFlag_ = true;
         condVar_.notify_all();
-        if (workerThread_.joinable()) {
+        if (workerThread_.joinable())
+        {
             workerThread_.join();
         }
     }
 
     // Add an event to the queue
-    void addEvent(const Event& event) {
+    void addEvent(const Event &event)
+    {
         {
             std::lock_guard<std::mutex> lock(mutex_);
             queue_.push(event);
@@ -35,19 +39,23 @@ public:
     }
 
 private:
-    void processLoop() {
-        while (!stopFlag_) {
+    void processLoop()
+    {
+        while (!stopFlag_)
+        {
             std::unique_lock<std::mutex> lock(mutex_);
 
             // Wait for an event or stop signal
             condVar_.wait(lock, [this]() { return !queue_.empty() || stopFlag_; });
 
-            if (stopFlag_ && queue_.empty()) {
+            if (stopFlag_ && queue_.empty())
+            {
                 break;
             }
 
             std::vector<Event> events;
-            while (!queue_.empty()) {
+            while (!queue_.empty())
+            {
                 events.push_back(queue_.front());
                 queue_.pop();
             }
@@ -58,7 +66,7 @@ private:
     }
 
     std::queue<Event> queue_;
-    std::function<void(const std::vector<Event>&)> processFunc_;
+    std::function<void(const std::vector<Event> &)> processFunc_;
     std::mutex mutex_;
     std::condition_variable condVar_;
     std::atomic<bool> stopFlag_;

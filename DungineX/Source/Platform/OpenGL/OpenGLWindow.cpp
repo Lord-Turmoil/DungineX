@@ -2,57 +2,63 @@
 
 DGEX_BEGIN
 
-static void GLFWErrorCallback(int error, const char* description)
+static int sWindowCount = 0;
+
+static void GLFWErrorCallback(int error, const char *description)
 {
-    DGEX_LOG_ERROR("GLFW Error (%d): %s", error, description);
+    DGEX_LOG_ERROR("GLFW Error ({}): {}", error, description);
 }
 
-
-OpenGLWindow::OpenGLWindow(const WindowProps& props) : _window(nullptr)
+OpenGLWindow::OpenGLWindow(const WindowProps &props) : _window(nullptr)
 {
     _Init(props);
 }
-
 
 OpenGLWindow::~OpenGLWindow()
 {
     _Shutdown();
 }
 
-
 void OpenGLWindow::OnUpdate()
 {
-
 }
-
 
 void OpenGLWindow::SetVSync(bool enabled)
 {
 }
 
-
-void* OpenGLWindow::GetNativeWindow() const
+void *OpenGLWindow::GetNativeWindow() const
 {
     // TODO
     return nullptr;
 }
 
-
-void OpenGLWindow::_Init(const WindowProps& props)
+void OpenGLWindow::_Init(const WindowProps &props)
 {
-    DGEX_LOG_INFO("Creating window %s (%u, %u)", props.Title.c_str(), props.Width, props.Height);
+    DGEX_LOG_INFO("Creating window {} ({}, {})", props.Title, props.Width, props.Height);
 
-    _title = props.Title;
-    _width = props.Width;
-    _height = props.Height;
+    _data.Title = props.Title;
+    _data.Width = props.Width;
+    _data.Height = props.Height;
 
+    if (sWindowCount == 0)
+    {
+        int ret = glfwInit();
+        DGEX_ASSERT(ret, "Failed to initialize GLFW");
+        glfwSetErrorCallback(GLFWErrorCallback);
+    }
+
+    _window = glfwCreateWindow(props.Width, props.Height, _data.Title.c_str(), nullptr, nullptr);
+    sWindowCount++;
+
+    // TODO: init context
+
+    glfwSetWindowUserPointer(_window, &_data);
+    SetVSync(true);
 }
-
 
 void OpenGLWindow::_Shutdown()
 {
-
 }
-
 
 DGEX_END

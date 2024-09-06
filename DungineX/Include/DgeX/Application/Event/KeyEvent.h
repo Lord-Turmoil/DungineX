@@ -1,15 +1,18 @@
 #pragma once
 
-#include "DgeX/Common/Base.h"
 #include "DgeX/Application/Event/Event.h"
 #include "DgeX/Application/Input/KeyCode.h"
+#include "DgeX/Common/Base.h"
 
 DGEX_BEGIN
 
 class KeyEvent : public Event
 {
 public:
-    KeyCode GetKeyCode() const { return _keyCode; }
+    KeyCode GetKeyCode() const
+    {
+        return _keyCode;
+    }
 
     DECL_EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput)
 
@@ -18,22 +21,20 @@ protected:
     {
     }
 
-
     KeyCode _keyCode;
 };
-
 
 class KeyPressedEvent final : public KeyEvent
 {
 public:
-    explicit KeyPressedEvent(const KeyCode code, const bool isRepeat = false)
-        : KeyEvent(code), _isRepeat(isRepeat)
+    explicit KeyPressedEvent(const KeyCode code, const bool isRepeat = false) : KeyEvent(code), _isRepeat(isRepeat)
     {
     }
 
-
-    bool IsRepeat() const { return _isRepeat; }
-
+    bool IsRepeat() const
+    {
+        return _isRepeat;
+    }
 
     std::wstring ToString() const override
     {
@@ -41,7 +42,6 @@ public:
         ss << GetName() << L" Event: " << _keyCode << L" (repeat = " << _isRepeat << L")";
         return ss.str();
     }
-
 
     DECL_EVENT_CLASS_TYPE(KeyPressed)
 
@@ -52,14 +52,12 @@ private:
     bool _isRepeat;
 };
 
-
 class KeyReleasedEvent final : public KeyEvent
 {
 public:
     explicit KeyReleasedEvent(const KeyCode code) : KeyEvent(code)
     {
     }
-
 
     std::wstring ToString() const override
     {
@@ -68,10 +66,8 @@ public:
         return ss.str();
     }
 
-
     DECL_EVENT_CLASS_TYPE(KeyReleased)
 };
-
 
 class KeyTypedEvent final : public KeyEvent
 {
@@ -80,7 +76,6 @@ public:
     {
     }
 
-
     std::wstring ToString() const override
     {
         std::wstringstream ss;
@@ -88,9 +83,7 @@ public:
         return ss.str();
     }
 
-
     DECL_EVENT_CLASS_TYPE(KeyTyped)
 };
-
 
 DGEX_END

@@ -17,11 +17,15 @@
 #endif
 
 // Only do logging with this macro defined
-#define DGEX_ENABLE_TRACE
+#define DGEX_ENABLE_LOGGING
 
-#define DGEX_BEGIN namespace DgeX {
+#define DGEX_BEGIN                                                                                                     \
+    namespace DgeX                                                                                                     \
+    {
 #define DGEX_END }
 
 // Define backend platform
 #define DGEX_GLFW (1)
 #define DGEX_EASYX (!DGEX_GLFW)
+
+#define _DGEX_CORE_

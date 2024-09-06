@@ -1,13 +1,12 @@
-#include <cstdio>
+#include <DgeX/DgeX.h>
 #include <GLFW/glfw3.h>
 #include <Windows.h>
-#include <DgeX/DgeX.h>
-
+#include <cstdio>
 
 void Display()
 {
     // Define shapes enclosed within a pair of glBegin and glEnd
-    glBegin(GL_QUADS);              // Each set of 4 vertices form a quad
+    glBegin(GL_QUADS);           // Each set of 4 vertices form a quad
     glColor3f(1.0f, 0.0f, 0.0f); // Red
     glVertex2f(-0.8f, 0.1f);     // Define vertices in counter-clockwise (CCW) order
     glVertex2f(-0.2f, 0.1f);     //  so that the normal (front-face) is facing you
@@ -30,7 +29,7 @@ void Display()
     glVertex2f(-0.9f, -0.3f);
     glEnd();
 
-    glBegin(GL_TRIANGLES);          // Each set of 3 vertices form a triangle
+    glBegin(GL_TRIANGLES);       // Each set of 3 vertices form a triangle
     glColor3f(0.0f, 0.0f, 1.0f); // Blue
     glVertex2f(0.1f, -0.6f);
     glVertex2f(0.7f, -0.6f);
@@ -44,7 +43,7 @@ void Display()
     glVertex2f(0.6f, -0.9f);
     glEnd();
 
-    glBegin(GL_POLYGON);            // These vertices form a closed polygon
+    glBegin(GL_POLYGON);         // These vertices form a closed polygon
     glColor3f(1.0f, 1.0f, 0.0f); // Yellow
     glVertex2f(0.4f, 0.2f);
     glVertex2f(0.6f, 0.2f);
@@ -55,24 +54,21 @@ void Display()
     glEnd();
 }
 
-
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-    _In_opt_ HINSTANCE hPrevInstance,
-    _In_ LPWSTR lpCmdLine,
-    _In_ int nCmdShow)
+int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine,
+                      _In_ int nCmdShow)
 {
     // Optionally create a console window
     bool showConsole = true; // Set this to true to show the console, false to hide it
     if (showConsole)
     {
         AllocConsole();
-        FILE* fp;
+        FILE *fp;
         freopen_s(&fp, "CONOUT$", "w", stdout);
         freopen_s(&fp, "CONOUT$", "w", stderr);
         freopen_s(&fp, "CONIN$", "r", stdin);
     }
 
-    DgeX::Log::Init(DgeX::LogLevel::All, "OpenGLTest.log", true);
+    DgeX::Log::Init();
 
     // Initialize GLFW
     if (!glfwInit())
@@ -81,7 +77,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     }
 
     // Create a windowed mode window and its OpenGL context
-    GLFWwindow* window = glfwCreateWindow(640, 480, "Hello World", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(640, 480, "Hello World", nullptr, nullptr);
     if (!window)
     {
         glfwTerminate();
@@ -91,9 +87,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     // Make the window's context current
     glfwMakeContextCurrent(window);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Black and opaque
-    glfwSwapInterval(1); // Enable vsync
+    glfwSwapInterval(1);                  // Enable vsync
 
-    DGEX_LOG_WARNING("Ready to roll!");
+    DGEX_LOG_WARN("Ready to roll!");
 
     // Main loop
     while (!glfwWindowShouldClose(window))

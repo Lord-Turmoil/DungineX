@@ -13,7 +13,7 @@ namespace Utils
  * @param src source string address
  * @return the number of characters converted
  */
-int widen(wchar_t* dest, const char* src);
+int widen(wchar_t *dest, const char *src);
 
 /**
  * @brief Convert char* to wchar_t*
@@ -21,7 +21,7 @@ int widen(wchar_t* dest, const char* src);
  * @param src source string address
  * @return address of the converted string
  */
-wchar_t* widen(const char* src);
+wchar_t *widen(const char *src);
 
 /**
  * @brief Convert wchar_t* to char*
@@ -29,7 +29,7 @@ wchar_t* widen(const char* src);
  * @param src source wide string address
  * @return the number of characters converted
  */
-int narrow(char* dest, const wchar_t* src);
+int narrow(char *dest, const wchar_t *src);
 
 /**
  * @brief Convert wchar_t* to char*
@@ -37,8 +37,8 @@ int narrow(char* dest, const wchar_t* src);
  * @param src source wide string address
  * @return address of the converted string
  */
-char* narrow(const wchar_t* src);
+char *narrow(const wchar_t *src);
 
-}
+} // namespace Utils
 
 DGEX_END

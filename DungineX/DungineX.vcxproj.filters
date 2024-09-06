@@ -57,18 +57,21 @@
     <ClInclude Include="Include\DgeX\Utils\String.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\DgeX\Platform\OpenGL\OpenGLWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Platform\DeviceGlfw.cpp">
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Common\Log.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Platform\DeviceEasyX.cpp">
+    <ClCompile Include="Source\Utils\String.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Utils\String.cpp">
+    <ClCompile Include="Source\Application\Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

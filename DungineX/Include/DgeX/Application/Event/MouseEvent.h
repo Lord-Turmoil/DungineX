@@ -1,8 +1,8 @@
 #pragma once
 
-#include "DgeX/Common/Base.h"
 #include "DgeX/Application/Event/Event.h"
 #include "DgeX/Application/Input/MouseCode.h"
+#include "DgeX/Common/Base.h"
 
 DGEX_BEGIN
 
@@ -13,10 +13,14 @@ public:
     {
     }
 
-
-    double GetX() const { return _x; }
-    double GetY() const { return _y; }
-
+    double GetX() const
+    {
+        return _x;
+    }
+    double GetY() const
+    {
+        return _y;
+    }
 
     std::wstring ToString() const override
     {
@@ -24,7 +28,6 @@ public:
         ss << GetName() << L" Event: " << _x << L", " << _y;
         return ss.str();
     }
-
 
     DECL_EVENT_CLASS_TYPE(MouseMoved)
     DECL_EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
@@ -34,19 +37,21 @@ private:
     double _y;
 };
 
-
 class MouseScrolledEvent final : public Event
 {
 public:
-    MouseScrolledEvent(const float xOffset, const float yOffset)
-        : _offsetX(xOffset), _offsetY(yOffset)
+    MouseScrolledEvent(const float xOffset, const float yOffset) : _offsetX(xOffset), _offsetY(yOffset)
     {
     }
 
-
-    double GetOffsetX() const { return _offsetX; }
-    double GetOffsetY() const { return _offsetY; }
-
+    double GetOffsetX() const
+    {
+        return _offsetX;
+    }
+    double GetOffsetY() const
+    {
+        return _offsetY;
+    }
 
     std::wstring ToString() const override
     {
@@ -55,7 +60,6 @@ public:
         return ss.str();
     }
 
-
     DECL_EVENT_CLASS_TYPE(MouseScrolled)
     DECL_EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
 
@@ -63,11 +67,13 @@ private:
     double _offsetX, _offsetY;
 };
 
-
 class MouseButtonEvent : public Event
 {
 public:
-    MouseCode GetMouseCode() const { return _mouseCode; }
+    MouseCode GetMouseCode() const
+    {
+        return _mouseCode;
+    }
 
     DECL_EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput | EventCategoryMouseButton)
 
@@ -76,10 +82,8 @@ protected:
     {
     }
 
-
     MouseCode _mouseCode;
 };
-
 
 class MouseButtonPressedEvent final : public MouseButtonEvent
 {
@@ -89,9 +93,10 @@ public:
     {
     }
 
-
-    bool IsRepeat() const { return _isRepeat; }
-
+    bool IsRepeat() const
+    {
+        return _isRepeat;
+    }
 
     std::wstring ToString() const override
     {
@@ -100,13 +105,11 @@ public:
         return ss.str();
     }
 
-
     DECL_EVENT_CLASS_TYPE(MouseButtonPressed)
 
 private:
     bool _isRepeat;
 };
-
 
 class MouseButtonReleasedEvent : public MouseButtonEvent
 {
@@ -115,7 +118,6 @@ public:
     {
     }
 
-
     std::wstring ToString() const override
     {
         std::wstringstream ss;
@@ -123,9 +125,7 @@ public:
         return ss.str();
     }
 
-
     DECL_EVENT_CLASS_TYPE(MouseButtonReleased)
 };
-
 
 DGEX_END
