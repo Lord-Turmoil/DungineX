@@ -4,14 +4,12 @@
 
 DGEX_BEGIN
 
-Scope<Window> Window::Create(const WindowProps &props)
+Scope<Window> Window::Create(const WindowProps& props)
 {
-#ifdef DGEX_GLFW
+#if DGEX_OPENGL
     return CreateScope<OpenGLWindow>(props);
-#elif DGEX_EASYX
-    DGEX_ASSERT(false, "Not implemented");
 #else
-    DGEX_ASSERT(false, "Unknown platform!");
+    DGEX_ASSERT(false, DGEX_MSG_UNKNOWN_PLATFORM);
 #endif
 }
 

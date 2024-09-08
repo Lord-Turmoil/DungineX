@@ -2,6 +2,17 @@
 Language: Cpp
 BasedOnStyle: Microsoft
 IndentWidth: 4
-AccessModifierOffset: -4
 UseTab: Never
+AccessModifierOffset: -4
 InsertNewlineAtEOF: true
+PointerAlignment: Left
+Cpp11BracedListStyle: false
+IncludeCategories: 
+  - Regex: '^<.*'
+    Priority: 1
+  - Regex: '^".*'
+    Priority: 2
+  - Regex: '.*'
+    Priority: 3
+AlignConsecutiveMacros: true
+SeparateDefinitionBlocks: Always

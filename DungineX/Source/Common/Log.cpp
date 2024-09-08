@@ -27,23 +27,24 @@ static spdlog::level::level_enum LogLevelToSpdLogLevel(LogLevel level)
     case LogLevel::Disabled:
         return spdlog::level::off;
     }
+    return spdlog::level::trace;
 }
 
-void Log::Init(LogLevel level, bool console, const char *filename)
+void Log::Init(LogLevel level, bool console, const char* filename)
 {
     std::vector<spdlog::sink_ptr> logSinks;
 
     if (console)
     {
         auto logger = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-        logger->set_pattern("%^[%Y-%m-%d %H:%M:%S] %8l [%n]: %v%$");
+        logger->set_pattern("%^[%Y-%m-%d %H:%M:%S] %=8l [%6n]: %v%$");
         logSinks.emplace_back(logger);
     }
 
     if (filename)
     {
         auto logger = std::make_shared<spdlog::sinks::basic_file_sink_mt>(filename, true);
-        logger->set_pattern("[%Y-%m-%d %H:%M:%S] %8l [%n]: %v");
+        logger->set_pattern("[%Y-%m-%d %H:%M:%S] %8l [%6n]: %v");
         logSinks.emplace_back(logger);
     }
 

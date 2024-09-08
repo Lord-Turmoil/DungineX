@@ -33,6 +33,7 @@ enum : MouseCode // NOLINT(performance-enum-size), keep align with KeyCode
     ButtonRight            = Button1,
     ButtonMiddle           = Button2
 };
+
 // clang-format on
 
 } // namespace Mouse

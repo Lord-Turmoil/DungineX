@@ -12,12 +12,29 @@
 #define DGEX_DEBUG
 #endif
 
-#ifdef DGEX_DEBUG
+#ifdef _RELEASE
+#define DGEX_RELEASE
+#endif
+
+#ifdef _PUBLISH
+#define DGEX_PUBLISH
+#endif
+
+// Enable assertions only in debug and release builds
+#if defined(DGEX_DEBUG) || defined(DGEX_RELEASE)
 #define DGEX_ENABLE_ASSERT
 #endif
 
 // Only do logging with this macro defined
 #define DGEX_ENABLE_LOGGING
+
+// Whether log trace messages
+// #define DGEX_VERBOSE_LOGGING
+
+// Attach console to the application for non-publishing builds
+#ifndef DGEX_PUBLISH
+#define DGEX_ATTACH_CONSOLE
+#endif
 
 #define DGEX_BEGIN                                                                                                     \
     namespace DgeX                                                                                                     \
@@ -25,7 +42,6 @@
 #define DGEX_END }
 
 // Define backend platform
-#define DGEX_GLFW (1)
-#define DGEX_EASYX (!DGEX_GLFW)
+#define DGEX_OPENGL 1
 
 #define _DGEX_CORE_

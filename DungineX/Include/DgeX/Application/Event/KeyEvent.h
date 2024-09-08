@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sstream>
 #include "DgeX/Application/Event/Event.h"
 #include "DgeX/Application/Input/KeyCode.h"
 #include "DgeX/Common/Base.h"
@@ -27,7 +28,7 @@ protected:
 class KeyPressedEvent final : public KeyEvent
 {
 public:
-    explicit KeyPressedEvent(const KeyCode code, const bool isRepeat = false) : KeyEvent(code), _isRepeat(isRepeat)
+    KeyPressedEvent(const KeyCode code, const bool isRepeat = false) : KeyEvent(code), _isRepeat(isRepeat)
     {
     }
 
@@ -36,10 +37,10 @@ public:
         return _isRepeat;
     }
 
-    std::wstring ToString() const override
+    std::string ToString() const override
     {
-        std::wstringstream ss;
-        ss << GetName() << L" Event: " << _keyCode << L" (repeat = " << _isRepeat << L")";
+        std::stringstream ss;
+        ss << GetName() << " Event: " << _keyCode << " (repeat = " << _isRepeat << ")";
         return ss.str();
     }
 
@@ -55,14 +56,14 @@ private:
 class KeyReleasedEvent final : public KeyEvent
 {
 public:
-    explicit KeyReleasedEvent(const KeyCode code) : KeyEvent(code)
+    KeyReleasedEvent(const KeyCode code) : KeyEvent(code)
     {
     }
 
-    std::wstring ToString() const override
+    std::string ToString() const override
     {
-        std::wstringstream ss;
-        ss << GetName() << L" Event: " << _keyCode;
+        std::stringstream ss;
+        ss << GetName() << " Event: " << _keyCode;
         return ss.str();
     }
 
@@ -72,14 +73,14 @@ public:
 class KeyTypedEvent final : public KeyEvent
 {
 public:
-    explicit KeyTypedEvent(const KeyCode code) : KeyEvent(code)
+    KeyTypedEvent(const KeyCode code) : KeyEvent(code)
     {
     }
 
-    std::wstring ToString() const override
+    std::string ToString() const override
     {
-        std::wstringstream ss;
-        ss << GetName() << L" Event: " << _keyCode;
+        std::stringstream ss;
+        ss << GetName() << " Event: " << _keyCode;
         return ss.str();
     }
 

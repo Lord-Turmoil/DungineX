@@ -144,6 +144,7 @@ enum : KeyCode
     RightSuper          = 347,
     Menu                = 348
 };
+
 // clang-format on
 
 } // namespace Key

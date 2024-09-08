@@ -1,74 +1,35 @@
 #pragma once
 
-#include <atomic>
-#include <condition_variable>
-#include <functional>
-#include <mutex>
-#include <queue>
-#include <thread>
 #include <vector>
 
-template <typename Event> class EventQueue
+#include "DgeX/Application/Event/Event.h"
+
+DGEX_BEGIN
+
+// clang-format off
+class EventBuffer
 {
 public:
-    EventQueue(std::function<void(const std::vector<Event> &)> processFunc)
-        : processFunc_(processFunc), stopFlag_(false)
-    {
-        workerThread_ = std::thread(&EventQueue::processLoop, this);
-    }
+    EventBuffer() = default;
 
-    ~EventQueue()
-    {
-        // Stop the worker thread and clean up
-        stopFlag_ = true;
-        condVar_.notify_all();
-        if (workerThread_.joinable())
-        {
-            workerThread_.join();
-        }
-    }
+    void PushEvent(const Ref<Event>& event);
+    void SwapBuffer();
+    
+	std::vector<Ref<Event>>::iterator begin() { return _frontBuffer.begin(); }
+	std::vector<Ref<Event>>::iterator end() { return _frontBuffer.end(); }
+	std::vector<Ref<Event>>::reverse_iterator rbegin() { return _frontBuffer.rbegin(); }
+	std::vector<Ref<Event>>::reverse_iterator rend() { return _frontBuffer.rend(); }
 
-    // Add an event to the queue
-    void addEvent(const Event &event)
-    {
-        {
-            std::lock_guard<std::mutex> lock(mutex_);
-            queue_.push(event);
-        }
-        condVar_.notify_one();
-    }
+	std::vector<Ref<Event>>::const_iterator begin() const { return _frontBuffer.begin(); }
+	std::vector<Ref<Event>>::const_iterator end()	const { return _frontBuffer.end(); }
+	std::vector<Ref<Event>>::const_reverse_iterator rbegin() const { return _frontBuffer.rbegin(); }
+	std::vector<Ref<Event>>::const_reverse_iterator rend() const { return _frontBuffer.rend(); }
 
 private:
-    void processLoop()
-    {
-        while (!stopFlag_)
-        {
-            std::unique_lock<std::mutex> lock(mutex_);
-
-            // Wait for an event or stop signal
-            condVar_.wait(lock, [this]() { return !queue_.empty() || stopFlag_; });
-
-            if (stopFlag_ && queue_.empty())
-            {
-                break;
-            }
-
-            std::vector<Event> events;
-            while (!queue_.empty())
-            {
-                events.push_back(queue_.front());
-                queue_.pop();
-            }
-
-            lock.unlock(); // Unlock while processing events
-            processFunc_(events);
-        }
-    }
-
-    std::queue<Event> queue_;
-    std::function<void(const std::vector<Event> &)> processFunc_;
-    std::mutex mutex_;
-    std::condition_variable condVar_;
-    std::atomic<bool> stopFlag_;
-    std::thread workerThread_;
+    std::vector<Ref<Event>> _frontBuffer;
+    std::vector<Ref<Event>> _backBuffer;
 };
+
+// clang-format on
+
+DGEX_END

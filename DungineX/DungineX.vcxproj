@@ -5,6 +5,10 @@
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Publish|x64">
+      <Configuration>Publish</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|x64">
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
@@ -31,6 +35,13 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Publish|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
@@ -42,15 +53,24 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Publish|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)Bin\$(ProjectName)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)Build\$(ProjectName)\$(Configuration)\</IntDir>
-    <TargetName>$(ProjectName)_b</TargetName>
+    <TargetName>DgeXd</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)Bin\$(ProjectName)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)Build\$(ProjectName)\$(Configuration)\</IntDir>
+    <TargetName>DgeXr</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Publish|x64'">
+    <OutDir>$(SolutionDir)Bin\$(ProjectName)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Build\$(ProjectName)\$(Configuration)\</IntDir>
+    <TargetName>DgeX</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -58,7 +78,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(ProjectDir)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Include;$(ProjectDir)Vendor\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -69,9 +89,7 @@
     <PostBuildEvent>
       <Command>xcopy /y  "$(SolutionDir)bin\$(ProjectName)\$(Configuration)\$(TargetFileName)" "$(SolutionDir)lib\"</Command>
     </PostBuildEvent>
-    <Lib>
-      <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
-    </Lib>
+    <Lib />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -79,11 +97,13 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(ProjectDir)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Include;$(ProjectDir)Vendor\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -94,17 +114,52 @@
     <PostBuildEvent>
       <Command>xcopy /y  "$(SolutionDir)bin\$(ProjectName)\$(Configuration)\$(TargetFileName)" "$(SolutionDir)lib\"</Command>
     </PostBuildEvent>
-    <Lib>
-      <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
-    </Lib>
+    <Lib />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Publish|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_PUBLISH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)Include;$(ProjectDir)Vendor\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y  "$(SolutionDir)bin\$(ProjectName)\$(Configuration)\$(TargetFileName)" "$(SolutionDir)lib\"</Command>
+    </PostBuildEvent>
+    <Lib />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Include\DgeX\Application\Application.h" />
+    <ClInclude Include="Include\DgeX\Application\Event\EventEmitter.h" />
+    <ClInclude Include="Include\DgeX\Core\Math.h" />
+    <ClInclude Include="Include\DgeX\EntryPoint.h" />
+    <ClInclude Include="Include\DgeX\Application\Event\ApplicationEvent.h" />
     <ClInclude Include="Include\DgeX\Application\Event\EventBuffer.h" />
     <ClInclude Include="Include\DgeX\Application\Event\KeyEvent.h" />
     <ClInclude Include="Include\DgeX\Application\Event\MouseEvent.h" />
     <ClInclude Include="Include\DgeX\Application\Input\Input.h" />
     <ClInclude Include="Include\DgeX\Application\Input\KeyCode.h" />
     <ClInclude Include="Include\DgeX\Application\Input\MouseCode.h" />
+    <ClInclude Include="Include\DgeX\Application\Interface\Interface.h" />
+    <ClInclude Include="Include\DgeX\Application\Interface\InterfaceStack.h" />
+    <ClInclude Include="Include\DgeX\Application\Interface\Layer.h" />
+    <ClInclude Include="Include\DgeX\Application\Interface\LayerStack.h" />
+    <ClInclude Include="Include\DgeX\Core\DeltaTime.h" />
+    <ClInclude Include="Include\DgeX\Core\UUID.h" />
+    <ClInclude Include="Include\DgeX\Platform\OpenGL\OpenGLGraphicsContext.h" />
     <ClInclude Include="Include\DgeX\Platform\OpenGL\OpenGLWindow.h" />
     <ClInclude Include="Include\DgeX\Common\Assert.h" />
     <ClInclude Include="Include\DgeX\Common\Base.h" />
@@ -113,13 +168,139 @@
     <ClInclude Include="Include\DgeX\DgeX.h" />
     <ClInclude Include="Include\DgeX\Application\Event\Event.h" />
     <ClInclude Include="Include\DgeX\Application\Window.h" />
+    <ClInclude Include="Include\DgeX\Renderer\GraphicsContext.h" />
+    <ClInclude Include="Include\DgeX\Renderer\RenderApi.h" />
+    <ClInclude Include="Include\DgeX\Utils\Easing.h" />
+    <ClInclude Include="Include\DgeX\Utils\PlatformUtils.h" />
     <ClInclude Include="Include\DgeX\Utils\String.h" />
+    <ClInclude Include="Vendor\Include\glad\glad.h" />
+    <ClInclude Include="Vendor\Include\GLFW\glfw3.h" />
+    <ClInclude Include="Vendor\Include\GLFW\glfw3native.h" />
+    <ClInclude Include="Vendor\Include\KHR\khrplatform.h" />
+    <ClInclude Include="Vendor\Include\spdlog\async.h" />
+    <ClInclude Include="Vendor\Include\spdlog\async_logger-inl.h" />
+    <ClInclude Include="Vendor\Include\spdlog\async_logger.h" />
+    <ClInclude Include="Vendor\Include\spdlog\cfg\argv.h" />
+    <ClInclude Include="Vendor\Include\spdlog\cfg\env.h" />
+    <ClInclude Include="Vendor\Include\spdlog\cfg\helpers-inl.h" />
+    <ClInclude Include="Vendor\Include\spdlog\cfg\helpers.h" />
+    <ClInclude Include="Vendor\Include\spdlog\common-inl.h" />
+    <ClInclude Include="Vendor\Include\spdlog\common.h" />
+    <ClInclude Include="Vendor\Include\spdlog\details\backtracer-inl.h" />
+    <ClInclude Include="Vendor\Include\spdlog\details\backtracer.h" />
+    <ClInclude Include="Vendor\Include\spdlog\details\circular_q.h" />
+    <ClInclude Include="Vendor\Include\spdlog\details\console_globals.h" />
+    <ClInclude Include="Vendor\Include\spdlog\details\file_helper-inl.h" />
+    <ClInclude Include="Vendor\Include\spdlog\details\file_helper.h" />
+    <ClInclude Include="Vendor\Include\spdlog\details\fmt_helper.h" />
+    <ClInclude Include="Vendor\Include\spdlog\details\log_msg-inl.h" />
+    <ClInclude Include="Vendor\Include\spdlog\details\log_msg.h" />
+    <ClInclude Include="Vendor\Include\spdlog\details\log_msg_buffer-inl.h" />
+    <ClInclude Include="Vendor\Include\spdlog\details\log_msg_buffer.h" />
+    <ClInclude Include="Vendor\Include\spdlog\details\mpmc_blocking_q.h" />
+    <ClInclude Include="Vendor\Include\spdlog\details\null_mutex.h" />
+    <ClInclude Include="Vendor\Include\spdlog\details\os-inl.h" />
+    <ClInclude Include="Vendor\Include\spdlog\details\os.h" />
+    <ClInclude Include="Vendor\Include\spdlog\details\periodic_worker-inl.h" />
+    <ClInclude Include="Vendor\Include\spdlog\details\periodic_worker.h" />
+    <ClInclude Include="Vendor\Include\spdlog\details\registry-inl.h" />
+    <ClInclude Include="Vendor\Include\spdlog\details\registry.h" />
+    <ClInclude Include="Vendor\Include\spdlog\details\synchronous_factory.h" />
+    <ClInclude Include="Vendor\Include\spdlog\details\tcp_client-windows.h" />
+    <ClInclude Include="Vendor\Include\spdlog\details\tcp_client.h" />
+    <ClInclude Include="Vendor\Include\spdlog\details\thread_pool-inl.h" />
+    <ClInclude Include="Vendor\Include\spdlog\details\thread_pool.h" />
+    <ClInclude Include="Vendor\Include\spdlog\details\udp_client-windows.h" />
+    <ClInclude Include="Vendor\Include\spdlog\details\udp_client.h" />
+    <ClInclude Include="Vendor\Include\spdlog\details\windows_include.h" />
+    <ClInclude Include="Vendor\Include\spdlog\fmt\bin_to_hex.h" />
+    <ClInclude Include="Vendor\Include\spdlog\fmt\bundled\args.h" />
+    <ClInclude Include="Vendor\Include\spdlog\fmt\bundled\chrono.h" />
+    <ClInclude Include="Vendor\Include\spdlog\fmt\bundled\color.h" />
+    <ClInclude Include="Vendor\Include\spdlog\fmt\bundled\compile.h" />
+    <ClInclude Include="Vendor\Include\spdlog\fmt\bundled\core.h" />
+    <ClInclude Include="Vendor\Include\spdlog\fmt\bundled\format-inl.h" />
+    <ClInclude Include="Vendor\Include\spdlog\fmt\bundled\format.h" />
+    <ClInclude Include="Vendor\Include\spdlog\fmt\bundled\locale.h" />
+    <ClInclude Include="Vendor\Include\spdlog\fmt\bundled\os.h" />
+    <ClInclude Include="Vendor\Include\spdlog\fmt\bundled\ostream.h" />
+    <ClInclude Include="Vendor\Include\spdlog\fmt\bundled\printf.h" />
+    <ClInclude Include="Vendor\Include\spdlog\fmt\bundled\ranges.h" />
+    <ClInclude Include="Vendor\Include\spdlog\fmt\bundled\std.h" />
+    <ClInclude Include="Vendor\Include\spdlog\fmt\bundled\xchar.h" />
+    <ClInclude Include="Vendor\Include\spdlog\fmt\chrono.h" />
+    <ClInclude Include="Vendor\Include\spdlog\fmt\compile.h" />
+    <ClInclude Include="Vendor\Include\spdlog\fmt\fmt.h" />
+    <ClInclude Include="Vendor\Include\spdlog\fmt\ostr.h" />
+    <ClInclude Include="Vendor\Include\spdlog\fmt\ranges.h" />
+    <ClInclude Include="Vendor\Include\spdlog\fmt\std.h" />
+    <ClInclude Include="Vendor\Include\spdlog\fmt\xchar.h" />
+    <ClInclude Include="Vendor\Include\spdlog\formatter.h" />
+    <ClInclude Include="Vendor\Include\spdlog\fwd.h" />
+    <ClInclude Include="Vendor\Include\spdlog\logger-inl.h" />
+    <ClInclude Include="Vendor\Include\spdlog\logger.h" />
+    <ClInclude Include="Vendor\Include\spdlog\mdc.h" />
+    <ClInclude Include="Vendor\Include\spdlog\pattern_formatter-inl.h" />
+    <ClInclude Include="Vendor\Include\spdlog\pattern_formatter.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\android_sink.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\ansicolor_sink-inl.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\ansicolor_sink.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\base_sink-inl.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\base_sink.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\basic_file_sink-inl.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\basic_file_sink.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\callback_sink.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\daily_file_sink.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\dist_sink.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\dup_filter_sink.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\hourly_file_sink.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\kafka_sink.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\mongo_sink.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\msvc_sink.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\null_sink.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\ostream_sink.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\qt_sinks.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\ringbuffer_sink.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\rotating_file_sink-inl.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\rotating_file_sink.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\sink-inl.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\sink.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\stdout_color_sinks-inl.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\stdout_color_sinks.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\stdout_sinks-inl.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\stdout_sinks.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\syslog_sink.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\systemd_sink.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\tcp_sink.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\udp_sink.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\wincolor_sink-inl.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\wincolor_sink.h" />
+    <ClInclude Include="Vendor\Include\spdlog\sinks\win_eventlog_sink.h" />
+    <ClInclude Include="Vendor\Include\spdlog\spdlog-inl.h" />
+    <ClInclude Include="Vendor\Include\spdlog\spdlog.h" />
+    <ClInclude Include="Vendor\Include\spdlog\stopwatch.h" />
+    <ClInclude Include="Vendor\Include\spdlog\tweakme.h" />
+    <ClInclude Include="Vendor\Include\spdlog\version.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Application\Application.cpp" />
+    <ClCompile Include="Source\Application\Event\EventBuffer.cpp" />
+    <ClCompile Include="Source\Application\Event\EventEmitter.cpp" />
+    <ClCompile Include="Source\Application\Interface\Interface.cpp" />
+    <ClCompile Include="Source\Application\Interface\InterfaceStack.cpp" />
+    <ClCompile Include="Source\Application\Interface\Layer.cpp" />
+    <ClCompile Include="Source\Application\Interface\LayerStack.cpp" />
+    <ClCompile Include="Source\Application\Interface\SplashInterface.cpp" />
     <ClCompile Include="Source\Application\Window.cpp" />
     <ClCompile Include="Source\Common\Log.cpp" />
+    <ClCompile Include="Source\Core\UUID.cpp" />
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLGraphicsContext.cpp" />
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLRenderApi.cpp" />
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLUtils.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLWindow.cpp" />
+    <ClCompile Include="Source\Renderer\GraphicsContext.cpp" />
     <ClCompile Include="Source\Utils\String.cpp" />
+    <ClCompile Include="Vendor\Source\glad.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

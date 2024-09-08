@@ -1,7 +1,8 @@
 #pragma once
 
-#include "DgeX/Common/Base.h"
 #include <spdlog/spdlog.h>
+
+#include "DgeX/Common/Base.h"
 
 DGEX_BEGIN
 
@@ -32,25 +33,29 @@ class Log
     friend class LogGuard;
 
 public:
-    static void Init(LogLevel level, bool console, const char *filename);
+    static void Init(LogLevel level, bool console, const char* filename);
+
     static void Init(LogLevel level, bool console)
     {
         Init(level, console, DEFAULT_LOG_FILE);
     }
+
     static void Init(LogLevel level)
     {
         Init(level, true, DEFAULT_LOG_FILE);
     }
+
     static void Init()
     {
         Init(LogLevel::All);
     }
 
-    static Ref<spdlog::logger> &GetCoreLogger()
+    static Ref<spdlog::logger>& GetCoreLogger()
     {
         return _sCoreLogger;
     }
-    static Ref<spdlog::logger> &GetClientLogger()
+
+    static Ref<spdlog::logger>& GetClientLogger()
     {
         return _sClientLogger;
     }
@@ -63,19 +68,19 @@ private:
 #ifdef DGEX_ENABLE_LOGGING
 
 #ifdef _DGEX_CORE_
-#define DGEX_CORE_TRACE(...) DgeX::Log::GetCoreLogger()->trace(__VA_ARGS__)
-#define DGEX_CORE_DEBUG(...) DgeX::Log::GetCoreLogger()->debug(__VA_ARGS__)
-#define DGEX_CORE_INFO(...) DgeX::Log::GetCoreLogger()->info(__VA_ARGS__)
-#define DGEX_CORE_WARN(...) DgeX::Log::GetCoreLogger()->warn(__VA_ARGS__)
-#define DGEX_CORE_ERROR(...) DgeX::Log::GetCoreLogger()->error(__VA_ARGS__)
+#define DGEX_CORE_TRACE(...)    DgeX::Log::GetCoreLogger()->trace(__VA_ARGS__)
+#define DGEX_CORE_DEBUG(...)    DgeX::Log::GetCoreLogger()->debug(__VA_ARGS__)
+#define DGEX_CORE_INFO(...)     DgeX::Log::GetCoreLogger()->info(__VA_ARGS__)
+#define DGEX_CORE_WARN(...)     DgeX::Log::GetCoreLogger()->warn(__VA_ARGS__)
+#define DGEX_CORE_ERROR(...)    DgeX::Log::GetCoreLogger()->error(__VA_ARGS__)
 #define DGEX_CORE_CRITICAL(...) DgeX::Log::GetCoreLogger()->critical(__VA_ARGS__)
 #endif
 
-#define DGEX_LOG_TRACE(...) DgeX::Log::GetClientLogger()->trace(__VA_ARGS__)
-#define DGEX_LOG_DEBUG(...) DgeX::Log::GetClientLogger()->debug(__VA_ARGS__)
-#define DGEX_LOG_INFO(...) DgeX::Log::GetClientLogger()->info(__VA_ARGS__)
-#define DGEX_LOG_WARN(...) DgeX::Log::GetClientLogger()->warn(__VA_ARGS__)
-#define DGEX_LOG_ERROR(...) DgeX::Log::GetClientLogger()->error(__VA_ARGS__)
+#define DGEX_LOG_TRACE(...)    DgeX::Log::GetClientLogger()->trace(__VA_ARGS__)
+#define DGEX_LOG_DEBUG(...)    DgeX::Log::GetClientLogger()->debug(__VA_ARGS__)
+#define DGEX_LOG_INFO(...)     DgeX::Log::GetClientLogger()->info(__VA_ARGS__)
+#define DGEX_LOG_WARN(...)     DgeX::Log::GetClientLogger()->warn(__VA_ARGS__)
+#define DGEX_LOG_ERROR(...)    DgeX::Log::GetClientLogger()->error(__VA_ARGS__)
 #define DGEX_LOG_CRITICAL(...) DgeX::Log::GetClientLogger()->critical(__VA_ARGS__)
 
 #else

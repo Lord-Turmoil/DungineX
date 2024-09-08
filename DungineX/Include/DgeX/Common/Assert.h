@@ -19,13 +19,14 @@
 #endif
 
 #define _DGEX_ASSERT_IMPL(expression, msg, ...)                                                                        \
+    do                                                                                                                 \
     {                                                                                                                  \
         if (!(expression))                                                                                             \
         {                                                                                                              \
             _DGEX_ASSERT_LOGGER(msg, __VA_ARGS__);                                                                     \
             DGEX_DEBUG_BREAK();                                                                                        \
         }                                                                                                              \
-    }
+    } while (0)
 
 #define _DGEX_ASSERT_WITH_MSG(expression, ...)                                                                         \
     _DGEX_ASSERT_IMPL(expression, "Assertion '{0}' failed at {1}:{2} with message: {3}",                               \
@@ -45,3 +46,16 @@
 #else
 #define DGEX_ASSERT(...)
 #endif
+
+// Common assert messages
+#define DGEX_MSG_GLAD_INIT_FAILED "Failed to initialize Glad!"
+#define DGEX_MSG_GLFW_INIT_FAILED "Failed to initialize GLFW!"
+
+#define DGEX_MSG_UNKNOWN_PLATFORM "Unknown platform!"
+
+#define DGEX_MSG_APPLICATION_ALREADY_CREATED "Application already created!"
+#define DGEX_MSG_APPLICATION_RUNNING         "Application is already running!"
+#define DGEX_MSG_NO_SPLASH_INTERFACE         "Splash interface not found!"
+#define DGEX_MSG_NO_MAIN_INTERFACE           "Main interface not found!"
+
+#define DGEX_MSG_INVALID_FRAME_BUFFER_SIZE "Invalid frame buffer size!"

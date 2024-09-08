@@ -7,14 +7,32 @@
 
 DGEX_BEGIN
 
+// clang-format off
+using WindowFlags = unsigned char;
+
+enum : unsigned char
+{
+    Plain              = 0,
+    DisableResize      = BIT(0),    // whether allow window resize
+    FullScreen         = BIT(1),    // whether launch in fullscreen
+    Borderless         = BIT(2),    // launch as borderless window
+    AlwaysOnTop        = BIT(3),    // always on top
+    LockAspectRatio    = BIT(4),    // lock aspect ratio as window resizes
+    VSync              = BIT(5),    // enable vertical synchronization
+    Default            = VSync
+};
+
+// clang-format on
+
 struct WindowProps
 {
     std::string Title;
     int Width;
     int Height;
+    WindowFlags Flags;
 
-    WindowProps(std::string title = "DungineX", int width = 1600, int height = 900)
-        : Title(std::move(title)), Width(width), Height(height)
+    WindowProps(std::string title, int width, int height, WindowFlags flags)
+        : Title(std::move(title)), Width(width), Height(height), Flags(flags)
     {
     }
 };
@@ -22,8 +40,11 @@ struct WindowProps
 class Window
 {
 public:
-    using EventCallbackFn = std::function<void(Ref<Event> &)>;
-
+    Window() = default;
+    Window(const Window&) = delete;
+    Window& operator=(const Window&) = delete;
+    Window(Window&&) = delete;
+    Window& operator=(Window&&) = delete;
     virtual ~Window() = default;
 
     virtual void OnUpdate() = 0;
@@ -32,13 +53,13 @@ public:
     virtual int GetHeight() const = 0;
 
     // Window attributes
-    virtual void SetEventCallback(const EventCallbackFn &callback) = 0;
+    virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
     virtual void SetVSync(bool enabled) = 0;
     virtual bool IsVSync() const = 0;
 
-    virtual void *GetNativeWindow() const = 0;
+    virtual void* GetNativeWindow() const = 0;
 
-    static Scope<Window> Create(const WindowProps &props = WindowProps());
+    static Scope<Window> Create(const WindowProps& props);
 };
 
 DGEX_END

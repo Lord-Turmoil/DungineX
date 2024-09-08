@@ -1,10 +1,12 @@
 #pragma once
 
+#include <string>
+
 #include "DgeX/Common/Base.h"
 
 DGEX_BEGIN
 
-namespace Utils
+namespace Utils::String
 {
 
 /**
@@ -13,7 +15,7 @@ namespace Utils
  * @param src source string address
  * @return the number of characters converted
  */
-int widen(wchar_t *dest, const char *src);
+int CharToWChar(wchar_t* dest, const char* src);
 
 /**
  * @brief Convert char* to wchar_t*
@@ -21,7 +23,7 @@ int widen(wchar_t *dest, const char *src);
  * @param src source string address
  * @return address of the converted string
  */
-wchar_t *widen(const char *src);
+wchar_t* CharToWChar(const char* src);
 
 /**
  * @brief Convert wchar_t* to char*
@@ -29,7 +31,7 @@ wchar_t *widen(const char *src);
  * @param src source wide string address
  * @return the number of characters converted
  */
-int narrow(char *dest, const wchar_t *src);
+int WCharToChar(char* dest, const wchar_t* src);
 
 /**
  * @brief Convert wchar_t* to char*
@@ -37,8 +39,15 @@ int narrow(char *dest, const wchar_t *src);
  * @param src source wide string address
  * @return address of the converted string
  */
-char *narrow(const wchar_t *src);
+char* WCharToChar(const wchar_t* src);
 
-} // namespace Utils
+/**
+ * @brief Convert bad string to std::string.
+ * @param str the original bad string
+ * @return A std::string
+ */
+std::string ToString(const unsigned char* str);
+
+} // namespace Utils::String
 
 DGEX_END

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sstream>
 #include "DgeX/Application/Event/Event.h"
 #include "DgeX/Application/Input/MouseCode.h"
 #include "DgeX/Common/Base.h"
@@ -17,15 +18,16 @@ public:
     {
         return _x;
     }
+
     double GetY() const
     {
         return _y;
     }
 
-    std::wstring ToString() const override
+    std::string ToString() const override
     {
-        std::wstringstream ss;
-        ss << GetName() << L" Event: " << _x << L", " << _y;
+        std::stringstream ss;
+        ss << GetName() << " Event: " << _x << ", " << _y;
         return ss.str();
     }
 
@@ -40,7 +42,7 @@ private:
 class MouseScrolledEvent final : public Event
 {
 public:
-    MouseScrolledEvent(const float xOffset, const float yOffset) : _offsetX(xOffset), _offsetY(yOffset)
+    MouseScrolledEvent(const double xOffset, const double yOffset) : _offsetX(xOffset), _offsetY(yOffset)
     {
     }
 
@@ -48,15 +50,16 @@ public:
     {
         return _offsetX;
     }
+
     double GetOffsetY() const
     {
         return _offsetY;
     }
 
-    std::wstring ToString() const override
+    std::string ToString() const override
     {
-        std::wstringstream ss;
-        ss << GetName() << L" Event: " << GetOffsetX() << L", " << GetOffsetY();
+        std::stringstream ss;
+        ss << GetName() << " Event: " << GetOffsetX() << ", " << GetOffsetY();
         return ss.str();
     }
 
@@ -88,27 +91,18 @@ protected:
 class MouseButtonPressedEvent final : public MouseButtonEvent
 {
 public:
-    MouseButtonPressedEvent(const MouseCode code, const bool isRepeat = false)
-        : MouseButtonEvent(code), _isRepeat(isRepeat)
+    MouseButtonPressedEvent(const MouseCode code) : MouseButtonEvent(code)
     {
     }
 
-    bool IsRepeat() const
+    std::string ToString() const override
     {
-        return _isRepeat;
-    }
-
-    std::wstring ToString() const override
-    {
-        std::wstringstream ss;
-        ss << GetName() << L" Event: " << _mouseCode;
+        std::stringstream ss;
+        ss << GetName() << " Event: " << _mouseCode;
         return ss.str();
     }
 
     DECL_EVENT_CLASS_TYPE(MouseButtonPressed)
-
-private:
-    bool _isRepeat;
 };
 
 class MouseButtonReleasedEvent : public MouseButtonEvent
@@ -118,10 +112,10 @@ public:
     {
     }
 
-    std::wstring ToString() const override
+    std::string ToString() const override
     {
-        std::wstringstream ss;
-        ss << GetName() << L" Event: " << _mouseCode;
+        std::stringstream ss;
+        ss << GetName() << " Event: " << _mouseCode;
         return ss.str();
     }
 
