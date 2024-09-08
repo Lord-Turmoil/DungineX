@@ -19,14 +19,6 @@
 #undef __DGEX__CORE__
 #define __DGEX__CLIENT__
 
-#if defined(DGEX_DEBUG)
-#pragma comment(lib, "DgeXd.lib")
-#elif defined(DGEX_RELEASE)
-#pragma comment(lib, "DgeXr.lib")
-#else
-#pragma comment(lib, "DgeX.lib")
-#endif
-
 #if DGEX_OPENGL
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glfw3.lib")

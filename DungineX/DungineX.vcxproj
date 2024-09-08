@@ -60,17 +60,17 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)Bin\$(ProjectName)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)Build\$(ProjectName)\$(Configuration)\</IntDir>
-    <TargetName>DgeXd</TargetName>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)Bin\$(ProjectName)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)Build\$(ProjectName)\$(Configuration)\</IntDir>
-    <TargetName>DgeXr</TargetName>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Publish|x64'">
     <OutDir>$(SolutionDir)Bin\$(ProjectName)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)Build\$(ProjectName)\$(Configuration)\</IntDir>
-    <TargetName>DgeX</TargetName>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -87,7 +87,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y  "$(SolutionDir)bin\$(ProjectName)\$(Configuration)\$(TargetFileName)" "$(SolutionDir)lib\"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
     <Lib />
   </ItemDefinitionGroup>
@@ -112,7 +113,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y  "$(SolutionDir)bin\$(ProjectName)\$(Configuration)\$(TargetFileName)" "$(SolutionDir)lib\"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
     <Lib />
   </ItemDefinitionGroup>
@@ -137,7 +139,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y  "$(SolutionDir)bin\$(ProjectName)\$(Configuration)\$(TargetFileName)" "$(SolutionDir)lib\"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
     <Lib />
   </ItemDefinitionGroup>

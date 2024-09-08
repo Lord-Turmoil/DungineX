@@ -2,8 +2,8 @@
 
 #include <functional>
 
+#include "DgeX/Application/Event/Event.h"
 #include "DgeX/Common/Base.h"
-#include "Event/Event.h"
 
 DGEX_BEGIN
 
