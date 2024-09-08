@@ -1,9 +1,10 @@
 #include "DgeX/Platform/OpenGL/OpenGLWindow.h"
-
 #include "DgeX/Application/Event/ApplicationEvent.h"
 #include "DgeX/Application/Event/KeyEvent.h"
 #include "DgeX/Application/Event/MouseEvent.h"
 #include "DgeX/Renderer/RenderApi.h"
+
+#ifdef DGEX_OPENGL
 
 DGEX_BEGIN
 
@@ -118,9 +119,12 @@ void OpenGLWindow::_Init(const WindowProps& props)
 void OpenGLWindow::_InitEventCallback() const
 {
     // Set GLFW callbacks
-    glfwSetWindowSizeCallback(_window, _WindowSizeCallback);
-
-    glfwSetFramebufferSizeCallback(_window, _FrameBufferSizeCallback);
+    glfwSetWindowSizeCallback(_window, [](GLFWwindow* window, int width, int height) {
+        WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+        data.Width = width;
+        data.Height = height;
+        data.EventCallback(CreateRef<WindowResizeEvent>(width, height));
+    });
 
     glfwSetWindowCloseCallback(_window, [](GLFWwindow* window) {
         WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
@@ -188,71 +192,6 @@ void OpenGLWindow::_Shutdown()
     }
 }
 
-void OpenGLWindow::_WindowSizeCallback(GLFWwindow* window, int width, int height)
-{
-    WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-    data.Width = width;
-    data.Height = height;
-
-    data.EventCallback(CreateRef<WindowResizeEvent>(width, height));
-
-    if (!(data.Flags & LockAspectRatio))
-    {
-        RenderApi::SetViewport(0, 0, width, height);
-    }
-}
-
-/**
- * @brief Called when frame buffer size changes
- * @ref https://diegomacario.github.io/2021/04/23/how-to-keep-the-aspect-ratio-of-an-opengl-window-constant.html
- * @param window window
- * @param width width of buffer
- * @param height height of buffer
- */
-void OpenGLWindow::_FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
-{
-    WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-    if (!(data.Flags & LockAspectRatio))
-    {
-        RenderApi::SetViewport(0, 0, width, height);
-        return;
-    }
-
-    float frameWidth = static_cast<float>(width);
-    float frameHeight = static_cast<float>(height);
-    float desiredAspectRatio = data.AspectRatio;
-
-    int widthOfViewport;
-    int heightOfViewport;
-    int lowerLeftCornerOfViewportX;
-    int lowerLeftCornerOfViewportY;
-
-    float requiredHeightOfViewport = frameWidth * (1.0f / desiredAspectRatio);
-    if (requiredHeightOfViewport > frameHeight)
-    {
-        float requiredWidthOfViewport = frameHeight * desiredAspectRatio;
-        if (requiredWidthOfViewport > frameWidth)
-        {
-            DGEX_ASSERT(false, DGEX_MSG_INVALID_FRAME_BUFFER_SIZE);
-            return;
-        }
-
-        widthOfViewport = static_cast<int>(requiredWidthOfViewport);
-        heightOfViewport = static_cast<int>(frameHeight);
-
-        lowerLeftCornerOfViewportX = static_cast<int>((frameWidth - requiredWidthOfViewport) * 0.5f);
-        lowerLeftCornerOfViewportY = 0;
-    }
-    else
-    {
-        widthOfViewport = static_cast<int>(frameWidth);
-        heightOfViewport = static_cast<int>(requiredHeightOfViewport);
-
-        lowerLeftCornerOfViewportX = 0;
-        lowerLeftCornerOfViewportY = static_cast<int>((frameHeight - requiredHeightOfViewport) * 0.5f);
-    }
-
-    glViewport(lowerLeftCornerOfViewportX, lowerLeftCornerOfViewportY, widthOfViewport, heightOfViewport);
-}
-
 DGEX_END
+
+#endif

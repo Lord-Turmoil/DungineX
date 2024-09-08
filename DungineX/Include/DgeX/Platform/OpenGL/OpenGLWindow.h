@@ -44,9 +44,6 @@ private:
     void _InitEventCallback() const;
     void _Shutdown();
 
-    static void _WindowSizeCallback(GLFWwindow* window, int width, int height);
-    static void _FrameBufferSizeCallback(GLFWwindow* window, int frameWidth, int frameHeight);
-
 private:
     GLFWwindow* _window;
     Scope<GraphicsContext> _context;

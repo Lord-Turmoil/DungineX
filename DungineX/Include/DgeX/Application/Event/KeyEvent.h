@@ -1,9 +1,7 @@
 #pragma once
 
-#include <sstream>
 #include "DgeX/Application/Event/Event.h"
 #include "DgeX/Application/Input/KeyCode.h"
-#include "DgeX/Common/Base.h"
 
 DGEX_BEGIN
 

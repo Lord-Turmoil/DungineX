@@ -14,12 +14,12 @@
 #include "DgeX/Utils/Easing.h"
 #include "DgeX/Utils/String.h"
 
-#include "Dgex/EntryPoint.h"
+#include "DgeX/Core/EntryPoint.h"
 
 #undef __DGEX__CORE__
 #define __DGEX__CLIENT__
 
-#if DGEX_OPENGL
+#ifdef DGEX_OPENGL
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glfw3.lib")
 #endif

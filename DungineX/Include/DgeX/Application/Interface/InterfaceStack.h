@@ -1,7 +1,5 @@
 #pragma once
 
-#include <unordered_set>
-
 #include "DgeX/Application/Interface/Interface.h"
 
 DGEX_BEGIN

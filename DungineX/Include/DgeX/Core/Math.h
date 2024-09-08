@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-#include "DgeX/Common/Base.h"
+#include "DgeX/dgexpch.h"
 
 DGEX_BEGIN
 

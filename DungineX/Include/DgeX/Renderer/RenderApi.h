@@ -1,6 +1,8 @@
 #pragma once
 
-#include "DgeX/Common/Base.h"
+#include "DgeX/dgexpch.h"
+
+#include "DgeX/Renderer/VertexArray.h"
 
 DGEX_BEGIN
 
@@ -44,15 +46,9 @@ namespace RenderApi
 {
 
 /**
- * @brief Set clear color, i.e. background color.
- * @param color clear color
+ * @brief Initialize the renderer backend API.
  */
-void SetClearColor(const Color& color);
-
-/**
- * @brief Clear the device, i.e. clear the screen.
- */
-void ClearDevice();
+void Init();
 
 /**
  * @brief Set viewport.
@@ -62,6 +58,15 @@ void ClearDevice();
  * @param height height
  */
 void SetViewport(int x, int y, int width, int height);
+/**
+ * @brief Set clear color, i.e. background color.
+ * @param color clear color
+ */
+void SetClearColor(const Color& color);
+/**
+ * @brief Clear the device, i.e. clear the screen.
+ */
+void ClearDevice();
 
 /**
  * @brief Set color.
@@ -75,29 +80,19 @@ void SetColor(const Color& color);
  */
 void SetLineWidth(float width);
 
-/*
- * =============================================================================
- * --------------------------- 2D Drawing Functions ----------------------------
- * =============================================================================
+/**
+ * @brief Draw index triangles
+ * @param vertexArray vertices to draw
+ * @param indexCount how many vertices to draw, 0 to draw all
  */
+static void DrawIndexed(const Ref<VertexArray>& vertexArray, int indexCount = 0);
 
 /**
- * @brief Draw a line.
- * @param x1 start x
- * @param y1 start y
- * @param x2 end x
- * @param y2 end y
+ * @brief Draw lines
+ * @param vertexArray vertices to draw
+ * @param vertexCount how many vertices to draw, 0 to draw all
  */
-void DrawLine(float x1, float y1, float x2, float y2);
-
-/**
- * @brief Draw a rectangle.
- * @param x x
- * @param y y
- * @param width width
- * @param height height
- */
-void DrawRectangle(float x, float y, float width, float height);
+static void DrawLines(const Ref<VertexArray>& vertexArray, int vertexCount = 0);
 
 } // namespace RenderApi
 

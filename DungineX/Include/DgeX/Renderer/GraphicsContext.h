@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DgeX/Common/Base.h"
+#include "DgeX/dgexpch.h"
 
 DGEX_BEGIN
 
@@ -11,11 +11,10 @@ class GraphicsContext
 {
 public:
     GraphicsContext() = default;
-    GraphicsContext(const GraphicsContext&) = delete;
-    GraphicsContext& operator=(const GraphicsContext&) = delete;
-    GraphicsContext(GraphicsContext&&) = delete;
-    GraphicsContext& operator=(GraphicsContext&&) = delete;
-
+    GraphicsContext(const GraphicsContext& other) = delete;
+    GraphicsContext(GraphicsContext&& other) noexcept = delete;
+    GraphicsContext& operator=(const GraphicsContext& other) = delete;
+    GraphicsContext& operator=(GraphicsContext&& other) noexcept = delete;
     virtual ~GraphicsContext() = default;
 
     virtual void Init() = 0;

@@ -1,9 +1,6 @@
 #pragma once
 
-#include <functional>
-
 #include "DgeX/Application/Event/Event.h"
-#include "DgeX/Common/Base.h"
 
 DGEX_BEGIN
 
@@ -41,10 +38,10 @@ class Window
 {
 public:
     Window() = default;
-    Window(const Window&) = delete;
-    Window& operator=(const Window&) = delete;
-    Window(Window&&) = delete;
-    Window& operator=(Window&&) = delete;
+    Window(const Window& other) = delete;
+    Window(Window&& other) noexcept = delete;
+    Window& operator=(const Window& other) = delete;
+    Window& operator=(Window&& other) noexcept = delete;
     virtual ~Window() = default;
 
     virtual void OnUpdate() = 0;

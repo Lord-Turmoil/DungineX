@@ -12,10 +12,10 @@ class LayerStack
 {
 public:
 	LayerStack() = default;
-    LayerStack(const LayerStack&) = delete;
-    LayerStack& operator=(const LayerStack&) = delete;
-    LayerStack(LayerStack&&) = delete;
-    LayerStack& operator=(LayerStack&&) = delete;
+    LayerStack(const LayerStack& other) = delete;
+    LayerStack(LayerStack&& other) noexcept = delete;
+    LayerStack& operator=(const LayerStack& other) = delete;
+    LayerStack& operator=(LayerStack&& other) noexcept = delete;
     ~LayerStack() = default;
 
 	void PushLayer(Layer* layer);

@@ -1,9 +1,6 @@
 #pragma once
 
-#include <string>
-
 #include "DgeX/Application/Interface/LayerStack.h"
-#include "DgeX/Common/Base.h"
 
 DGEX_BEGIN
 
@@ -22,10 +19,10 @@ class Interface
 {
 public:
     Interface(const std::string& name = "");
-    Interface(const Interface&) = delete;
-    Interface& operator=(const Interface&) = delete;
-    Interface(Interface&&) = delete;
-    Interface& operator=(Interface&&) = delete;
+    Interface(const Interface& other) = delete;
+    Interface(Interface&& other) noexcept = delete;
+    Interface& operator=(const Interface& other) = delete;
+    Interface& operator=(Interface&& other) noexcept = delete;
     virtual ~Interface() = default;
 
     /**

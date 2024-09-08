@@ -59,3 +59,11 @@
 #define DGEX_MSG_NO_MAIN_INTERFACE           "Main interface not found!"
 
 #define DGEX_MSG_INVALID_FRAME_BUFFER_SIZE "Invalid frame buffer size!"
+
+#define DGEX_MSG_CANNOT_OPEN_FILE "Cannot open file '{0}'!"
+#define DGEX_MSG_CANNOT_READ_FILE "Cannot read file '{0}'!"
+
+#define DGEX_MSG_SHADER_SYNTAX_ERROR  "Shader syntax error near '{0}'!"
+#define DGEX_MSG_SHADER_COMPILE_ERROR "Failed to compile shader '{0}'!"
+#define DGEX_MSG_SHADER_LINK_ERROR    "Failed to link shader '{0}'!"
+#define DGEX_MSG_SHADER_LOAD_ERROR    "Failed to load shader '{0}'!"

@@ -1,7 +1,9 @@
-#include <glad/glad.h>
-
 #include "DgeX/Platform/OpenGL/OpenGLGraphicsContext.h"
 #include "DgeX/Utils/String.h"
+
+#include <glad/glad.h>
+
+#ifdef DGEX_OPENGL
 
 DGEX_BEGIN
 
@@ -20,9 +22,6 @@ void OpenGLGraphicsContext::Init()
     DGEX_CORE_WARN("  Vendor: {0}", Utils::String::ToString(glGetString(GL_VENDOR)));
     DGEX_CORE_WARN("  Renderer: {0}", Utils::String::ToString(glGetString(GL_RENDERER)));
     DGEX_CORE_WARN("  Version: {0}", Utils::String::ToString(glGetString(GL_VERSION)));
-
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_BLEND);
 }
 
 void OpenGLGraphicsContext::SwapBuffers()
@@ -31,3 +30,5 @@ void OpenGLGraphicsContext::SwapBuffers()
 }
 
 DGEX_END
+
+#endif

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vector>
-
 #include "DgeX/Application/Event/Event.h"
 
 DGEX_BEGIN

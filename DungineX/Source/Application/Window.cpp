@@ -6,7 +6,7 @@ DGEX_BEGIN
 
 Scope<Window> Window::Create(const WindowProps& props)
 {
-#if DGEX_OPENGL
+#ifdef DGEX_OPENGL
     return CreateScope<OpenGLWindow>(props);
 #else
     DGEX_ASSERT(false, DGEX_MSG_UNKNOWN_PLATFORM);

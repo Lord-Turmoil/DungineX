@@ -1,7 +1,6 @@
 #pragma once
 
 #include "DgeX/Application/Application.h"
-#include "Windows.h"
 
 /**
  * @brief Entry point of DungineX application.
@@ -31,8 +30,6 @@ int main(int argc, char* argv[])
 
     DGEX_CORE_ERROR("DgeX Engine {0}.{1}.{2}", DGEX_VERSION_MAJOR, DGEX_VERSION_MINOR, DGEX_VERSION_PATCH);
     DGEX_CORE_ERROR("Copyright (C) 2024 New Desire Studios");
-
-    DGEX_CORE_INFO("Running on {0}", DGEX_OPENGL ? "GLFW" : "EasyX");
 
     DGEX_LOG_INFO("Initializing application");
     const auto app = DgeX::CreateApplication({ argc, argv });

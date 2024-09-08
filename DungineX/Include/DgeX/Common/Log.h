@@ -3,6 +3,7 @@
 #include <spdlog/spdlog.h>
 
 #include "DgeX/Common/Base.h"
+#include "DgeX/Common/Macros.h"
 
 DGEX_BEGIN
 

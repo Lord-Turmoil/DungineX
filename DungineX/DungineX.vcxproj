@@ -91,6 +91,9 @@
       </Command>
     </PostBuildEvent>
     <Lib />
+    <Lib>
+      <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -117,6 +120,9 @@
       </Command>
     </PostBuildEvent>
     <Lib />
+    <Lib>
+      <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Publish|x64'">
     <ClCompile>
@@ -143,12 +149,15 @@
       </Command>
     </PostBuildEvent>
     <Lib />
+    <Lib>
+      <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Include\DgeX\Application\Application.h" />
     <ClInclude Include="Include\DgeX\Application\Event\EventEmitter.h" />
     <ClInclude Include="Include\DgeX\Core\Math.h" />
-    <ClInclude Include="Include\DgeX\EntryPoint.h" />
+    <ClInclude Include="Include\DgeX\Core\EntryPoint.h" />
     <ClInclude Include="Include\DgeX\Application\Event\ApplicationEvent.h" />
     <ClInclude Include="Include\DgeX\Application\Event\EventBuffer.h" />
     <ClInclude Include="Include\DgeX\Application\Event\KeyEvent.h" />
@@ -160,9 +169,12 @@
     <ClInclude Include="Include\DgeX\Application\Interface\InterfaceStack.h" />
     <ClInclude Include="Include\DgeX\Application\Interface\Layer.h" />
     <ClInclude Include="Include\DgeX\Application\Interface\LayerStack.h" />
-    <ClInclude Include="Include\DgeX\Core\DeltaTime.h" />
+    <ClInclude Include="Include\DgeX\Common\DeltaTime.h" />
     <ClInclude Include="Include\DgeX\Core\UUID.h" />
+    <ClInclude Include="Include\DgeX\dgexpch.h" />
+    <ClInclude Include="Include\DgeX\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="Include\DgeX\Platform\OpenGL\OpenGLGraphicsContext.h" />
+    <ClInclude Include="Include\DgeX\Platform\OpenGL\OpenGLVertexArray.h" />
     <ClInclude Include="Include\DgeX\Platform\OpenGL\OpenGLWindow.h" />
     <ClInclude Include="Include\DgeX\Common\Assert.h" />
     <ClInclude Include="Include\DgeX\Common\Base.h" />
@@ -171,9 +183,15 @@
     <ClInclude Include="Include\DgeX\DgeX.h" />
     <ClInclude Include="Include\DgeX\Application\Event\Event.h" />
     <ClInclude Include="Include\DgeX\Application\Window.h" />
+    <ClInclude Include="Include\DgeX\Renderer\Buffer.h" />
+    <ClInclude Include="Include\DgeX\Renderer\Camera.h" />
     <ClInclude Include="Include\DgeX\Renderer\GraphicsContext.h" />
     <ClInclude Include="Include\DgeX\Renderer\RenderApi.h" />
+    <ClInclude Include="Include\DgeX\Renderer\Renderer.h" />
+    <ClInclude Include="Include\DgeX\Renderer\Shader.h" />
+    <ClInclude Include="Include\DgeX\Renderer\VertexArray.h" />
     <ClInclude Include="Include\DgeX\Utils\Easing.h" />
+    <ClInclude Include="Include\DgeX\Utils\File.h" />
     <ClInclude Include="Include\DgeX\Utils\PlatformUtils.h" />
     <ClInclude Include="Include\DgeX\Utils\String.h" />
     <ClInclude Include="Vendor\Include\glad\glad.h" />
@@ -286,6 +304,7 @@
     <ClInclude Include="Vendor\Include\spdlog\version.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Include\DgeX\Platform\OpenGL\OpenGLShader.h" />
     <ClCompile Include="Source\Application\Application.cpp" />
     <ClCompile Include="Source\Application\Event\EventBuffer.cpp" />
     <ClCompile Include="Source\Application\Event\EventEmitter.cpp" />
@@ -297,11 +316,17 @@
     <ClCompile Include="Source\Application\Window.cpp" />
     <ClCompile Include="Source\Common\Log.cpp" />
     <ClCompile Include="Source\Core\UUID.cpp" />
+    <ClCompile Include="Source\dgexpch.cpp" />
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLGraphicsContext.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLRenderApi.cpp" />
+    <ClCompile Include="Source\Renderer\Renderer.cpp" />
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLUtils.cpp" />
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLVertexArray.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLWindow.cpp" />
     <ClCompile Include="Source\Renderer\GraphicsContext.cpp" />
+    <ClCompile Include="Source\Utils\File.cpp" />
     <ClCompile Include="Source\Utils\String.cpp" />
     <ClCompile Include="Vendor\Source\glad.c" />
   </ItemGroup>
