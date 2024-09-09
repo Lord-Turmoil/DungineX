@@ -40,7 +40,7 @@ In "Linker > General", add "Additional Library Directories".
 $(SolutionDir)Lib
 ```
 
-In "Linker > Input", add "Ignore Specific Default Libraries".
+For Debug profile, in "Linker > Input", add "Ignore Specific Default Libraries" to avoid some warnings.
 
 ```
 msvcrt.lib
