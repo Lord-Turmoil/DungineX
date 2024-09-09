@@ -36,6 +36,9 @@
 #define DGEX_ATTACH_CONSOLE
 #endif
 
+// Always show splash screen
+// #define DGEX_ALWAYS_SPLASH
+
 #define DGEX_BEGIN                                                                                                     \
     namespace DgeX                                                                                                     \
     {

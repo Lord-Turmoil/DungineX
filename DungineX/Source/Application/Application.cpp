@@ -3,7 +3,8 @@
 #include "DgeX/Application/Application.h"
 #include "DgeX/Application/Event/EventEmitter.h"
 #include "DgeX/Application/Interface/Interface.h"
-#include "DgeX/Renderer/RenderApi.h"
+#include "DgeX/Renderer/RenderCommand.h"
+#include "DgeX/Renderer/Renderer.h"
 #include "DgeX/Utils/PlatformUtils.h"
 
 DGEX_BEGIN
@@ -24,8 +25,10 @@ Application::Application(ApplicationSpecification specification) : _specificatio
     _window = Window::Create(
         WindowProps(_specification.Name, _specification.Width, _specification.Height, _specification.Flags));
     _window->SetEventCallback(DGEX_BIND_EVENT_FN(Application::OnEvent));
-
     EventEmitter::SetEventCallBack(DGEX_BIND_EVENT_FN(Application::OnEvent));
+
+    Renderer::Init();
+    Renderer::OnWindowResize(_window->GetWidth(), _window->GetHeight());
 }
 
 void Application::Run()
@@ -43,7 +46,7 @@ void Application::Run()
         DGEX_ASSERT(false, DGEX_MSG_NO_SPLASH_INTERFACE);
         return;
     }
-    _currentInterface->OnLoad();
+    _currentInterface->_OnLoad();
     _currentInterface->OnMounted();
 
     _isRunning = true;
@@ -74,13 +77,15 @@ void Application::Run()
         {
             if (!event->Handled)
             {
-                _currentInterface->OnEvent(event);
+                _currentInterface->_OnEvent(event);
             }
         }
 
         // Update and render
         _currentInterface->OnUpdate(delta);
-        _currentInterface->OnRender();
+
+        RenderCommand::ClearDevice();
+        _currentInterface->_OnRender();
 
         _window->OnUpdate();
     }
@@ -115,6 +120,10 @@ bool Application::_OnWindowClose(WindowCloseEvent& e)
 bool Application::_OnWindowResize(WindowResizeEvent& e)
 {
     _isMinimized = e.GetWidth() == 0 || e.GetHeight() == 0;
+    if (!_isMinimized)
+    {
+        Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+    }
     return false;
 }
 
@@ -132,7 +141,7 @@ bool Application::_OnInterfaceTransit(InterfaceTransitEvent& e)
     _currentInterface->OnUnmounted();
     if (_interfaces.PushInterface(_nextInterface))
     {
-        _nextInterface->OnLoad();
+        _nextInterface->_OnLoad();
     }
     _nextInterface->OnMounted();
 
@@ -165,7 +174,7 @@ bool Application::_OnInterfaceChange(InterfaceChangeEvent& e)
 
     if (_interfaces.PushInterface(_nextInterface))
     {
-        _nextInterface->OnLoad();
+        _nextInterface->_OnLoad();
     }
     _nextInterface->OnMounted();
 

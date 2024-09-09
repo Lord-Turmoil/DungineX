@@ -11,6 +11,8 @@ namespace Math
 
 template <typename T> constexpr T PI = T(3.14159265358979323846);
 template <typename T> constexpr T TWO_PI = T(2.0) * PI<T>;
+template <typename T> constexpr T HALF_PI = T(0.5) * PI<T>;
+template <typename T> constexpr T QUARTER_PI = T(0.25) * PI<T>;
 
 template <typename T> constexpr T ToRadians(T degrees)
 {

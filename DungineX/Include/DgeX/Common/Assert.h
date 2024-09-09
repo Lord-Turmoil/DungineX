@@ -67,3 +67,6 @@
 #define DGEX_MSG_SHADER_COMPILE_ERROR "Failed to compile shader '{0}'!"
 #define DGEX_MSG_SHADER_LINK_ERROR    "Failed to link shader '{0}'!"
 #define DGEX_MSG_SHADER_LOAD_ERROR    "Failed to load shader '{0}'!"
+
+#define DGEX_MSG_IMAGE_INVALID_FORMAT "Invalid image format!"
+#define DGEX_MSG_TEXTURE_DATA_SIZE    "Texture data size does not match the specification!"

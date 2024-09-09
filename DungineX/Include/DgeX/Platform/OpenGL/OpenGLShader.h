@@ -1,8 +1,10 @@
+#pragma once
+
 #include "DgeX/Renderer/Shader.h"
 
 DGEX_BEGIN
 
-class OpenGLShader final : Shader
+class OpenGLShader final : public Shader
 {
 public:
     OpenGLShader(const std::string& filepath);

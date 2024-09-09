@@ -108,6 +108,13 @@ void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
     _vertexBuffers.push_back(vertexBuffer);
 }
 
+void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
+{
+    glBindVertexArray(_rendererId);
+    indexBuffer->Bind();
+    _indexBuffer = indexBuffer;
+}
+
 DGEX_END
 
 #endif

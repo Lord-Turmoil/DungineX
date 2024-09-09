@@ -10,6 +10,7 @@
 #include "Dgex/Application/Application.h"
 
 #include "DgeX/Renderer/RenderApi.h"
+#include "DgeX/Renderer/RenderCommand.h"
 
 #include "DgeX/Utils/Easing.h"
 #include "DgeX/Utils/String.h"

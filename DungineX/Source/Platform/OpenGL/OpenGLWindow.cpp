@@ -2,7 +2,7 @@
 #include "DgeX/Application/Event/ApplicationEvent.h"
 #include "DgeX/Application/Event/KeyEvent.h"
 #include "DgeX/Application/Event/MouseEvent.h"
-#include "DgeX/Renderer/RenderApi.h"
+#include "DgeX/Renderer/RenderCommand.h"
 
 #ifdef DGEX_OPENGL
 
@@ -80,15 +80,15 @@ void OpenGLWindow::_Init(const WindowProps& props)
         glfwWindowHint(GLFW_FLOATING, GLFW_TRUE);
     }
 
+    auto monitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode* mode = glfwGetVideoMode(monitor);
     if (_data.Flags & FullScreen)
     {
-        auto monitor = glfwGetPrimaryMonitor();
+        _data.Width = mode->width;
+        _data.Height = mode->height;
         if (_data.Flags & Borderless)
         {
             // launch in fullscreen borderless mode
-            const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-            _data.Width = mode->width;
-            _data.Height = mode->height;
             _window = glfwCreateWindow(_data.Width, _data.Height, _data.Title.c_str(), nullptr, nullptr);
             glfwSetWindowPos(_window, 0, 0);
         }
@@ -102,6 +102,7 @@ void OpenGLWindow::_Init(const WindowProps& props)
     {
         // normal window
         _window = glfwCreateWindow(_data.Width, _data.Height, _data.Title.c_str(), nullptr, nullptr);
+        glfwSetWindowPos(_window, (mode->width - _data.Width) / 2, (mode->height - _data.Height) / 2);
     }
     sWindowCount++;
 
@@ -112,8 +113,6 @@ void OpenGLWindow::_Init(const WindowProps& props)
     SetVSync(_data.Flags & VSync);
 
     _InitEventCallback();
-
-    RenderApi::SetViewport(0, 0, _data.Width, _data.Height);
 }
 
 void OpenGLWindow::_InitEventCallback() const

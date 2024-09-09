@@ -21,16 +21,16 @@ public:
         dispatcher.Dispatch<DgeX::KeyPressedEvent>(DGEX_BIND_EVENT_FN(_OnKeyPressed));
     }
 
+    void OnUpdate(DgeX::DeltaTime delta) override
+    {
+        _elapsedTime += delta;
+    }
+
     void OnRender() override
     {
-        DgeX::RenderApi::SetColor(DgeX::Color::FromUInt32(0xFFF00000));
-        DgeX::RenderApi::DrawRectangle(600, 300, 80, 60);
-
-        DgeX::RenderApi::SetColor(DgeX::Color::FromUInt32(0xFF0F0000));
-        DgeX::RenderApi::DrawRectangle(700, 400, 80, 60);
-
-        DgeX::RenderApi::SetColor(DgeX::Color::FromUInt32(0xA00F0000));
-        DgeX::RenderApi::DrawRectangle(600, 400, 80, 60);
+        DgeX::RenderApi::DrawRotatedQuad({ GetWidth() / 2.0f, GetHeight() / 2.0f }, { 200.0f, 200.0f },
+                                         DgeX::Math::ToDegrees(_elapsedTime * DgeX::Math::PI<float>),
+                                         DgeX::Color::FromUInt32(0xFFF00000).ToVec4());
     }
 
 private:
@@ -42,6 +42,8 @@ private:
         }
         return true;
     }
+
+    float _elapsedTime = 0.0f;
 };
 
 class MainInterface final : public DgeX::Interface
@@ -54,7 +56,6 @@ public:
 
     void OnLoad() override
     {
-        DgeX::RenderApi::SetClearColor(DgeX::Color::FromUInt32(0xFFFFFFFF));
         DGEX_LOG_INFO("MainInterface loaded");
     }
 

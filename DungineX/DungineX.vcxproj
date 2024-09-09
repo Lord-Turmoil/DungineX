@@ -174,6 +174,8 @@
     <ClInclude Include="Include\DgeX\dgexpch.h" />
     <ClInclude Include="Include\DgeX\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="Include\DgeX\Platform\OpenGL\OpenGLGraphicsContext.h" />
+    <ClInclude Include="Include\DgeX\Platform\OpenGL\OpenGLShaderTemplate.h" />
+    <ClInclude Include="Include\DgeX\Platform\OpenGL\OpenGLUniformBuffer.h" />
     <ClInclude Include="Include\DgeX\Platform\OpenGL\OpenGLVertexArray.h" />
     <ClInclude Include="Include\DgeX\Platform\OpenGL\OpenGLWindow.h" />
     <ClInclude Include="Include\DgeX\Common\Assert.h" />
@@ -184,11 +186,17 @@
     <ClInclude Include="Include\DgeX\Application\Event\Event.h" />
     <ClInclude Include="Include\DgeX\Application\Window.h" />
     <ClInclude Include="Include\DgeX\Renderer\Buffer.h" />
-    <ClInclude Include="Include\DgeX\Renderer\Camera.h" />
+    <ClInclude Include="Include\DgeX\Renderer\Camera\Camera.h" />
+    <ClInclude Include="Include\DgeX\Renderer\Color.h" />
     <ClInclude Include="Include\DgeX\Renderer\GraphicsContext.h" />
+    <ClInclude Include="Include\DgeX\Renderer\Camera\InterfaceCamera.h" />
+    <ClInclude Include="Include\DgeX\Renderer\Camera\OrthographicCamera.h" />
     <ClInclude Include="Include\DgeX\Renderer\RenderApi.h" />
+    <ClInclude Include="Include\DgeX\Renderer\RenderCommand.h" />
     <ClInclude Include="Include\DgeX\Renderer\Renderer.h" />
     <ClInclude Include="Include\DgeX\Renderer\Shader.h" />
+    <ClInclude Include="Include\DgeX\Renderer\Texture.h" />
+    <ClInclude Include="Include\DgeX\Renderer\UniformBuffer.h" />
     <ClInclude Include="Include\DgeX\Renderer\VertexArray.h" />
     <ClInclude Include="Include\DgeX\Utils\Easing.h" />
     <ClInclude Include="Include\DgeX\Utils\File.h" />
@@ -305,6 +313,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\DgeX\Platform\OpenGL\OpenGLShader.h" />
+    <ClInclude Include="Include\DgeX\Platform\OpenGL\OpenGLTexture.h" />
     <ClCompile Include="Source\Application\Application.cpp" />
     <ClCompile Include="Source\Application\Event\EventBuffer.cpp" />
     <ClCompile Include="Source\Application\Event\EventEmitter.cpp" />
@@ -320,13 +329,24 @@
     <ClCompile Include="Source\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLGraphicsContext.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLRenderApi.cpp" />
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLRenderCommand.cpp" />
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLTexture.cpp" />
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLUniformBuffer.cpp" />
+    <ClCompile Include="Source\Renderer\Buffer.cpp" />
+    <ClCompile Include="Source\Renderer\InterfaceCamera.cpp" />
+    <ClCompile Include="Source\Renderer\OrthographicCamera.cpp" />
     <ClCompile Include="Source\Renderer\Renderer.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLUtils.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLVertexArray.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLWindow.cpp" />
     <ClCompile Include="Source\Renderer\GraphicsContext.cpp" />
+    <ClCompile Include="Source\Renderer\Shader.cpp" />
+    <ClCompile Include="Source\Renderer\Texture.cpp" />
+    <ClCompile Include="Source\Renderer\UniformBuffer.cpp" />
+    <ClCompile Include="Source\Renderer\VertexArray.cpp" />
     <ClCompile Include="Source\Utils\File.cpp" />
+    <ClCompile Include="Source\Utils\stb_image.cpp" />
     <ClCompile Include="Source\Utils\String.cpp" />
     <ClCompile Include="Vendor\Source\glad.c" />
   </ItemGroup>

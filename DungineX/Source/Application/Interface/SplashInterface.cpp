@@ -39,17 +39,13 @@ private:
     bool _OnResize(WindowResizeEvent& event);
 
     timestamp_t _elapsedTime = 0.0f;
-    float _x = 0.0f;
-    float _y = 0.0f;
-    float _width = 600.0f;
-    float _height = 400.0f;
+    glm::vec2 _splashPosition = { 0.f, 0.f };
+    glm::vec2 _splashSize = { 600.f, 400.f };
     float _alpha = 0.0f;
 };
 
 void SplashInterface::OnLoad()
 {
-    RenderApi::SetClearColor(Color::From255(50.f, 5.f, 60.f));
-
     _layer = new SplashLayer();
     PushLayer(_layer);
 
@@ -71,8 +67,8 @@ void SplashLayer::OnAttach()
 
     auto app = Application::GetInstance();
 
-    _x = 0.5f * (static_cast<float>(app->GetWidth()) - _width);
-    _y = 0.5f * (static_cast<float>(app->GetHeight()) - _height);
+    _splashPosition.x = 0.5f * static_cast<float>(app->GetWidth());
+    _splashPosition.y = 0.5f * static_cast<float>(app->GetHeight());
 
     DGEX_CORE_INFO("SplashLayer attached");
 }
@@ -83,21 +79,17 @@ void SplashLayer::OnUpdate(DeltaTime delta)
 
     _elapsedTime += delta.Seconds();
 
-#ifdef _PUBLISH
-    if (_elapsedTime < 4.f)
+#if defined(DGEX_PUBLISH) || defined(DGEX_ALWAYS_SPLASH)
+    if (_elapsedTime < 3.5f)
     {
-        _alpha = Interpolate(0.0f, 255.0f, RangeToStep(.5f, 3.f, _elapsedTime), EaseInOutCubic);
+        _alpha = Interpolate(0.0f, 1.0f, RangeToStep(.5f, 2.8f, _elapsedTime), Linear);
     }
     else
     {
-        _alpha = Interpolate(255.0f, 0.0f, RangeToStep(5.f, 7.7f, _elapsedTime), EaseOutQuart);
-        float step = RangeToStep(5.f, 7.5f, _elapsedTime);
-        RenderApi::SetClearColor(Color::From255(Interpolate(50.f, 0.f, step, EaseInOutSine),
-                                                Interpolate(5.f, 0.f, step, EaseInOutSine),
-                                                Interpolate(60.f, 0.f, step, EaseInOutSine), 255.f));
+        _alpha = Interpolate(1.0f, 0.0f, RangeToStep(3.8f, 6.0f, _elapsedTime), EaseOutQuart);
     }
 
-    if (_elapsedTime > 8.0f)
+    if (_elapsedTime > 6.28f)
     {
         DGEX_CORE_INFO("Prepare to launch Client interface");
         EventEmitter::Emit(CreateRef<InterfaceChangeEvent>("Main"));
@@ -114,8 +106,10 @@ void SplashLayer::OnUpdate(DeltaTime delta)
 
 void SplashLayer::OnRender()
 {
-    RenderApi::SetColor(Color::From255(200.f, 0.f, 200.f, _alpha));
-    RenderApi::DrawRectangle(_x, _y, _width, _height);
+    // RenderApi::DrawQuad(_splashPosition, _splashSize, glm::vec4(1.f, 1.f, 0.f, _alpha));
+    RenderApi::DrawRotatedQuad(_splashPosition, _splashSize * 0.8f, Math::ToDegrees(Math::QUARTER_PI<float>),
+                               glm::vec4(1.f, 1.f, 0.f, _alpha));
+    RenderApi::DrawRect(_splashPosition, _splashSize, glm::vec4(1.f, 0.f, 0.f, _alpha));
 }
 
 void SplashLayer::OnEvent(const Ref<Event>& event)
@@ -128,8 +122,8 @@ bool SplashLayer::_OnResize(WindowResizeEvent& event)
 {
     auto app = Application::GetInstance();
 
-    _x = 0.5f * (static_cast<float>(app->GetWidth()) - _width);
-    _y = 0.5f * (static_cast<float>(app->GetHeight()) - _height);
+    _splashPosition.x = 0.5f * static_cast<float>(app->GetWidth());
+    _splashPosition.y = 0.5f * static_cast<float>(app->GetHeight());
 
     return false;
 }

@@ -26,6 +26,8 @@ public:
     virtual void OnEvent(const Ref<Event>&event) {}
 
     const std::string& GetName() const { return _name; }
+    int GetWidth() const;
+    int GetHeight() const;
 
 private:
     /**

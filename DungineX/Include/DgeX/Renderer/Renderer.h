@@ -2,7 +2,7 @@
 
 #include "DgeX/dgexpch.h"
 
-#include "DgeX/Renderer/Camera.h"
+#include "DgeX/Renderer/Camera/Camera.h"
 #include "DgeX/Renderer/Shader.h"
 #include "Dgex/Renderer/VertexArray.h"
 

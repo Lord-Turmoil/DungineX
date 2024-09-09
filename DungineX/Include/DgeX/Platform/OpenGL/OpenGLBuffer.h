@@ -7,14 +7,14 @@ DGEX_BEGIN
 class OpenGLVertexBuffer : public VertexBuffer
 {
 public:
-    OpenGLVertexBuffer(int size);
-    OpenGLVertexBuffer(float* vertices, int size);
+    OpenGLVertexBuffer(uint32_t size);
+    OpenGLVertexBuffer(float* vertices, uint32_t size);
     ~OpenGLVertexBuffer() override;
 
     void Bind() const override;
     void Unbind() const override;
 
-    void SetData(const void* data, int size) override;
+    void SetData(const void* data, uint32_t size) override;
 
     const BufferLayout& GetLayout() const override
     {
@@ -34,20 +34,20 @@ private:
 class OpenGLIndexBuffer : public IndexBuffer
 {
 public:
-    OpenGLIndexBuffer(int* indices, int count);
+    OpenGLIndexBuffer(uint32_t* indices, uint32_t count);
     ~OpenGLIndexBuffer() override;
 
     void Bind() const override;
     void Unbind() const override;
 
-    int GetCount() const override
+    uint32_t GetCount() const override
     {
         return _count;
     }
 
 private:
     uint32_t _rendererId;
-    int _count;
+    uint32_t _count;
 };
 
 DGEX_END

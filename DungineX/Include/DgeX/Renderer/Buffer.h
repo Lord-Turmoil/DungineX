@@ -16,7 +16,7 @@ enum class ShaderDataType
 
 // clang-format on
 
-static int ShaderDataTypeSize(ShaderDataType type)
+static uint32_t ShaderDataTypeSize(ShaderDataType type)
 {
     switch (type)
     {
@@ -53,7 +53,7 @@ struct BufferElement
 {
     std::string Name;
     ShaderDataType Type;
-    int Size;
+    uint32_t Size;
     size_t Offset;
     bool Normalized;
 
@@ -109,7 +109,7 @@ public:
         CalculateOffsetsAndStride();
     }
 
-    int GetStride() const { return _stride; }
+    uint32_t GetStride() const { return _stride; }
 
     const std::vector<BufferElement>& GetElements() const { return _elements; }
     std::vector<BufferElement>::iterator begin() { return _elements.begin(); }
@@ -132,7 +132,7 @@ private:
 
 private:
     std::vector<BufferElement> _elements;
-    int _stride = 0;
+    uint32_t _stride = 0;
 };
 
 // clang-format on
@@ -150,13 +150,13 @@ public:
     virtual void Bind() const = 0;
     virtual void Unbind() const = 0;
 
-    virtual void SetData(const void* data, int size) = 0;
+    virtual void SetData(const void* data, uint32_t size) = 0;
 
     virtual const BufferLayout& GetLayout() const = 0;
     virtual void SetLayout(const BufferLayout& layout) = 0;
 
-    static Ref<VertexBuffer> Create(int size);
-    static Ref<VertexBuffer> Create(float* vertices, int size);
+    static Ref<VertexBuffer> Create(uint32_t size);
+    static Ref<VertexBuffer> Create(float* vertices, uint32_t size);
 };
 
 class IndexBuffer
@@ -172,9 +172,9 @@ public:
     virtual void Bind() const = 0;
     virtual void Unbind() const = 0;
 
-    virtual int GetCount() const = 0;
+    virtual uint32_t GetCount() const = 0;
 
-    static Ref<IndexBuffer> Create(int* indices, int count);
+    static Ref<IndexBuffer> Create(uint32_t* indices, uint32_t count);
 };
 
 DGEX_END

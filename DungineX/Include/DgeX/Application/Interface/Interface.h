@@ -1,6 +1,8 @@
 #pragma once
 
+#include "DgeX/Application/Event/ApplicationEvent.h"
 #include "DgeX/Application/Interface/LayerStack.h"
+#include "DgeX/Renderer/Camera/InterfaceCamera.h"
 
 DGEX_BEGIN
 
@@ -17,6 +19,7 @@ DGEX_BEGIN
  */
 class Interface
 {
+    friend class Application;
 public:
     Interface(const std::string& name = "");
     Interface(const Interface& other) = delete;
@@ -56,12 +59,12 @@ public:
      * @brief Event handler for the interface.
      * @param event event
      */
-    void OnEvent(const Ref<Event>&event);
+    virtual void OnEvent(const Ref<Event>& event) {}
 
     /**
      * @brief Render the interface in each frame.
      */
-    void OnRender();
+    virtual void OnRender() {}
 
     void PushLayer(Layer* layer);
     void PopLayer(Layer* layer);
@@ -70,10 +73,27 @@ public:
     void PopOverlay(Layer* overlay);
 
     const std::string& GetName() const { return _name; }
+    int GetWidth() const { return _width; };
+    int GetHeight() const { return _height; };
+
+private:
+    // Some wrapper functions to hide the implementation details.
+    void _OnLoad();
+    void _OnEvent(const Ref<Event>& event);
+    void _OnRender();
+
+    bool _OnResize(WindowResizeEvent& event);
 
 private:
     LayerStack _layers;
     std::string _name;
+
+    int _width;
+    int _height;
+
+    // For now, we hide this camera to user, so they'll be limited to this
+    // fixed view. :)
+    Ref<InterfaceCamera> _camera;
 };
 
 // clang-format on

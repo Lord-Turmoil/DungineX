@@ -1,98 +1,91 @@
+
+// Provide basic 2D rendering methods.
+
 #pragma once
 
 #include "DgeX/dgexpch.h"
 
-#include "DgeX/Renderer/VertexArray.h"
+#include "DgeX/Renderer/Camera/Camera.h"
+#include "DgeX/Renderer/Texture.h"
 
 DGEX_BEGIN
-
-struct Color
-{
-    float Red, Green, Blue, Alpha;
-
-    Color() : Red(0.0f), Green(0.0f), Blue(0.0f), Alpha(1.0f)
-    {
-    }
-
-    Color(float r, float g, float b, float a = 1.0f) : Red(r), Green(g), Blue(b), Alpha(a)
-    {
-    }
-
-    uint32_t ToUInt32() const
-    {
-        uint32_t r = static_cast<uint32_t>(this->Red * 255.0f) & 0xFF;
-        uint32_t g = static_cast<uint32_t>(this->Green * 255.0f) & 0xFF;
-        uint32_t b = static_cast<uint32_t>(this->Blue * 255.0f) & 0xFF;
-        uint32_t a = static_cast<uint32_t>(this->Alpha * 255.0f) & 0xFF;
-        return (a << 24) | (r << 16) | (g << 8) | b;
-    }
-
-    static Color From255(float r, float g, float b, float a = 255.0f)
-    {
-        return { r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f };
-    }
-
-    static Color FromUInt32(const uint32_t color)
-    {
-        float r = static_cast<float>((color >> 16) & 0xFF) / 255.0f;
-        float g = static_cast<float>((color >> 8) & 0xFF) / 255.0f;
-        float b = static_cast<float>(color & 0xFF) / 255.0f;
-        float a = static_cast<float>((color >> 24) & 0xFF) / 255.0f;
-        return { r, g, b, a };
-    }
-};
 
 namespace RenderApi
 {
 
-/**
- * @brief Initialize the renderer backend API.
- */
 void Init();
+void Shutdown();
 
-/**
- * @brief Set viewport.
- * @param x origin x
- * @param y origin y
- * @param width width
- * @param height height
- */
-void SetViewport(int x, int y, int width, int height);
-/**
- * @brief Set clear color, i.e. background color.
- * @param color clear color
- */
-void SetClearColor(const Color& color);
-/**
- * @brief Clear the device, i.e. clear the screen.
- */
-void ClearDevice();
+void BeginScene(const Camera& camera, const glm::mat4& transform);
+void BeginScene(const Camera& camera);
+void EndScene();
+void Flush();
 
-/**
- * @brief Set color.
- * @param color the following color to be used
- */
-void SetColor(const Color& color);
+void DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);
+void DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color);
+void DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture>& texture, float tilingFactor = 1.0f,
+              const glm::vec4& tintColor = glm::vec4(1.0f));
+void DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture>& texture, float tilingFactor = 1.0f,
+              const glm::vec4& tintColor = glm::vec4(1.0f));
 
-/**
- * @brief Set line width.
- * @param width line width
- */
+void DrawQuad(const glm::mat4& transform, const glm::vec4& color);
+void DrawQuad(const glm::mat4& transform, const Ref<Texture>& texture, float tilingFactor = 1.0f,
+              const glm::vec4& tintColor = glm::vec4(1.0f));
+
+void DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color);
+void DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color);
+void DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const Ref<Texture>& texture,
+                     float tilingFactor = 1.0f, const glm::vec4& tintColor = glm::vec4(1.0f));
+void DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const Ref<Texture>& texture,
+                     float tilingFactor = 1.0f, const glm::vec4& tintColor = glm::vec4(1.0f));
+
+void DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickness = 1.0f, float fade = 0.005f);
+
+void DrawLine(const glm::vec3& p0, glm::vec3& p1, const glm::vec4& color);
+
+void DrawRect(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);
+void DrawRect(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color);
+void DrawRect(const glm::mat4& transform, const glm::vec4& color);
+
+void DrawRotatedRect(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color);
+void DrawRotatedRect(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color);
+
+// static void DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID);
+
+struct TextParams
+{
+    glm::vec4 Color{ 1.0f }; // { 1.0f, 1.0f, 1.0f, 1.0f }
+    float LetterSpacing = 0.0f;
+    float LineSpacing = 0.0f;
+};
+
+// static void DrawString(const std::string& string, Ref<Font> font, const glm::mat4& transform,
+//                        const TextParams& textParams);
+// static void DrawString(const std::string& string, const glm::mat4& transform, const TextComponent& component,
+//                        );
+
+float GetLineWidth();
 void SetLineWidth(float width);
 
-/**
- * @brief Draw index triangles
- * @param vertexArray vertices to draw
- * @param indexCount how many vertices to draw, 0 to draw all
- */
-static void DrawIndexed(const Ref<VertexArray>& vertexArray, int indexCount = 0);
+// Stats
+struct Statistics
+{
+    uint32_t DrawCalls = 0;
+    uint32_t QuadCount = 0;
 
-/**
- * @brief Draw lines
- * @param vertexArray vertices to draw
- * @param vertexCount how many vertices to draw, 0 to draw all
- */
-static void DrawLines(const Ref<VertexArray>& vertexArray, int vertexCount = 0);
+    uint32_t GetTotalVertexCount() const
+    {
+        return QuadCount * 4;
+    }
+
+    uint32_t GetTotalIndexCount() const
+    {
+        return QuadCount * 6;
+    }
+};
+
+void ResetStats();
+Statistics GetStats();
 
 } // namespace RenderApi
 

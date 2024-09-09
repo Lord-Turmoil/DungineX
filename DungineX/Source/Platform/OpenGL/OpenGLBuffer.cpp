@@ -7,14 +7,14 @@
 
 DGEX_BEGIN
 
-OpenGLVertexBuffer::OpenGLVertexBuffer(int size)
+OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t size)
 {
     glCreateBuffers(1, &_rendererId);
     glBindBuffer(GL_ARRAY_BUFFER, _rendererId);
     glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
 }
 
-OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, int size)
+OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, uint32_t size)
 {
     glCreateBuffers(1, &_rendererId);
     glBindBuffer(GL_ARRAY_BUFFER, _rendererId);
@@ -36,13 +36,13 @@ void OpenGLVertexBuffer::Unbind() const
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void OpenGLVertexBuffer::SetData(const void* data, int size)
+void OpenGLVertexBuffer::SetData(const void* data, uint32_t size)
 {
     glBindBuffer(GL_ARRAY_BUFFER, _rendererId);
     glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
 }
 
-OpenGLIndexBuffer::OpenGLIndexBuffer(int* indices, int count) : _count(count)
+OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* indices, uint32_t count) : _count(count)
 {
     glCreateBuffers(1, &_rendererId);
 

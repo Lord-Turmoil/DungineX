@@ -77,7 +77,7 @@ OpenGLShader::~OpenGLShader()
     {
         glDeleteShader(_programId);
     }
-    DGEX_LOG_INFO("Shader {0} unloaded", _name);
+    DGEX_CORE_INFO("Shader {0} unloaded", _name);
 }
 
 void OpenGLShader::Bind() const
@@ -210,7 +210,7 @@ void OpenGLShader::_Init(const std::string& name, const char* vertexShaderSource
     glDeleteShader(vertex);
     glDeleteShader(fragment);
 
-    DGEX_LOG_INFO("Shader {0} loaded", _name);
+    DGEX_CORE_INFO("Shader {0} loaded", _name);
 }
 
 /**
@@ -246,6 +246,10 @@ std::string OpenGLShader::_ParseShaderFile(const std::string& filepath, std::str
         {
             continue;
         }
+        if (line.rfind("//", 0) == 0) // Skip comments
+        {
+            continue;
+        }
 
         if (line.rfind("#shader", 0) == 0)
         {
@@ -277,6 +281,15 @@ std::string OpenGLShader::_ParseShaderFile(const std::string& filepath, std::str
     else if (type == GL_FRAGMENT_SHADER)
     {
         fragmentSource = source.str();
+    }
+
+    if (vertexSource.empty())
+    {
+        DGEX_LOG_WARN("No vertex shader source found in {0}", filepath);
+    }
+    if (fragmentSource.empty())
+    {
+        DGEX_LOG_WARN("No fragment shader source found in {0}", filepath);
     }
 
     return Utils::File::GetFileName(filepath);

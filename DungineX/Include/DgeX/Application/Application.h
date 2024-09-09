@@ -76,9 +76,15 @@ public:
         return _window->GetHeight();
     }
 
+    glm::vec2 GetSize() const
+    {
+        return { static_cast<float>(GetWidth()), static_cast<float>(GetHeight()) };
+    }
+
 private:
     bool _OnWindowClose(WindowCloseEvent& e);
     bool _OnWindowResize(WindowResizeEvent& e);
+
     bool _OnInterfaceTransit(InterfaceTransitEvent& e);
     bool _OnInterfaceChange(InterfaceChangeEvent& e);
     bool _OnInterfaceClose(InterfaceCloseEvent& e);

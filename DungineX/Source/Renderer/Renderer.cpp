@@ -1,21 +1,27 @@
 #include "DgeX/Renderer/Renderer.h"
-
 #include "DgeX/Renderer/RenderApi.h"
+#include "DgeX/Renderer/RenderCommand.h"
 
 DGEX_BEGIN
 
+Scope<Renderer::SceneData> Renderer::_data;
+
 void Renderer::Init()
 {
+    RenderCommand::Init();
     RenderApi::Init();
+
+    RenderCommand::SetClearColor(Color::FromUInt32(0xFF000000));
 }
 
 void Renderer::Shutdown()
 {
+    RenderApi::Shutdown();
 }
 
 void Renderer::OnWindowResize(int width, int height)
 {
-    RenderApi::SetViewport(0, 0, width, height);
+    RenderCommand::SetViewport(0, 0, width, height);
 }
 
 void Renderer::BeginScene(Camera& camera)
@@ -34,7 +40,7 @@ void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexA
     shader->SetMat4("u_Transform", transform);
 
     vertexArray->Bind();
-    RenderApi::(vertexArray);
+    RenderCommand::DrawIndexed(vertexArray);
 }
 
 DGEX_END
