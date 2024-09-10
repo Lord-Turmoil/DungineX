@@ -1,4 +1,5 @@
 #include <DgeX/DgeX.h>
+#include <DgeX/EntryPoint.h>
 
 class DemoApplication final : public DgeX::Application
 {

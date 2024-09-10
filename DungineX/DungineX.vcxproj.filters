@@ -87,7 +87,7 @@
     <ClInclude Include="Include\DgeX\Application\Interface\InterfaceStack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Include\DgeX\Core\EntryPoint.h">
+    <ClInclude Include="Include\DgeX\EntryPoint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\DgeX\Renderer\GraphicsContext.h">
@@ -429,7 +429,7 @@
     <ClInclude Include="Include\DgeX\Utils\Easing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Include\DgeX\Core\Math.h">
+    <ClInclude Include="Include\DgeX\Utils\Math.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\DgeX\dgexpch.h">
@@ -490,6 +490,30 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\DgeX\Utils\Random.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Core\Types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Core\Base.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Physics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\phxpch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Core\Macros.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Particle\Particle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Core\ObjectPool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Utils\Utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -600,6 +624,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Utils\Random.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\phxpch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Core\Types.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Particle\Particle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

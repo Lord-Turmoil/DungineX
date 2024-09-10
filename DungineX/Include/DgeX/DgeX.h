@@ -15,7 +15,9 @@
 #include "DgeX/Utils/Easing.h"
 #include "DgeX/Utils/String.h"
 
-#include "DgeX/Core/EntryPoint.h"
+#include "DgeX/Core/ObjectPool.h"
+
+#include "DgeX/Physics/Physics.h"
 
 #undef __DGEX__CORE__
 #define __DGEX__CLIENT__

@@ -35,6 +35,8 @@ template <> inline uint64_t RandomNumber<uint64_t>(uint64_t min, uint64_t max)
     return RandomUInt64(min, max);
 }
 
+
+
 } // namespace Utils::Random
 
 DGEX_END
