@@ -201,6 +201,7 @@
     <ClInclude Include="Include\DgeX\Utils\Easing.h" />
     <ClInclude Include="Include\DgeX\Utils\File.h" />
     <ClInclude Include="Include\DgeX\Utils\PlatformUtils.h" />
+    <ClInclude Include="Include\DgeX\Utils\Random.h" />
     <ClInclude Include="Include\DgeX\Utils\String.h" />
     <ClInclude Include="Vendor\Include\glad\glad.h" />
     <ClInclude Include="Vendor\Include\GLFW\glfw3.h" />
@@ -346,6 +347,7 @@
     <ClCompile Include="Source\Renderer\UniformBuffer.cpp" />
     <ClCompile Include="Source\Renderer\VertexArray.cpp" />
     <ClCompile Include="Source\Utils\File.cpp" />
+    <ClCompile Include="Source\Utils\Random.cpp" />
     <ClCompile Include="Source\Utils\stb_image.cpp" />
     <ClCompile Include="Source\Utils\String.cpp" />
     <ClCompile Include="Vendor\Source\glad.c" />
