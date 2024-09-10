@@ -6,6 +6,7 @@
 #include "DgeX/Renderer/RenderCommand.h"
 #include "DgeX/Renderer/Renderer.h"
 #include "DgeX/Utils/PlatformUtils.h"
+#include "GLFW/glfw3.h"
 
 DGEX_BEGIN
 
@@ -38,6 +39,7 @@ void Application::Run()
         DGEX_ASSERT(false, DGEX_MSG_APPLICATION_RUNNING);
         return;
     }
+    _isRunning = true;
 
     // Initialize splash interface
     _currentInterface = GetSplashInterface();
@@ -49,46 +51,16 @@ void Application::Run()
     _currentInterface->_OnLoad();
     _currentInterface->OnMounted();
 
-    _isRunning = true;
+    _window->Detach();
+
+    std::thread thread(&Application::_Run, this);
     while (_isRunning)
     {
-        timestamp_t time = Time::GetTimestamp();
-        DeltaTime delta = time - _lastFrameTime;
-        _lastFrameTime = time;
-
-        // Poll events
-        _eventBuffer.SwapBuffer();
-
-        // Dispatch window events
-        for (auto& event : _eventBuffer)
-        {
-            EventDispatcher dispatcher(event);
-            dispatcher.Dispatch<WindowCloseEvent>(DGEX_BIND_EVENT_FN(Application::_OnWindowClose));
-            dispatcher.Dispatch<WindowResizeEvent>(DGEX_BIND_EVENT_FN(Application::_OnWindowResize));
-            dispatcher.Dispatch<InterfaceTransitEvent>(DGEX_BIND_EVENT_FN(Application::_OnInterfaceTransit));
-            dispatcher.Dispatch<InterfaceChangeEvent>(DGEX_BIND_EVENT_FN(Application::_OnInterfaceChange));
-            dispatcher.Dispatch<InterfaceCloseEvent>(DGEX_BIND_EVENT_FN(Application::_OnInterfaceClose));
-        }
-        if (!_isRunning)
-        {
-            break;
-        }
-        for (auto& event : _eventBuffer)
-        {
-            if (!event->Handled)
-            {
-                _currentInterface->_OnEvent(event);
-            }
-        }
-
-        // Update and render
-        _currentInterface->OnUpdate(delta);
-
-        RenderCommand::ClearDevice();
-        _currentInterface->_OnRender();
-
-        _window->OnUpdate();
+        glfwWaitEvents();
     }
+    thread.join();
+
+    _window->Attach();
 }
 
 void Application::OnEvent(const Ref<Event>& event)
@@ -209,6 +181,64 @@ bool Application::_OnInterfaceClose(InterfaceCloseEvent& e)
     }
 
     return true;
+}
+
+void Application::_Run()
+{
+    float frameCount = 0.0;
+    float frameTime = 0.0;
+
+    _window->Attach();
+    while (_isRunning)
+    {
+        timestamp_t time = Time::GetTimestamp();
+        DeltaTime delta = time - _lastFrameTime;
+        _lastFrameTime = time;
+
+        // Poll events
+        _eventBuffer.SwapBuffer();
+
+        // Dispatch window events
+        for (auto& event : _eventBuffer)
+        {
+            EventDispatcher dispatcher(event);
+            dispatcher.Dispatch<WindowCloseEvent>(DGEX_BIND_EVENT_FN(Application::_OnWindowClose));
+            dispatcher.Dispatch<WindowResizeEvent>(DGEX_BIND_EVENT_FN(Application::_OnWindowResize));
+            dispatcher.Dispatch<InterfaceTransitEvent>(DGEX_BIND_EVENT_FN(Application::_OnInterfaceTransit));
+            dispatcher.Dispatch<InterfaceChangeEvent>(DGEX_BIND_EVENT_FN(Application::_OnInterfaceChange));
+            dispatcher.Dispatch<InterfaceCloseEvent>(DGEX_BIND_EVENT_FN(Application::_OnInterfaceClose));
+        }
+        if (!_isRunning)
+        {
+            break;
+        }
+        for (auto& event : _eventBuffer)
+        {
+            if (!event->Handled)
+            {
+                _currentInterface->_OnEvent(event);
+            }
+        }
+
+        // Update and render
+        _currentInterface->OnUpdate(delta);
+
+        RenderCommand::ClearDevice();
+        _currentInterface->_OnRender();
+
+        _window->OnRender();
+
+        frameCount += 1.0f;
+        frameTime += delta;
+        if (frameTime > 1.0f)
+        {
+            _fps = frameCount / frameTime;
+            frameCount = 0.0f;
+            frameTime = 0.0f;
+            DGEX_CORE_DEBUG("FPS: {0}", _fps);
+        }
+    }
+    _window->Detach();
 }
 
 DGEX_END

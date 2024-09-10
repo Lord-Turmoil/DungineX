@@ -25,9 +25,23 @@ OpenGLWindow::~OpenGLWindow()
     _Shutdown();
 }
 
+void OpenGLWindow::Attach()
+{
+    glfwMakeContextCurrent(_window);
+}
+
+void OpenGLWindow::Detach()
+{
+    glfwMakeContextCurrent(nullptr);
+}
+
 void OpenGLWindow::OnUpdate()
 {
-    glfwPollEvents();
+    glfwWaitEvents();
+}
+
+void OpenGLWindow::OnRender()
+{
     _context->SwapBuffers();
 }
 

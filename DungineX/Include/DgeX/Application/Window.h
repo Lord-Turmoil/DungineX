@@ -44,7 +44,18 @@ public:
     Window& operator=(Window&& other) noexcept = delete;
     virtual ~Window() = default;
 
+    /**
+     * @brief Attach window to the current thread.
+     */
+    virtual void Attach() = 0;
+
+    /**
+     * @brief Detach window from the current thread.
+     */
+    virtual void Detach() = 0;
+
     virtual void OnUpdate() = 0;
+    virtual void OnRender() = 0;
 
     virtual int GetWidth() const = 0;
     virtual int GetHeight() const = 0;

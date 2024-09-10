@@ -13,7 +13,11 @@ public:
     OpenGLWindow(const WindowProps& props);
     ~OpenGLWindow() override;
 
+    void Attach() override;
+    void Detach() override;
+
     void OnUpdate() override;
+    void OnRender() override;
 
     int GetWidth() const override
     {

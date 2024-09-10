@@ -81,6 +81,11 @@ public:
         return { static_cast<float>(GetWidth()), static_cast<float>(GetHeight()) };
     }
 
+    float GetFps() const
+    {
+        return _fps;
+    }
+
 private:
     bool _OnWindowClose(WindowCloseEvent& e);
     bool _OnWindowResize(WindowResizeEvent& e);
@@ -88,6 +93,11 @@ private:
     bool _OnInterfaceTransit(InterfaceTransitEvent& e);
     bool _OnInterfaceChange(InterfaceChangeEvent& e);
     bool _OnInterfaceClose(InterfaceCloseEvent& e);
+
+    /**
+     * @brief The run thread to prevent freezing on window events.
+     */
+    void _Run();
 
 private:
     ApplicationSpecification _specification;
@@ -103,6 +113,8 @@ private:
     InterfaceStack _interfaces;
     Interface* _currentInterface;
     Interface* _nextInterface;
+
+    float _fps = 0.0f;
 
 private:
     static Application* _sInstance;
