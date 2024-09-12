@@ -12,7 +12,7 @@ DGEX_BEGIN
 
 Application* Application::_sInstance = nullptr;
 
-Application::Application(ApplicationSpecification specification): _specification(std::move(specification))
+Application::Application(ApplicationSpecification specification) : _specification(std::move(specification))
 {
     DGEX_ASSERT(!_sInstance, DGEX_MSG_APPLICATION_ALREADY_CREATED);
     _sInstance = this;

@@ -31,7 +31,6 @@ void OrthographicCamera::_RecalculateViewProjection()
 {
     glm::mat4 transform =
         translate(glm::mat4(1.0f), _position) * rotate(glm::mat4(1.0f), glm::radians(_rotation), glm::vec3(0, 0, 1));
-
     _view = inverse(transform);
     _viewProjection = _projection * _view;
 }

@@ -9,6 +9,7 @@
 #include "DgeX/Application/Event/MouseEvent.h"
 #include "Dgex/Application/Application.h"
 
+#include "DgeX/Renderer/Camera/SceneCamera.h"
 #include "DgeX/Renderer/RenderApi.h"
 #include "DgeX/Renderer/RenderCommand.h"
 

@@ -156,9 +156,11 @@
   <ItemGroup>
     <ClInclude Include="Include\DgeX\Application\Application.h" />
     <ClInclude Include="Include\DgeX\Application\Event\EventEmitter.h" />
+    <ClInclude Include="Include\DgeX\Core\ObjectQueue.h" />
     <ClInclude Include="Include\DgeX\Physics\Particle\Particle.h" />
     <ClInclude Include="Include\DgeX\Core\ObjectPool.h" />
     <ClInclude Include="Include\DgeX\Physics\Utils\Utils.h" />
+    <ClInclude Include="Include\DgeX\Renderer\Camera\SceneCamera.h" />
     <ClInclude Include="Include\DgeX\Utils\Math.h" />
     <ClInclude Include="Include\DgeX\EntryPoint.h" />
     <ClInclude Include="Include\DgeX\Application\Event\ApplicationEvent.h" />
@@ -326,6 +328,8 @@
     <ClCompile Include="Source\Application\Application.cpp" />
     <ClCompile Include="Source\Application\Event\EventBuffer.cpp" />
     <ClCompile Include="Source\Application\Event\EventEmitter.cpp" />
+    <ClCompile Include="Source\Application\Input\Input.cpp" />
+    <ClCompile Include="Source\Platform\OpenGL\OpenGLInput.cpp" />
     <ClCompile Include="Source\Application\Interface\Interface.cpp" />
     <ClCompile Include="Source\Application\Interface\InterfaceStack.cpp" />
     <ClCompile Include="Source\Application\Interface\Layer.cpp" />
@@ -345,8 +349,9 @@
     <ClCompile Include="Source\Platform\OpenGL\OpenGLTexture.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLUniformBuffer.cpp" />
     <ClCompile Include="Source\Renderer\Buffer.cpp" />
-    <ClCompile Include="Source\Renderer\InterfaceCamera.cpp" />
-    <ClCompile Include="Source\Renderer\OrthographicCamera.cpp" />
+    <ClCompile Include="Source\Renderer\Camera\InterfaceCamera.cpp" />
+    <ClCompile Include="Source\Renderer\Camera\OrthographicCamera.cpp" />
+    <ClCompile Include="Source\Renderer\Camera\SceneCamera.cpp" />
     <ClCompile Include="Source\Renderer\Renderer.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLUtils.cpp" />
