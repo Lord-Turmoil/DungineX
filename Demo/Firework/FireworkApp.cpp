@@ -241,6 +241,9 @@ bool FireworkInterface::_OnKeyPressed(KeyPressedEvent& event)
         // reset
         _camera.Reset();
         break;
+    case Key::Escape:
+        EventEmitter::Emit(CreateRef<WindowCloseEvent>());
+        break;
     default:
         break;
     }
