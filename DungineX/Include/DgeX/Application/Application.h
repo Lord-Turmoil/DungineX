@@ -111,8 +111,8 @@ private:
     EventBuffer _eventBuffer;
 
     InterfaceStack _interfaces;
-    Interface* _currentInterface;
-    Interface* _nextInterface;
+    Interface* _currentInterface = nullptr;
+    Interface* _nextInterface = nullptr;
 
     float _fps = 0.0f;
 

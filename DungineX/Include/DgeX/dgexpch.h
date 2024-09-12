@@ -14,9 +14,8 @@
 #include <utility>
 #include <vector>
 
-#include "DgeX/Common/Base.h"
-
 #include "DgeX/Common/Assert.h"
+#include "DgeX/Common/Base.h"
 #include "DgeX/Common/DeltaTime.h"
 #include "DgeX/Common/Log.h"
 #include "DgeX/Common/Macros.h"

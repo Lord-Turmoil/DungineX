@@ -48,7 +48,8 @@ OpenGLTexture::OpenGLTexture(const TextureSpecification& specification)
     glTextureParameteri(_rendererId, GL_TEXTURE_WRAP_T, GL_REPEAT);
 }
 
-OpenGLTexture::OpenGLTexture(const std::string& path) : _path(path)
+OpenGLTexture::OpenGLTexture(const std::string& path)
+    : _rendererId(0), _internalFormat(0), _dataFormat(0), _path(path), _width(0), _height(0)
 {
     int width, height, channels;
     stbi_set_flip_vertically_on_load(1);
