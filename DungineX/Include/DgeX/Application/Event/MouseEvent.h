@@ -8,7 +8,7 @@ DGEX_BEGIN
 class MouseMovedEvent final : public Event
 {
 public:
-    MouseMovedEvent(const double x, const double y) : _x(x), _y(y)
+    MouseMovedEvent(const double x, const double y, const double inverseY) : _x(x), _y(y), _inverseY(inverseY)
     {
     }
 
@@ -22,10 +22,15 @@ public:
         return _y;
     }
 
+    double GetInverseY() const
+    {
+        return _inverseY;
+    }
+
     std::string ToString() const override
     {
         std::stringstream ss;
-        ss << GetName() << " Event: " << _x << ", " << _y;
+        ss << GetName() << " Event: " << _x << ", " << _y << ", " << _inverseY;
         return ss.str();
     }
 
@@ -35,6 +40,7 @@ public:
 private:
     double _x;
     double _y;
+    double _inverseY;
 };
 
 class MouseScrolledEvent final : public Event

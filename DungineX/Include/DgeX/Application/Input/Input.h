@@ -5,15 +5,18 @@
 
 DGEX_BEGIN
 
-class Input
+namespace Input
 {
-public:
-    static bool IsKeyPressed(KeyCode key);
-    static bool IsMouseButtonPressed(MouseCode button);
 
-    static MousePosition GetMousePosition();
-    static double GetMouseX();
-    static double GetMouseY();
-};
+bool IsKeyPressed(KeyCode key);
+bool IsMouseButtonPressed(MouseCode button);
+
+MousePosition GetMousePosition();
+MousePosition GetInverseMousePosition();
+double GetMouseX();
+double GetMouseY();
+double GetMouseInverseY();
+
+}; // namespace Input
 
 DGEX_END

@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
 #ifdef DGEX_VERBOSE_LOGGING
     DgeX::Log::Init(DgeX::LogLevel::All);
 #else
-    Log::Init(LogLevel::Debug);
+    DgeX::Log::Init(LogLevel::Debug);
 #endif
 #endif
 

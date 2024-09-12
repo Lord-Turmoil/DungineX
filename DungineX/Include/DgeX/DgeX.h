@@ -7,6 +7,7 @@
 #include "DgeX/Application/Event/EventEmitter.h"
 #include "DgeX/Application/Event/KeyEvent.h"
 #include "DgeX/Application/Event/MouseEvent.h"
+#include "DgeX/Application/Input/Input.h"
 #include "Dgex/Application/Application.h"
 
 #include "DgeX/Renderer/Camera/SceneCamera.h"
@@ -17,6 +18,7 @@
 #include "DgeX/Utils/String.h"
 
 #include "DgeX/Core/ObjectPool.h"
+#include "DgeX/Core/ObjectQueue.h"
 
 #include "DgeX/Physics/Physics.h"
 
