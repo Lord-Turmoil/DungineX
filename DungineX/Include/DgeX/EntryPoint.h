@@ -16,15 +16,17 @@ int main(int argc, char* argv[])
     freopen_s(&fp, "CONIN$", "r", stdin);
 #endif
 
-#if defined DGEX_RELEASE
-    DgeX::Log::Init(DgeX::LogLevel::Info);
-#elif defined DGEX_PUBLISH
-    DgeX::Log::Init(DgeX::LogLevel::Warning);
-#else
+#ifdef DGEX_DEBUG
 #ifdef DGEX_VERBOSE_LOGGING
     DgeX::Log::Init(DgeX::LogLevel::All);
 #else
-    DgeX::Log::Init(LogLevel::Debug);
+    DgeX::Log::Init(DgeX::LogLevel::Debug);
+#endif
+#else
+#ifdef DGEX_PUBLISH
+    DgeX::Log::Init(DgeX::LogLevel::Warning);
+#else
+    DgeX::Log::Init(DgeX::LogLevel::Info);
 #endif
 #endif
 
@@ -32,7 +34,7 @@ int main(int argc, char* argv[])
     DGEX_CORE_ERROR("Copyright (C) 2024 New Desire Studios");
 
     DGEX_LOG_INFO("Initializing application");
-    const auto app = CreateApplication({ argc, argv });
+    const auto app = DgeX::CreateApplication({ argc, argv });
     DGEX_LOG_INFO("Application initialized");
 
     DGEX_LOG_INFO("Running application");

@@ -2,6 +2,9 @@
 
 #define DUNGEON_ENGINE_X
 
+// define this to publish the application
+// #define DGEX_PUBLISH
+
 // Define the DungineX version
 #define DGEX_VERSION_MAJOR 0
 #define DGEX_VERSION_MINOR 1
@@ -10,14 +13,8 @@
 // Define the DungineX debug flag
 #if defined(DEBUG) || defined(_DEBUG)
 #define DGEX_DEBUG
-#endif
-
-#ifdef _RELEASE
+#else
 #define DGEX_RELEASE
-#endif
-
-#ifdef _PUBLISH
-#define DGEX_PUBLISH
 #endif
 
 // Enable assertions only in debug and release builds
@@ -32,7 +29,7 @@
 // #define DGEX_VERBOSE_LOGGING
 
 // Attach console to the application for non-publishing builds
-#ifndef DGEX_PUBLISH
+#ifndef DGEX_RELEASE
 #define DGEX_ATTACH_CONSOLE
 #endif
 

@@ -79,7 +79,7 @@ void SplashLayer::OnUpdate(DeltaTime delta)
 
     _elapsedTime += delta.Seconds();
 
-#if defined(DGEX_PUBLISH) || defined(DGEX_ALWAYS_SPLASH)
+#if defined(DGEX_RELEASE) || defined(DGEX_ALWAYS_SPLASH)
     if (_elapsedTime < 3.5f)
     {
         _alpha = Interpolate(0.0f, 1.0f, RangeToStep(.5f, 2.8f, _elapsedTime), Linear);

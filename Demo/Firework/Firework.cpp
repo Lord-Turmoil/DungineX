@@ -1,7 +1,5 @@
 #include "Firework.h"
 
-#include "DgeX/Physics/Utils/Utils.h"
-
 void FireworkSpecification::Create(Firework* firework, Firework* parent) const
 {
     DGEX_ASSERT(parent, "Parent mustn't be null");

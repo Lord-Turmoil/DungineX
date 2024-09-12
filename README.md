@@ -32,15 +32,13 @@ $(SolutionDir)Include
 $(SolutionDir)DungineX\Include
 ```
 
-Then, in "C/C++ > Preprocessor" add "Preprocessor Definitions" for each profiles. `_RELEASE` for Release and `_PUBLISH` for Publish.
-
 In "Linker > General", add "Additional Library Directories".
 
 ```
 $(SolutionDir)Lib
 ```
 
-For Debug profile, in "Linker > Input", add "Ignore Specific Default Libraries" to avoid some warnings.
+For Debug profile (only), in "Linker > Input", add "Ignore Specific Default Libraries" to avoid some warnings.
 
 ```
 msvcrt.lib
