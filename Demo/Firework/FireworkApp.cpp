@@ -237,6 +237,15 @@ bool FireworkInterface::_OnKeyPressed(KeyPressedEvent& event)
     case Key::D9:
         _CreateFirework(9, 1, _emitterPosition);
         break;
+    case Key::D0: {
+        int count = DgeX::Utils::Random::RandomInt(1, 5);
+        for (int i = 0; i < count; i++)
+        {
+            int type = DgeX::Utils::Random::RandomInt(1, 9);
+            _CreateFirework(type, count, _emitterPosition);
+        }
+    }
+    break;
     case Key::Space:
         // reset
         _camera.Reset();
