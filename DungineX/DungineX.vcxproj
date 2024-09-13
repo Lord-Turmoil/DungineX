@@ -151,7 +151,7 @@
     <ClInclude Include="Include\DgeX\Renderer\Color.h" />
     <ClInclude Include="Include\DgeX\Renderer\GraphicsContext.h" />
     <ClInclude Include="Include\DgeX\Renderer\Camera\InterfaceCamera.h" />
-    <ClInclude Include="Include\DgeX\Renderer\Camera\OrthographicCamera.h" />
+    <ClInclude Include="Include\DgeX\Renderer\Camera\PerspectiveCamera.h" />
     <ClInclude Include="Include\DgeX\Renderer\RenderApi.h" />
     <ClInclude Include="Include\DgeX\Renderer\RenderCommand.h" />
     <ClInclude Include="Include\DgeX\Renderer\Renderer.h" />
@@ -302,7 +302,7 @@
     <ClCompile Include="Source\Platform\OpenGL\OpenGLUniformBuffer.cpp" />
     <ClCompile Include="Source\Renderer\Buffer.cpp" />
     <ClCompile Include="Source\Renderer\Camera\InterfaceCamera.cpp" />
-    <ClCompile Include="Source\Renderer\Camera\OrthographicCamera.cpp" />
+    <ClCompile Include="Source\Renderer\Camera\PerspectiveCamera.cpp" />
     <ClCompile Include="Source\Renderer\Camera\SceneCamera.cpp" />
     <ClCompile Include="Source\Renderer\Renderer.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLShader.cpp" />

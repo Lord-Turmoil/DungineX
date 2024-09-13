@@ -23,12 +23,12 @@ class SceneCamera : public Camera
 public:
     SceneCamera() = default;
     SceneCamera(float width, float height);
-    SceneCamera(float width, float height, float zoom);
+    SceneCamera(float width, float height, float scale);
 
     const glm::mat4& GetView() const override { return _view; }
     const glm::mat4& GetViewProjection() const override { return _viewProjection; }
 
-    void SetProjection(  float width, float height);
+    void SetProjection(float width, float height);
     float GetWidth() const { return _width; }
     float GetHeight() const { return _height; }
 
@@ -36,8 +36,8 @@ public:
     float GetBaseZoom() const { return _scale; }
 
     void SetZoom(float zoom);
-    void Zoom(float zoom) { SetZoom(_zoom + zoom); }
-    float GetZoom() const { return _zoom; }
+    void Zoom(float zoom) { SetZoom(_scale + zoom); }
+    float GetZoom() const { return _scale; }
 
     void SetTranslation(float x, float y) { _translation = glm::vec2(x, y); _RecalculateViewProjection(); }
     void SetTranslation(const glm::vec2& translation) { SetTranslation(translation.x, translation.y); }

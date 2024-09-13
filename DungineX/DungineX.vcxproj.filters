@@ -483,7 +483,7 @@
     <ClInclude Include="Include\DgeX\Platform\OpenGL\OpenGLShaderTemplate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Include\DgeX\Renderer\Camera\OrthographicCamera.h">
+    <ClInclude Include="Include\DgeX\Renderer\Camera\PerspectiveCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\DgeX\Renderer\Camera\InterfaceCamera.h">
@@ -623,7 +623,7 @@
     <ClCompile Include="Source\Renderer\UniformBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Renderer\Camera\OrthographicCamera.cpp">
+    <ClCompile Include="Source\Renderer\Camera\PerspectiveCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Renderer\Camera\InterfaceCamera.cpp">

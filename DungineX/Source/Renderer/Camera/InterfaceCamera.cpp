@@ -11,7 +11,7 @@ InterfaceCamera::InterfaceCamera(float width, float height)
 
 void InterfaceCamera::OnResize(float width, float height)
 {
-    _projection = glm::ortho(0.f, width, height, 0.f);
+    _projection = glm::ortho(0.f, width, height, 0.f, 1000.f, -1000.f);
 }
 
 DGEX_END

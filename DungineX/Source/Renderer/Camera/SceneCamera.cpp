@@ -11,8 +11,8 @@ SceneCamera::SceneCamera(float width, float height) : _width(width), _height(hei
     _RecalculateViewProjection();
 }
 
-SceneCamera::SceneCamera(float width, float height, float zoom)
-    : _width(width), _height(height), _zoom(zoom), _translation(0.0f)
+SceneCamera::SceneCamera(float width, float height, float scale)
+    : _width(width), _height(height), _scale(scale), _translation(0.0f)
 {
     _RecalculateViewProjection();
 }
