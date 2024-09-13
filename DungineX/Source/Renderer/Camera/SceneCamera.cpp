@@ -52,7 +52,7 @@ void SceneCamera::Reset()
 
 void SceneCamera::_RecalculateViewProjection()
 {
-    _projection = glm::ortho(0.f, _width, 0.f, _height);
+    _projection = glm::ortho(0.f, _width, 0.f, _height, -1000.f, 1000.f);
 
     _view = scale(glm::mat4(1.0f), glm::vec3(1.f / _scale, 1.f / _scale, 1.0f));
     if ((_translation.x != 0.0f) || (_translation.y != 0.0f))

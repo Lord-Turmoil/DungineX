@@ -201,7 +201,7 @@ void FireworkInterface::OnRender()
         using namespace DgeX::Utils::Easing;
         Vector3 position = it->GetPosition();
         float size = static_cast<float>(Interpolate(0.1, 1.0, RangeToStep(-5.0, 20.0, position.Z), Linear));
-        RenderApi::DrawQuad({ position.X, position.Y }, { size, size }, color);
+        RenderApi::DrawQuad({ position.X, position.Y, position.Z }, { size, size }, color);
     }
     RenderApi::EndScene();
 }
