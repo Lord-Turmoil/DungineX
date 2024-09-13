@@ -16,3 +16,5 @@
 #define DPHX_END                                                                                                       \
     }                                                                                                                  \
     }
+
+#define DPHX DGEX Physics::

@@ -94,6 +94,11 @@ template <typename T> constexpr T Sqrt(T x)
     return std::sqrt(x);
 }
 
+template <typename T> constexpr T Exp(T x)
+{
+    return std::exp(x);
+}
+
 } // namespace Math
 
 DGEX_END

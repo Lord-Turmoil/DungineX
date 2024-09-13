@@ -41,6 +41,8 @@
     {
 #define DGEX_END }
 
+#define DGEX ::DgeX::
+
 // Define backend platform
 #define DGEX_OPENGL
 

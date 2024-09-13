@@ -18,15 +18,15 @@ int main(int argc, char* argv[])
 
 #ifdef DGEX_DEBUG
 #ifdef DGEX_VERBOSE_LOGGING
-    DgeX::Log::Init(DgeX::LogLevel::All);
+    DGEX Log::Init(DGEX LogLevel::All);
 #else
-    Log::Init(LogLevel::Debug);
+    DGEX Log::Init(DGEX LogLevel::Debug);
 #endif
 #else
 #ifdef DGEX_PUBLISH
-    DgeX::Log::Init(DgeX::LogLevel::Warning);
+    DGEX Log::Init(DGEX LogLevel::Warning);
 #else
-    DgeX::Log::Init(DgeX::LogLevel::Info);
+    DGEX Log::Init(DGEX LogLevel::Info);
 #endif
 #endif
 
@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
     DGEX_CORE_ERROR("Copyright (C) 2024 New Desire Studios");
 
     DGEX_LOG_INFO("Initializing application");
-    const auto app = CreateApplication({ argc, argv });
+    const auto app = DGEX CreateApplication({ argc, argv });
     DGEX_LOG_INFO("Application initialized");
 
     DGEX_LOG_INFO("Running application");
