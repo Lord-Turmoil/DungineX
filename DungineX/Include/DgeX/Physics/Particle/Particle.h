@@ -39,9 +39,11 @@ public:
     real_t GetDamping() const { return _damping; }
 
     void SetVelocity(const Vector3& velocity) { _velocity = velocity; }
+    void AddVelocity(const Vector3& velocity) { _velocity += velocity; }
     const Vector3& GetVelocity() const { return _velocity; }
 
     void SetAcceleration(const Vector3& acceleration) { _acceleration = acceleration; }
+    void AddAcceleration(const Vector3& acceleration) { _acceleration += acceleration; }
     const Vector3& GetAcceleration() const { return _acceleration; }
 
     void ApplyForce(const Vector3& force);

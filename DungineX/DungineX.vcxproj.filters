@@ -525,6 +525,12 @@
     <ClInclude Include="Include\DgeX\Physics\Particle\ParticleForceGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Particle\ParticleContact.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Particle\ParticleLink.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLWindow.cpp">
@@ -654,6 +660,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Physics\Particle\ParticleForceGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Particle\ParticleContact.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Particle\ParticleLink.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

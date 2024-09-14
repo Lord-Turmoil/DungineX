@@ -11,8 +11,10 @@ DPHX_BEGIN
 
 #ifdef DPHX_HIGH_PRECISION
 typedef double real_t;
+constexpr real_t MAX_REAL = std::numeric_limits<double>::max();
 #else
 typedef float real_t;
+constexpr real_t MAX_REAL = std::numeric_limits<float>::max();
 #endif
 
 class Vector3
@@ -79,6 +81,11 @@ public:
     Vector3 operator-(const Vector3& rhs) const
     {
         return { X - rhs.X, Y - rhs.Y, Z - rhs.Z };
+    }
+
+    Vector3 operator-() const
+    {
+        return { -X, -Y, -Z };
     }
 
     void operator*=(const real_t scale)
