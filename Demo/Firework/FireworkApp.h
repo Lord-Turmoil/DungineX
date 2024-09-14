@@ -4,14 +4,6 @@
 
 #include "Firework.h"
 
-class FireworkApp : public Application
-{
-public:
-    FireworkApp(const ApplicationSpecification& specification) : Application(specification)
-    {
-    }
-};
-
 class FireworkInterface : public Interface
 {
 public:

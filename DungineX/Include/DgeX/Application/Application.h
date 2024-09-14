@@ -39,7 +39,7 @@ class Interface;
  *          Application manages the transition of interfaces, and dispatch events
  *          to the current interface.
  */
-class Application
+class Application final
 {
 public:
     Application(ApplicationSpecification specification);

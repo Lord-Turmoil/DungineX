@@ -1,14 +1,6 @@
 #include <DgeX/DgeX.h>
 #include <DgeX/EntryPoint.h>
 
-class DemoApplication final : public DgeX::Application
-{
-public:
-    DemoApplication(const DgeX::ApplicationSpecification& specification) : Application(specification)
-    {
-    }
-};
-
 class MainLayer final : public DgeX::Layer
 {
 public:
@@ -83,5 +75,5 @@ DgeX::Application* DgeX::CreateApplication(ApplicationCommandLineArgs args)
     specification.Height = 720;
     specification.Flags = Default;
     specification.CommandLineArgs = args;
-    return new DemoApplication(specification);
+    return new DgeX::Application(specification);
 }

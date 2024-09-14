@@ -11,5 +11,5 @@ Application* DgeX::CreateApplication(ApplicationCommandLineArgs args)
     specification.Height = 720;
     specification.Flags = Default | DisableResize;
     specification.CommandLineArgs = args;
-    return new FireworkApp(specification);
+    return new DgeX::Application(specification);
 }
