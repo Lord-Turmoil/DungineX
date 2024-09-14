@@ -136,12 +136,12 @@ void OpenGLWindow::_InitEventCallback() const
         WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
         data.Width = width;
         data.Height = height;
-        data.EventCallback(CreateRef<WindowResizeEvent>(width, height));
+        data.EventCallback(WindowResizeEvent::Create(width, height));
     });
 
     glfwSetWindowCloseCallback(_window, [](GLFWwindow* window) {
         WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-        data.EventCallback(CreateRef<WindowCloseEvent>());
+        data.EventCallback(WindowCloseEvent::Create());
     });
 
     glfwSetKeyCallback(_window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -149,13 +149,13 @@ void OpenGLWindow::_InitEventCallback() const
         switch (action)
         {
         case GLFW_RELEASE:
-            data.EventCallback(CreateRef<KeyReleasedEvent>(key));
+            data.EventCallback(KeyReleasedEvent::Create(static_cast<KeyCode>(key)));
             break;
         case GLFW_PRESS:
-            data.EventCallback(CreateRef<KeyPressedEvent>(key, false));
+            data.EventCallback(KeyPressedEvent::Create(static_cast<KeyCode>(key), false));
             break;
         case GLFW_REPEAT:
-            data.EventCallback(CreateRef<KeyPressedEvent>(key, true));
+            data.EventCallback(KeyPressedEvent::Create(static_cast<KeyCode>(key), true));
             break;
         default:
             break;
@@ -164,7 +164,7 @@ void OpenGLWindow::_InitEventCallback() const
 
     glfwSetCharCallback(_window, [](GLFWwindow* window, unsigned int keycode) {
         WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-        data.EventCallback(CreateRef<KeyTypedEvent>(keycode));
+        data.EventCallback(KeyTypedEvent::Create(static_cast<KeyCode>(keycode)));
     });
 
     glfwSetMouseButtonCallback(_window, [](GLFWwindow* window, int button, int action, int mods) {
@@ -172,10 +172,10 @@ void OpenGLWindow::_InitEventCallback() const
         switch (action)
         {
         case GLFW_PRESS:
-            data.EventCallback(CreateRef<MouseButtonPressedEvent>(button));
+            data.EventCallback(MouseButtonPressedEvent::Create(button));
             break;
         case GLFW_RELEASE:
-            data.EventCallback(CreateRef<MouseButtonReleasedEvent>(button));
+            data.EventCallback(MouseButtonReleasedEvent::Create(button));
             break;
         default:
             break;
@@ -184,12 +184,12 @@ void OpenGLWindow::_InitEventCallback() const
 
     glfwSetScrollCallback(_window, [](GLFWwindow* window, double xOffset, double yOffset) {
         WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-        data.EventCallback(CreateRef<MouseScrolledEvent>(xOffset, yOffset));
+        data.EventCallback(MouseScrolledEvent::Create(xOffset, yOffset));
     });
 
     glfwSetCursorPosCallback(_window, [](GLFWwindow* window, double xPos, double yPos) {
         WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-        data.EventCallback(CreateRef<MouseMovedEvent>(xPos, yPos, data.Height - yPos));
+        data.EventCallback(MouseMovedEvent::Create(xPos, yPos, data.Height - yPos));
     });
 }
 

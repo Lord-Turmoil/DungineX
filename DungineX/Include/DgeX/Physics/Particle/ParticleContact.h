@@ -80,10 +80,10 @@ protected:
 class ParticleContactResolver
 {
 public:
-    ParticleContactResolver(int iterations);
+    ParticleContactResolver(uint32_t iterations);
     virtual ~ParticleContactResolver() = default;
 
-    void SetIterations(int iterations)
+    void SetIterations(uint32_t iterations)
     {
         _iterations = iterations;
     }
@@ -100,13 +100,13 @@ protected:
      * @brief
      * The number of iterations allowed for the resolution of contacts.
      */
-    int _iterations;
+    uint32_t _iterations;
 
     /**
      * @brief
      * The number of iterations used in the last call to resolve contacts.
      */
-    int _iterationsUsed;
+    uint32_t _iterationsUsed;
 };
 
 /**
@@ -127,6 +127,19 @@ public:
      * is greater than or equal to 1.
      */
     virtual int AddContact(ParticleContact* contact, int limit) const = 0;
+};
+
+class ParticleContactRegistry
+{
+public:
+    void Add(ParticleContactGenerator* contactGenerator);
+    void Remove(ParticleContactGenerator* contactGenerator);
+    void Clear();
+
+    int AddContact(ParticleContact* contacts, int limit);
+
+private:
+    std::vector<ParticleContactGenerator*> _contactGenerators;
 };
 
 DPHX_END

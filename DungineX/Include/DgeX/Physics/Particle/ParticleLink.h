@@ -13,6 +13,10 @@ class Particle;
 class ParticleAnchoredLink : public ParticleContactGenerator
 {
 public:
+    ParticleAnchoredLink() : _particle(nullptr), _anchor(nullptr)
+    {
+    }
+
     ParticleAnchoredLink(Particle* particle, Vector3* anchor) : _particle(particle), _anchor(anchor)
     {
     }
@@ -41,6 +45,10 @@ protected:
 class ParticleAnchoredCable : public ParticleAnchoredLink
 {
 public:
+    ParticleAnchoredCable() : _maxLength(0), _restitution(0)
+    {
+    }
+
     ParticleAnchoredCable(Particle* particle, Vector3* anchor, real_t maxLength, real_t restitution)
         : ParticleAnchoredLink(particle, anchor), _maxLength(maxLength), _restitution(restitution)
     {
@@ -69,6 +77,10 @@ private:
 class ParticleAnchoredHalfRod : public ParticleAnchoredLink
 {
 public:
+    ParticleAnchoredHalfRod() : _minLength(0), _restitution(0)
+    {
+    }
+
     ParticleAnchoredHalfRod(Particle* particle, Vector3* anchor, real_t minLength, real_t restitution)
         : ParticleAnchoredLink(particle, anchor), _minLength(minLength), _restitution(restitution)
     {
@@ -97,6 +109,10 @@ private:
 class ParticleAnchoredRod : public ParticleAnchoredLink
 {
 public:
+    ParticleAnchoredRod() : _length(0)
+    {
+    }
+
     ParticleAnchoredRod(Particle* particle, Vector3* anchor, real_t length)
         : ParticleAnchoredLink(particle, anchor), _length(length)
     {
@@ -122,6 +138,10 @@ private:
 class ParticleLink : public ParticleContactGenerator
 {
 public:
+    ParticleLink() : _particles{ nullptr, nullptr }
+    {
+    }
+
     ParticleLink(Particle* first, Particle* second) : _particles{ first, second }
     {
     }
@@ -149,6 +169,10 @@ protected:
 class ParticleCable : public ParticleLink
 {
 public:
+    ParticleCable() : _maxLength(0), _restitution(0)
+    {
+    }
+
     ParticleCable(Particle* first, Particle* second, real_t maxLength, real_t restitution)
         : ParticleLink(first, second), _maxLength(maxLength), _restitution(restitution)
     {
@@ -177,6 +201,10 @@ private:
 class ParticleHalfRod : public ParticleLink
 {
 public:
+    ParticleHalfRod() : _minLength(0), _restitution(0)
+    {
+    }
+
     ParticleHalfRod(Particle* first, Particle* second, real_t minLength, real_t restitution)
         : ParticleLink(first, second), _minLength(minLength), _restitution(restitution)
     {
@@ -205,6 +233,10 @@ private:
 class ParticleRod : public ParticleLink
 {
 public:
+    ParticleRod() : _length(0)
+    {
+    }
+
     ParticleRod(Particle* first, Particle* second, real_t length) : ParticleLink(first, second), _length(length)
     {
     }
@@ -229,6 +261,10 @@ private:
 class ParticlePanel : public ParticleContactGenerator
 {
 public:
+    ParticlePanel() : _particle(nullptr), _normal(Vector3::UnitY), _anchor(Vector3::Zero), _restitution(0.2f)
+    {
+    }
+
     ParticlePanel(Particle* particle, const Vector3& normal, const Vector3& anchor, real_t restitution = 0.2f)
         : _particle(particle), _normal(normal), _anchor(anchor), _restitution(restitution)
     {
@@ -266,6 +302,10 @@ protected:
 class ParticlesPanel : public ParticleContactGenerator
 {
 public:
+    ParticlesPanel() : _particles(nullptr), _count(0), _normal(Vector3::UnitY), _restitution(0.2f)
+    {
+    }
+
     ParticlesPanel(Particle* particles, size_t count, const Vector3& normal, const Vector3& anchor,
                    real_t restitution = 0.2f)
         : _particles(particles), _count(count), _normal(normal), _anchor(anchor), _restitution(restitution)
@@ -275,6 +315,10 @@ public:
     int AddContact(ParticleContact* contact, int limit) const override;
 
     // clang-format off
+    void SetParticles(Particle* particles, size_t count) { _particles = particles; _count = count; }
+    Particle* GetParticles() const { return _particles; }
+    size_t GetCount() const { return _count; }
+
     void SetNormal(const Vector3& normal) { _normal = normal; _normal.Normalize(); }
     const Vector3& GetNormal() const { return _normal; }
 

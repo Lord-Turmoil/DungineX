@@ -41,7 +41,7 @@ template <typename T> constexpr T RangeToStep(T begin, T end, T t)
  * @note call RangeToStep to convert time range to step
  * @return interpolated value
  */
-template <typename T> constexpr T Interpolate(T initial, T target, T step, EasingFn<T> fn)
+template <typename T, typename S> constexpr T Interpolate(T initial, T target, S step, EasingFn<S> fn)
 {
     return initial + (target - initial) * fn(step);
 }

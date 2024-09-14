@@ -44,6 +44,11 @@ public:
 
     DECL_EVENT_CLASS_TYPE(KeyPressed)
 
+    static Ref<KeyPressedEvent> Create(const KeyCode code, const bool isRepeat = false)
+    {
+        return CreateRef<KeyPressedEvent>(code, isRepeat);
+    }
+
 private:
     /**
      * @brief Whether the key is being held down or pressed for the first time.
@@ -66,6 +71,11 @@ public:
     }
 
     DECL_EVENT_CLASS_TYPE(KeyReleased)
+
+    static Ref<KeyReleasedEvent> Create(const KeyCode code)
+    {
+        return CreateRef<KeyReleasedEvent>(code);
+    }
 };
 
 class KeyTypedEvent final : public KeyEvent
@@ -83,6 +93,11 @@ public:
     }
 
     DECL_EVENT_CLASS_TYPE(KeyTyped)
+
+    static Ref<KeyTypedEvent> Create(const KeyCode code)
+    {
+        return CreateRef<KeyTypedEvent>(code);
+    }
 };
 
 DGEX_END

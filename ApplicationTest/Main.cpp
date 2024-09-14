@@ -21,9 +21,21 @@ public:
 
     void OnRender() override
     {
-        DgeX::RenderApi::DrawRotatedQuad({ GetWidth() / 2.0f, GetHeight() / 2.0f }, { 200.0f, 200.0f },
-                                         DgeX::Math::ToDegrees(_elapsedTime * DgeX::Math::PI<float>),
-                                         DgeX::Color::FromUInt32(0xFFF00000).ToVec4());
+        DgeX::RenderApi::DrawRotatedFilledRect({ GetWidth() / 2.0f, GetHeight() / 2.0f }, { 200.0f, 200.0f },
+                                               _elapsedTime * DgeX::Math::PI<float>,
+                                               DgeX::Color::FromUInt32(0xFF9900FF).ToVec4());
+        DgeX::RenderApi::DrawRotatedRect({ GetWidth() / 2.0f, GetHeight() / 2.0f }, { 250.0f, 250.0f },
+                                         -_elapsedTime * DgeX::Math::PI<float>,
+                                         DgeX::Color::FromUInt32(0xFFFFFF00).ToVec4());
+
+        DgeX::RenderApi::DrawCircle({ GetWidth() / 4.0f, GetHeight() / 4.0f }, 100.0f,
+                                    DgeX::Color::FromUInt32(0xFFFF3300).ToVec4());
+        DgeX::RenderApi::DrawCircle({ GetWidth() * 0.75f, GetHeight() * 0.75f }, 100.0f,
+                                    DgeX::Color::FromUInt32(0xFF99FF00).ToVec4());
+        DgeX::RenderApi::DrawFilledCircle({ GetWidth() * 0.25f, GetHeight() * 0.75f }, 100.0f,
+                                          DgeX::Color::FromUInt32(0xFF00CCFF).ToVec4());
+        DgeX::RenderApi::DrawFilledCircle({ GetWidth() * 0.75f, GetHeight() * 0.25f }, 100.0f,
+                                          DgeX::Color::FromUInt32(0xFFFF00FF).ToVec4());
     }
 
 private:
@@ -31,7 +43,7 @@ private:
     {
         if (event.GetKeyCode() == DgeX::Key::Escape)
         {
-            DgeX::EventEmitter::Emit(DgeX::CreateRef<DgeX::WindowCloseEvent>());
+            DgeX::EventEmitter::Emit(DgeX::WindowCloseEvent::Create());
         }
         return true;
     }
@@ -75,5 +87,5 @@ DgeX::Application* DgeX::CreateApplication(ApplicationCommandLineArgs args)
     specification.Height = 720;
     specification.Flags = Default;
     specification.CommandLineArgs = args;
-    return new DgeX::Application(specification);
+    return new Application(specification);
 }

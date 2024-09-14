@@ -37,6 +37,11 @@ public:
     DECL_EVENT_CLASS_TYPE(MouseMoved)
     DECL_EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
 
+    static Ref<MouseMovedEvent> Create(const double x, const double y, const double inverseY)
+    {
+        return CreateRef<MouseMovedEvent>(x, y, inverseY);
+    }
+
 private:
     double _x;
     double _y;
@@ -69,6 +74,11 @@ public:
 
     DECL_EVENT_CLASS_TYPE(MouseScrolled)
     DECL_EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
+
+    static Ref<MouseScrolledEvent> Create(const double xOffset, const double yOffset)
+    {
+        return CreateRef<MouseScrolledEvent>(xOffset, yOffset);
+    }
 
 private:
     double _offsetX, _offsetY;
@@ -107,6 +117,11 @@ public:
     }
 
     DECL_EVENT_CLASS_TYPE(MouseButtonPressed)
+
+    static Ref<MouseButtonPressedEvent> Create(const MouseCode code)
+    {
+        return CreateRef<MouseButtonPressedEvent>(code);
+    }
 };
 
 class MouseButtonReleasedEvent : public MouseButtonEvent
@@ -124,6 +139,11 @@ public:
     }
 
     DECL_EVENT_CLASS_TYPE(MouseButtonReleased)
+
+    static Ref<MouseButtonReleasedEvent> Create(const MouseCode code)
+    {
+        return CreateRef<MouseButtonReleasedEvent>(code);
+    }
 };
 
 DGEX_END

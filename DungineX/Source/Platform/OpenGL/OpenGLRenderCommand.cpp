@@ -25,7 +25,7 @@ void SetViewport(int x, int y, int width, int height)
 
 void SetClearColor(const Color& color)
 {
-    glClearColor(color.Red, color.Green, color.Blue, color.Alpha);
+    glClearColor(color.R, color.G, color.B, color.A);
 }
 
 void ClearDevice()
@@ -41,14 +41,31 @@ void SetLineWidth(float width)
 void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount)
 {
     vertexArray->Bind();
-    uint32_t count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
+    uint32_t count = indexCount ? indexCount : vertexArray->GetIndexCount();
     glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
+}
+
+void DrawCircle(const Ref<VertexArray>& vertexArray, uint32_t vertexCount, uint32_t step)
+{
+    vertexArray->Bind();
+    if (vertexCount == 0)
+    {
+        vertexCount = vertexArray->GetVertexCount();
+    }
+    if (step == 0)
+    {
+        step = vertexCount;
+    }
+    for (uint32_t offset = 0; offset < vertexCount; offset += step)
+    {
+        glDrawArrays(GL_TRIANGLE_FAN, offset, step);
+    }
 }
 
 void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount)
 {
     vertexArray->Bind();
-    glDrawArrays(GL_LINES, 0, vertexCount);
+    glDrawArrays(GL_LINES, 0, vertexCount ? vertexCount : vertexArray->GetVertexCount());
 }
 
 } // namespace RenderCommand

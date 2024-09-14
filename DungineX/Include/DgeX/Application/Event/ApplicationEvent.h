@@ -36,6 +36,11 @@ public:
 
     DECL_EVENT_CLASS_TYPE(WindowResize)
 
+    static Ref<WindowResizeEvent> Create(int width, int height)
+    {
+        return CreateRef<WindowResizeEvent>(width, height);
+    }
+
 private:
     int _width;
     int _height;
@@ -45,6 +50,11 @@ class WindowCloseEvent final : public WindowEvent
 {
 public:
     DECL_EVENT_CLASS_TYPE(WindowClose)
+
+    static Ref<WindowCloseEvent> Create()
+    {
+        return CreateRef<WindowCloseEvent>();
+    }
 };
 
 class InterfaceEvent : public Event
@@ -90,6 +100,21 @@ public:
 
     DECL_EVENT_CLASS_TYPE(InterfaceTransit)
 
+    static InterfaceTransitEvent Create(std::string fromName, std::string toName, std::string style)
+    {
+        return InterfaceTransitEvent(std::move(fromName), std::move(toName), std::move(style));
+    }
+
+    static InterfaceTransitEvent Create(std::string toName, std::string style)
+    {
+        return InterfaceTransitEvent(std::move(toName), std::move(style));
+    }
+
+    static InterfaceTransitEvent Create(std::string toName)
+    {
+        return InterfaceTransitEvent(std::move(toName));
+    }
+
 private:
     std::string _fromName;
     std::string _toName;
@@ -129,6 +154,21 @@ public:
 
     DECL_EVENT_CLASS_TYPE(InterfaceChange)
 
+    static Ref<InterfaceChangeEvent> Create(std::string fromName, std::string toName, std::string style)
+    {
+        return CreateRef<InterfaceChangeEvent>(std::move(fromName), std::move(toName), std::move(style));
+    }
+
+    static Ref<InterfaceChangeEvent> Create(std::string toName, std::string style)
+    {
+        return CreateRef<InterfaceChangeEvent>(std::move(toName), std::move(style));
+    }
+
+    static Ref<InterfaceChangeEvent> Create(std::string toName)
+    {
+        return CreateRef<InterfaceChangeEvent>(std::move(toName));
+    }
+
 private:
     std::string _fromName;
     std::string _toName;
@@ -146,6 +186,11 @@ public:
     }
 
     DECL_EVENT_CLASS_TYPE(InterfaceTransit)
+
+    static Ref<InterfaceCloseEvent> Create(bool transit = false)
+    {
+        return CreateRef<InterfaceCloseEvent>(transit);
+    }
 
 private:
     bool _transit;

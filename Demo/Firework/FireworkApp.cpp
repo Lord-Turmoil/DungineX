@@ -201,7 +201,7 @@ void FireworkInterface::OnRender()
         using namespace DgeX::Utils::Easing;
         Vector3 position = it->GetPosition();
         float size = static_cast<float>(Interpolate(0.1, 1.0, RangeToStep(-5.0, 20.0, position.Z), Linear));
-        RenderApi::DrawQuad({ position.X, position.Y, position.Z }, { size, size }, color);
+        RenderApi::DrawFilledRect({ position.X, position.Y, position.Z }, { size, size }, color);
     }
     RenderApi::EndScene();
 }
@@ -251,7 +251,7 @@ bool FireworkInterface::_OnKeyPressed(KeyPressedEvent& event)
         _camera.Reset();
         break;
     case Key::Escape:
-        EventEmitter::Emit(CreateRef<WindowCloseEvent>());
+        EventEmitter::Emit(WindowCloseEvent::Create());
         break;
     default:
         break;

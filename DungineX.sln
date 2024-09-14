@@ -27,6 +27,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demo", "Demo", "{782F31A3-B
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Firework", "Demo\Firework\Firework.vcxproj", "{8225920C-609B-4C20-A4BE-568297D57801}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Platform", "Demo\Platform\Platform.vcxproj", "{DD9794CB-FBF0-4E39-9296-A12AD91238E4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -67,12 +69,21 @@ Global
 		{8225920C-609B-4C20-A4BE-568297D57801}.Release|x64.Build.0 = Release|x64
 		{8225920C-609B-4C20-A4BE-568297D57801}.Release|x86.ActiveCfg = Release|Win32
 		{8225920C-609B-4C20-A4BE-568297D57801}.Release|x86.Build.0 = Release|Win32
+		{DD9794CB-FBF0-4E39-9296-A12AD91238E4}.Debug|x64.ActiveCfg = Debug|x64
+		{DD9794CB-FBF0-4E39-9296-A12AD91238E4}.Debug|x64.Build.0 = Debug|x64
+		{DD9794CB-FBF0-4E39-9296-A12AD91238E4}.Debug|x86.ActiveCfg = Debug|Win32
+		{DD9794CB-FBF0-4E39-9296-A12AD91238E4}.Debug|x86.Build.0 = Debug|Win32
+		{DD9794CB-FBF0-4E39-9296-A12AD91238E4}.Release|x64.ActiveCfg = Release|x64
+		{DD9794CB-FBF0-4E39-9296-A12AD91238E4}.Release|x64.Build.0 = Release|x64
+		{DD9794CB-FBF0-4E39-9296-A12AD91238E4}.Release|x86.ActiveCfg = Release|Win32
+		{DD9794CB-FBF0-4E39-9296-A12AD91238E4}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8225920C-609B-4C20-A4BE-568297D57801} = {782F31A3-BB9F-4853-9D07-E8D6264C2CE5}
+		{DD9794CB-FBF0-4E39-9296-A12AD91238E4} = {782F31A3-BB9F-4853-9D07-E8D6264C2CE5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {77DA07D0-7603-4DC1-B966-BE356F5260A0}

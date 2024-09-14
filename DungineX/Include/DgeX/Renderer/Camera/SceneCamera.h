@@ -108,7 +108,7 @@ private:
      * @brief Translation of the camera in the world.
      * @note This is the camera's bottom-left corner position in the world.
      */
-    glm::vec2 _translation;
+    glm::vec2 _translation = glm::vec2(0.f);
 
     glm::mat4 _view;
     glm::mat4 _viewProjection;

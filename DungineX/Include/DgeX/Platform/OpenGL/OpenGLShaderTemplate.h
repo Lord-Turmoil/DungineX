@@ -115,11 +115,8 @@ void main()
 const char CIRCLE_VS[] = R"(
 #version 450 core
 
-layout(location = 0) in vec3 a_WorldPosition;
-layout(location = 1) in vec3 a_LocalPosition;
-layout(location = 2) in vec4 a_Color;
-layout(location = 3) in float a_Thickness;
-layout(location = 4) in float a_Fade;
+layout(location = 0) in vec3 a_Position;
+layout(location = 1) in vec4 a_Color;
 
 layout(std140, binding = 0) uniform Camera
 {
@@ -128,22 +125,15 @@ layout(std140, binding = 0) uniform Camera
 
 struct VertexOutput
 {
-	vec3 LocalPosition;
 	vec4 Color;
-	float Thickness;
-	float Fade;
 };
 
 layout (location = 0) out VertexOutput Output;
 
 void main()
 {
-	Output.LocalPosition = a_LocalPosition;
 	Output.Color = a_Color;
-	Output.Thickness = a_Thickness;
-	Output.Fade = a_Fade;
-
-	gl_Position = u_ViewProjection * vec4(a_WorldPosition, 1.0);
+	gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
 }
 )";
 
@@ -154,27 +144,74 @@ layout(location = 0) out vec4 o_Color;
 
 struct VertexOutput
 {
-	vec3 LocalPosition;
 	vec4 Color;
-	float Thickness;
-	float Fade;
 };
 
 layout (location = 0) in VertexOutput Input;
 
 void main()
 {
-    // Calculate distance and fill circle with white
-    float distance = 1.0 - length(Input.LocalPosition);
-    float circle = smoothstep(0.0, Input.Fade, distance);
-    circle *= smoothstep(Input.Thickness + Input.Fade, Input.Thickness, distance);
-
-	if (circle == 0.0)
-		discard;
-
-    // Set output color
     o_Color = Input.Color;
-	o_Color.a *= circle;
+}
+)";
+
+const char RING_VS[] = R"(
+#version 450 core
+
+layout(location = 0) in vec3 a_Position;
+layout(location = 1) in vec4 a_Color;
+layout(location = 2) in float a_Radius;
+layout(location = 3) in float a_Thickness;
+
+layout(std140, binding = 0) uniform Camera
+{
+	mat4 u_ViewProjection;
+};
+
+struct VertexOutput
+{
+    vec4 Position;
+	vec4 Color;
+	float Radius;
+    float Margin;
+};
+
+layout (location = 0) out VertexOutput Output;
+
+void main()
+{
+    Output.Position = u_ViewProjection * vec4(a_Position, 1.0);
+	Output.Color = a_Color;
+	Output.Radius = a_Radius;
+    Output.Margin = a_Thickness * 0.5;
+
+	gl_Position = Output.Position;
+}
+)";
+
+const char RING_FS[] = R"(
+#version 450 core
+
+layout(location = 0) out vec4 o_Color;
+
+struct VertexOutput
+{
+    vec4 Position;
+	vec4 Color;
+	float Radius;
+    float Margin;
+};
+
+layout (location = 0) in VertexOutput Input;
+
+void main()
+{
+    float margin = distance(gl_FragCoord.xy, Input.Position.xy) - Input.Radius;
+    if (abs(margin) < Input.Margin) {
+        o_Color = Input.Color;
+    } else {
+        discard;
+    }
 }
 )";
 

@@ -20,6 +20,7 @@ constexpr real_t MAX_REAL = std::numeric_limits<float>::max();
 class Vector3
 {
 public:
+    // Warning: These may not be initialized when constructing global variables!
     static const Vector3 Zero;
     static const Vector3 UnitX;
     static const Vector3 UnitY;

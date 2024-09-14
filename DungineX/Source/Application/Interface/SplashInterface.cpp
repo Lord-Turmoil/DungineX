@@ -107,8 +107,8 @@ void SplashLayer::OnUpdate(DeltaTime delta)
 void SplashLayer::OnRender()
 {
     // RenderApi::DrawQuad(_splashPosition, _splashSize, glm::vec4(1.f, 1.f, 0.f, _alpha));
-    RenderApi::DrawRotatedQuad(_splashPosition, _splashSize * 0.8f, Math::ToDegrees(Math::QUARTER_PI<float>),
-                               glm::vec4(1.f, 1.f, 0.f, _alpha));
+    RenderApi::DrawRotatedFilledRect(_splashPosition, _splashSize * 0.8f, Math::QUARTER_PI<float>,
+                                     glm::vec4(1.f, 1.f, 0.f, _alpha));
     RenderApi::DrawRect(_splashPosition, _splashSize, glm::vec4(1.f, 0.f, 0.f, _alpha));
 }
 

@@ -114,6 +114,7 @@
     <ClInclude Include="Include\DgeX\Physics\Particle\ParticleContact.h" />
     <ClInclude Include="Include\DgeX\Physics\Particle\ParticleForceGenerator.h" />
     <ClInclude Include="Include\DgeX\Physics\Particle\ParticleLink.h" />
+    <ClInclude Include="Include\DgeX\Physics\Particle\ParticleWorld.h" />
     <ClInclude Include="Include\DgeX\Physics\Utils\Utils.h" />
     <ClInclude Include="Include\DgeX\Renderer\Camera\SceneCamera.h" />
     <ClInclude Include="Include\DgeX\Utils\Math.h" />
@@ -287,6 +288,7 @@
     <ClCompile Include="Source\Physics\Particle\ParticleContact.cpp" />
     <ClCompile Include="Source\Physics\Particle\ParticleForceGenerator.cpp" />
     <ClCompile Include="Source\Physics\Particle\ParticleLink.cpp" />
+    <ClCompile Include="Source\Physics\Particle\ParticleWorld.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLInput.cpp" />
     <ClCompile Include="Source\Application\Interface\Interface.cpp" />
     <ClCompile Include="Source\Application\Interface\InterfaceStack.cpp" />
@@ -310,6 +312,7 @@
     <ClCompile Include="Source\Renderer\Camera\InterfaceCamera.cpp" />
     <ClCompile Include="Source\Renderer\Camera\PerspectiveCamera.cpp" />
     <ClCompile Include="Source\Renderer\Camera\SceneCamera.cpp" />
+    <ClCompile Include="Source\Renderer\Color.cpp" />
     <ClCompile Include="Source\Renderer\Renderer.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLUtils.cpp" />

@@ -74,7 +74,8 @@ int ParticleAnchoredRod::AddContact(ParticleContact* contact, int limit) const
         contact->SetContactNormal(-normal);
         contact->SetPenetration(_length - length);
     }
-    contact->SetRestitution(0);
+    // Using 0.0 will make rod soft?
+    contact->SetRestitution(1.0);
 
     return 1;
 }
@@ -153,7 +154,9 @@ int ParticleRod::AddContact(ParticleContact* contact, int limit) const
         contact->SetContactNormal(-normal);
         contact->SetPenetration(_length - length);
     }
-    contact->SetRestitution(0);
+
+    // Using 0.0 will cause the rod to be soft?
+    contact->SetRestitution(1.0);
 
     return 1;
 }
@@ -197,6 +200,7 @@ int ParticlesPanel::AddContact(ParticleContact* contact, int limit) const
         contact->SetPenetration(penetration);
         contact->SetRestitution(_restitution);
 
+        contact++;
         added++;
     }
 

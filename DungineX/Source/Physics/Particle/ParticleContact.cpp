@@ -120,7 +120,7 @@ void ParticleContact::_ResolveInterpenetration(real_t delta)
     }
 }
 
-ParticleContactResolver::ParticleContactResolver(int iterations) : _iterations(iterations), _iterationsUsed(0)
+ParticleContactResolver::ParticleContactResolver(uint32_t iterations) : _iterations(iterations), _iterationsUsed(0)
 {
 }
 
@@ -177,6 +177,47 @@ void ParticleContactResolver::Resolve(ParticleContact* contacts, size_t count, r
 
         _iterationsUsed++;
     }
+}
+
+void ParticleContactRegistry::Add(ParticleContactGenerator* contactGenerator)
+{
+    _contactGenerators.push_back(contactGenerator);
+}
+
+void ParticleContactRegistry::Remove(ParticleContactGenerator* contactGenerator)
+{
+    for (auto it = _contactGenerators.begin(); it != _contactGenerators.end(); ++it)
+    {
+        if (*it == contactGenerator)
+        {
+            _contactGenerators.erase(it);
+            break;
+        }
+    }
+}
+
+void ParticleContactRegistry::Clear()
+{
+    _contactGenerators.clear();
+}
+
+int ParticleContactRegistry::AddContact(ParticleContact* contacts, int limit)
+{
+    int available = limit;
+
+    for (auto generator : _contactGenerators)
+    {
+        int added = generator->AddContact(contacts, available);
+        available -= added;
+        contacts += added;
+
+        if (available <= 0)
+        {
+            break;
+        }
+    }
+
+    return limit - available;
 }
 
 DPHX_END

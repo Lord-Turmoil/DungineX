@@ -42,14 +42,22 @@ void ClearDevice();
 void SetLineWidth(float width);
 
 /**
- * @brief Draw index triangles
+ * @brief Draw index triangles.
  * @param vertexArray vertices to draw
  * @param indexCount how many vertices to draw, 0 to draw all
  */
 void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0);
 
 /**
- * @brief Draw lines
+ * @brief Draw circle as fan triangles.
+ * @param vertexArray vertices to draw
+ * @param vertexCount how many vertices to draw, 0 to draw all
+ * @param step how many vertices one circle has, 0 to use vertexCount
+ */
+void DrawCircle(const Ref<VertexArray>& vertexArray, uint32_t vertexCount = 0, uint32_t step = 0);
+
+/**
+ * @brief Draw lines.
  * @param vertexArray vertices to draw
  * @param vertexCount how many vertices to draw, 0 to draw all
  */
