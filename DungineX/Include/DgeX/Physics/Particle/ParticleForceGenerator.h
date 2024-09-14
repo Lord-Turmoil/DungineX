@@ -26,6 +26,8 @@ public:
 class ParticleGravity : public ParticleForceGenerator
 {
 public:
+    ParticleGravity() = default;
+
     ParticleGravity(const Vector3& gravity) : _gravity(gravity)
     {
     }
@@ -56,7 +58,14 @@ protected:
 class ParticleDrag : public ParticleForceGenerator
 {
 public:
-    ParticleDrag(real_t k1, real_t k2);
+    ParticleDrag() : _k1(0), _k2(0)
+    {
+    }
+
+    ParticleDrag(real_t k1, real_t k2) : _k1(k1), _k2(k2)
+    {
+    }
+
     ~ParticleDrag() override = default;
 
     void UpdateForce(Particle* particle, real_t delta) override;
@@ -72,6 +81,10 @@ protected:
 class ParticleAnchoredSpring : public ParticleForceGenerator
 {
 public:
+    ParticleAnchoredSpring() : _anchor(nullptr), _springConstant(0), _restLength(0)
+    {
+    }
+
     ParticleAnchoredSpring(Vector3* anchor, real_t springConstant, real_t restLength)
         : _anchor(anchor), _springConstant(springConstant), _restLength(restLength)
     {
@@ -110,6 +123,8 @@ protected:
 class ParticleAnchoredBungee : public ParticleAnchoredSpring
 {
 public:
+    ParticleAnchoredBungee() = default;
+
     ParticleAnchoredBungee(Vector3* anchor, real_t springConstant, real_t restLength)
         : ParticleAnchoredSpring(anchor, springConstant, restLength)
     {
@@ -127,6 +142,10 @@ public:
 class ParticleFakeSpring : public ParticleForceGenerator
 {
 public:
+    ParticleFakeSpring() : _anchor(nullptr), _springConstant(0), _damping(0)
+    {
+    }
+
     ParticleFakeSpring(Vector3* anchor, real_t springConstant, real_t damping)
         : _anchor(anchor), _springConstant(springConstant), _damping(damping)
     {
@@ -163,6 +182,10 @@ protected:
 class ParticleSpring : public ParticleForceGenerator
 {
 public:
+    ParticleSpring() : _other(nullptr), _springConstant(0), _restLength(0)
+    {
+    }
+
     ParticleSpring(Particle* other, real_t springConstant, real_t restLength)
         : _other(other), _springConstant(springConstant), _restLength(restLength)
     {
@@ -196,6 +219,8 @@ protected:
 class ParticleBungee : public ParticleSpring
 {
 public:
+    ParticleBungee() = default;
+
     ParticleBungee(Particle* other, real_t springConstant, real_t restLength)
         : ParticleSpring(other, springConstant, restLength)
     {

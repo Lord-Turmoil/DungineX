@@ -10,51 +10,20 @@ void PlatformInterface::OnLoad()
     _camera.SetProjection(static_cast<float>(GetWidth()), static_cast<float>(GetHeight()));
     _camera.SetScale(10.f);
     _slide = 0.5;
+    _UpdateMass();
 }
 
 void PlatformInterface::OnUpdate(DeltaTime delta)
 {
     _world.Step(delta);
 
-    if (Input::IsKeyPressed(Key::W))
-    {
-        _camera.Translate(0, 5.f);
-    }
-    if (Input::IsKeyPressed(Key::S))
-    {
-        _camera.Translate(0, -5.f);
-    }
     if (Input::IsKeyPressed(Key::A))
     {
-        _camera.Translate(-5.f, 0);
+        _slide = Math::Clamp(_slide - 0.01, 0.0, 1.0);
     }
     if (Input::IsKeyPressed(Key::D))
     {
-        _camera.Translate(5.f, 0);
-    }
-    if (Input::IsKeyPressed(Key::Q))
-    {
-        _camera.Zoom(0.01f);
-    }
-    if (Input::IsKeyPressed(Key::E))
-    {
-        _camera.Zoom(-0.01f);
-    }
-    if (Input::IsKeyPressed(Key::R))
-    {
-        _camera.Rotate(0.01f);
-    }
-    if (Input::IsKeyPressed(Key::F))
-    {
-        _camera.Rotate(-0.01f);
-    }
-    if (Input::IsKeyPressed(Key::Right))
-    {
         _slide = Math::Clamp(_slide + 0.01, 0.0, 1.0);
-    }
-    if (Input::IsKeyPressed(Key::Left))
-    {
-        _slide = Math::Clamp(_slide - 0.01, 0.0, 1.0);
     }
 
     _UpdateMass();
@@ -90,6 +59,11 @@ void PlatformInterface::OnRender()
     RenderApi::SetLineWidth(1.f);
     RenderApi::DrawCircle({ pos.X, pos.Y, 100.f }, 1.f, Color::LightBlue.ToVec4());
 
+    RenderApi::DrawLine({ _bungeeAnchors[0].X, _bungeeAnchors[0].Y, 0 },
+                        { _particles[2].GetPosition().X, _particles[2].GetPosition().Y, 0 }, Color::Green.ToVec4());
+    RenderApi::DrawLine({ _bungeeAnchors[1].X, _bungeeAnchors[1].Y, 0 },
+                        { _particles[3].GetPosition().X, _particles[3].GetPosition().Y, 0 }, Color::Green.ToVec4());
+
     RenderApi::SetLineWidth(2.f);
     RenderApi::DrawLine({ -100, _panel.GetAnchor().Y, 0 }, { 1000, _panel.GetAnchor().Y, 0 }, Color::DarkGray.ToVec4());
 
@@ -101,23 +75,43 @@ bool PlatformInterface::_OnKeyPressed(KeyPressedEvent& event)
     if (event.GetKeyCode() == Key::Escape)
     {
         EventEmitter::Emit(WindowCloseEvent::Create());
-        return true;
     }
     if (event.GetKeyCode() == Key::Space)
     {
         _camera.Reset();
-        return true;
     }
-    return false;
+
+    if (event.GetKeyCode() == Key::Q)
+    {
+        _bungees[1].SetRestLength(Math::Clamp(_bungees[1].GetRestLength() - 5, 10.0, 60.0));
+        DGEX_LOG_DEBUG("Left length: {}", _bungees[1].GetRestLength());
+    }
+    if (event.GetKeyCode() == Key::Z)
+    {
+        _bungees[1].SetRestLength(Math::Clamp(_bungees[1].GetRestLength() + 5, 10.0, 60.0));
+        DGEX_LOG_DEBUG("Left length: {}", _bungees[1].GetRestLength());
+    }
+    if (event.GetKeyCode() == Key::E)
+    {
+        _bungees[0].SetRestLength(Math::Clamp(_bungees[0].GetRestLength() - 5, 10.0, 60.0));
+        DGEX_LOG_DEBUG("Right length: {}", _bungees[0].GetRestLength());
+    }
+    if (event.GetKeyCode() == Key::C)
+    {
+        _bungees[0].SetRestLength(Math::Clamp(_bungees[0].GetRestLength() + 5, 10.0, 60.0));
+        DGEX_LOG_DEBUG("Right length: {}", _bungees[0].GetRestLength());
+    }
+
+    return true;
 }
 
 void PlatformInterface::_Init()
 {
     // Create the masses and connections.
-    _particles[0].SetPosition(60, 30);
-    _particles[1].SetPosition(70, 30);
-    _particles[2].SetPosition(100, 40);
-    _particles[3].SetPosition(30, 40);
+    _particles[0].SetPosition(54, 30);
+    _particles[1].SetPosition(76, 30);
+    _particles[2].SetPosition(100, 46);
+    _particles[3].SetPosition(30, 46);
 
     auto gravity = Vector3(0, -9.81, 0);
     for (int i = 0; i < 4; i++)
@@ -132,11 +126,11 @@ void PlatformInterface::_Init()
 
     _rods[0].SetFirst(_particles + 0);
     _rods[0].SetSecond(_particles + 1);
-    _rods[0].SetLength(10);
+    _rods[0].SetLength(22);
 
     _rods[1].SetFirst(_particles + 1);
     _rods[1].SetSecond(_particles + 2);
-    _rods[1].SetLength(31.6);
+    _rods[1].SetLength(28.84);
 
     _rods[2].SetFirst(_particles + 2);
     _rods[2].SetSecond(_particles + 3);
@@ -144,15 +138,26 @@ void PlatformInterface::_Init()
 
     _rods[3].SetFirst(_particles + 3);
     _rods[3].SetSecond(_particles + 0);
-    _rods[3].SetLength(31.6);
+    _rods[3].SetLength(28.84);
 
     _rods[4].SetFirst(_particles + 0);
     _rods[4].SetSecond(_particles + 2);
-    _rods[4].SetLength(41.2);
+    _rods[4].SetLength(48.7);
 
     _rods[5].SetFirst(_particles + 1);
     _rods[5].SetSecond(_particles + 3);
-    _rods[5].SetLength(41.2);
+    _rods[5].SetLength(48.7);
+
+    _bungeeAnchors[0] = Vector3(100, 70, 0);
+    _bungees[0].SetAnchor(&_bungeeAnchors[0]);
+    _bungeeAnchors[1] = Vector3(30, 70, 0);
+    _bungees[1].SetAnchor(&_bungeeAnchors[1]);
+    for (int i = 0; i < 2; i++)
+    {
+        _bungees[i].SetRestLength(40.0);
+        _bungees[i].SetSpringConstant(3.0);
+        _world.GetForceRegistry().Add(_particles + 2 + i, _bungees + i);
+    }
 
     for (int i = 0; i < 6; i++)
     {

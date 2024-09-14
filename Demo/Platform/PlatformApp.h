@@ -27,6 +27,9 @@ private:
     ParticleRod _rods[6];
     ParticlesPanel _panel;
 
+    ParticleAnchoredBungee _bungees[2];
+    Vector3 _bungeeAnchors[2];
+
     real_t _slide;
 
     SceneCamera _camera;

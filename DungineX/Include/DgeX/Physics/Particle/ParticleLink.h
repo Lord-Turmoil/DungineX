@@ -242,6 +242,7 @@ public:
     }
 
     ~ParticleRod() override = default;
+
     int AddContact(ParticleContact* contact, int limit) const override;
 
     // clang-format off
@@ -302,12 +303,12 @@ protected:
 class ParticlesPanel : public ParticleContactGenerator
 {
 public:
-    ParticlesPanel() : _particles(nullptr), _count(0), _normal(Vector3::UnitY), _restitution(0.2f)
+    ParticlesPanel() : _particles(nullptr), _count(0), _normal(Vector3::UnitY), _restitution(0.1f)
     {
     }
 
     ParticlesPanel(Particle* particles, size_t count, const Vector3& normal, const Vector3& anchor,
-                   real_t restitution = 0.2f)
+                   real_t restitution = 0.1f)
         : _particles(particles), _count(count), _normal(normal), _anchor(anchor), _restitution(restitution)
     {
     }

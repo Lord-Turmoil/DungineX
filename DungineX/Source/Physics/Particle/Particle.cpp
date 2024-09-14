@@ -14,7 +14,6 @@ void Particle::Integrate(real_t delta)
     _position.AddScaledVector(_velocity, delta);
 
     // Calculate the changes in acceleration.
-    _acceleration.AddScaledVector(_accumulatedForce, _inverseMass);
     Vector3 acceleration = _acceleration;
     acceleration.AddScaledVector(_accumulatedForce, _inverseMass);
 
