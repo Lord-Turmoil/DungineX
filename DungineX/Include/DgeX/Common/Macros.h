@@ -18,7 +18,7 @@
 #endif
 
 // Enable assertions only in debug and release builds
-#if defined(DGEX_DEBUG) || defined(DGEX_RELEASE)
+#if defined(DGEX_DEBUG)
 #define DGEX_ENABLE_ASSERT
 #endif
 
