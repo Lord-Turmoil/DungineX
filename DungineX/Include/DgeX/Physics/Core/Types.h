@@ -156,6 +156,20 @@ struct Vector3
         Z += vec.Z * scale;
     }
 
+    void AddVector(const Vector3& vec)
+    {
+        X += vec.X;
+        Y += vec.Y;
+        Z += vec.Z;
+    }
+
+    void AddVector(real_t x, real_t y, real_t z)
+    {
+        X += x;
+        Y += y;
+        Z += z;
+    }
+
     /*
      * =========================================================================
      * --------------------------- Vector Comparison ---------------------------
@@ -358,6 +372,14 @@ struct Quaternion
         J *= s;
         K *= s;
     }
+
+    void Set(real_t r, real_t i, real_t j, real_t k)
+    {
+        R = r;
+        I = i;
+        J = j;
+        K = k;
+    }
 };
 
 /**
@@ -366,7 +388,6 @@ struct Quaternion
  * and a position. It assumed that the remaining dimension is (0,0,0,1), so
  * it represents a homogeneous transformation.
  */
-
 struct Matrix4
 {
     real_t Data[12];

@@ -24,22 +24,7 @@ void Particle::Integrate(real_t delta)
     _velocity *= Math::Pow(_damping, delta);
 
     // Clear the forces.
-    ClearAccumulatedForce();
-}
-
-void Particle::SetMass(real_t mass)
-{
-    DGEX_ASSERT(mass > 0);
-    SetInverseMass(static_cast<real_t>(1) / mass);
-}
-
-real_t Particle::GetMass() const
-{
-    if (HasInfiniteMass())
-    {
-        return std::numeric_limits<real_t>::max();
-    }
-    return static_cast<real_t>(1) / _inverseMass;
+    ClearAccumulators();
 }
 
 void Particle::ApplyForce(const Vector3& force)

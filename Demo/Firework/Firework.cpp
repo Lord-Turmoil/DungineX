@@ -32,5 +32,5 @@ void FireworkSpecification::_Create(Firework* firework, const Vector3* position,
     firework->SetAcceleration(Gravity);
 
     // prevent dirty data
-    firework->ClearAccumulatedForce();
+    firework->ClearAccumulators();
 }

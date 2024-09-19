@@ -43,7 +43,7 @@ void ParticleWorld::_StartFrame()
 {
     for (auto particle : _particles)
     {
-        particle->ClearAccumulatedForce();
+        particle->ClearAccumulators();
     }
 }
 

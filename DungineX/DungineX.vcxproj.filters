@@ -534,6 +534,9 @@
     <ClInclude Include="Include\DgeX\Physics\Particle\ParticleWorld.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Body\RigidBody.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLWindow.cpp">
@@ -675,6 +678,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Renderer\Color.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Core\Base.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Body\RigidBody.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

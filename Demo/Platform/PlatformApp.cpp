@@ -120,7 +120,7 @@ void PlatformInterface::_Init()
         _particles[i].SetVelocity(Vector3::Zero);
         _particles[i].SetDamping(0.9f);
         _particles[i].SetAcceleration(gravity);
-        _particles[i].ClearAccumulatedForce();
+        _particles[i].ClearAccumulators();
         _world.AddParticle(_particles + i);
     }
 
