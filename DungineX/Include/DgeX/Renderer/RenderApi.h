@@ -14,6 +14,8 @@ namespace RenderApi
 void Init();
 void Shutdown();
 
+void SetClearColor(const glm::vec4& color, glm::vec4* old = nullptr);
+
 void BeginScene(const Camera& camera, const glm::mat4& transform);
 void BeginScene(const Camera& camera);
 void EndScene();

@@ -4,7 +4,7 @@
 
 DGEX_BEGIN
 
-enum class ImageFormat
+enum class ImageFormat : uint8_t
 {
     None = 0,
     R8,
@@ -12,6 +12,25 @@ enum class ImageFormat
     RGBA8,
     RGBA32F
 };
+
+inline const char* ImageFormatToString(ImageFormat format)
+{
+    switch (format)
+    {
+    case ImageFormat::None:
+        return "None";
+    case ImageFormat::R8:
+        return "R8";
+    case ImageFormat::RGB8:
+        return "RGB8";
+    case ImageFormat::RGBA8:
+        return "RGBA8";
+    case ImageFormat::RGBA32F:
+        return "RGBA32F";
+    default:
+        return "unknown";
+    }
+}
 
 struct TextureSpecification
 {

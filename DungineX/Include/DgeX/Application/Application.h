@@ -43,7 +43,7 @@ class Application final
 {
 public:
     Application(ApplicationSpecification specification);
-    virtual ~Application() = default;
+    ~Application();
 
     static Application* GetInstance()
     {

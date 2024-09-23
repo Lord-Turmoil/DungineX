@@ -33,6 +33,8 @@ public:
     float GetHeight() const { return _height; }
 
     void SetScale(float scale);
+    void SetWorldHeight(float height) { SetScale(_height / height); }
+    void SetWorldWidth(float width) { SetScale(_width / width); }
     float GetBaseZoom() const { return _scale; }
 
     void SetZoom(float zoom);
@@ -43,15 +45,21 @@ public:
     void SetTranslation(const glm::vec2& translation) { SetTranslation(translation.x, translation.y); }
     void Translate(float x, float y) { SetTranslation(_translation.x + x, _translation.y + y); }
     void Translate(const glm::vec2& translation) { Translate(translation.x, translation.y); }
+    const glm::vec2& GetTranslation() const { return _translation; }
 
     float GetWorldX() const { return _translation.x; }
     float GetWorldY() const { return _translation.y; }
-    float GetWorldWidth() const { return _width * _scale; }
-    float GetWorldHeight() const { return _height * _scale; }
+    float GetWorldWidth() const { return _width / _scale; }
+    float GetWorldHeight() const { return _height / _scale; }
 
     void SetRotation(float radian) { _rotation = radian; _RecalculateViewProjection(); }
     void Rotate(float radian) { SetRotation(_rotation + radian); }
     float GetRotation() const { return _rotation; }
+
+    /**
+     * @brief Center the given location in world. 
+     */
+    void CenterWorldPoint(float x, float y);
 
     /**
      * @brief

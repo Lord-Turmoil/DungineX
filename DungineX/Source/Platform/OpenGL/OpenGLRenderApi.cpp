@@ -233,7 +233,30 @@ void Shutdown()
     delete[] sData.TextVertexBufferBase;
     sData.TextVertexBufferBase = nullptr;
 
+    // Warning:
+    // must recycle these global static variables to ensure they are deleted
+    // before logger is destroyed.
+    sData.QuadShader.reset();
+    sData.CircleShader.reset();
+    sData.LineShader.reset();
+    sData.TextShader.reset();
+
+    sData.TextureSlots.fill(nullptr);
+    sData.WhiteTexture.reset();
+
     DGEX_CORE_INFO("Render API shutdown");
+}
+
+static glm::vec4 sClearColor = { 0.f, 0.f, 0.f, 1.f };
+
+void SetClearColor(const glm::vec4& color, glm::vec4* old)
+{
+    RenderCommand::SetClearColor({ color.r, color.g, color.b, color.a });
+    if (old)
+    {
+        *old = sClearColor;
+    }
+    sClearColor = color;
 }
 
 void BeginScene(const Camera& camera, const glm::mat4& transform)
@@ -556,7 +579,11 @@ float GetLineWidth()
 
 void SetLineWidth(float width)
 {
+    // Flush line buffer if line width changes.
+    NextBatch();
+
     sData.LineWidth = width;
+    RenderCommand::SetLineWidth(width);
 }
 
 void ResetStats()

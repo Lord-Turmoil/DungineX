@@ -18,6 +18,30 @@ public:
 };
 
 /**
+ * @brief To apply constant force on a particle.
+ */
+class ParticleForce : public ParticleForceGenerator
+{
+public:
+    ParticleForce() = default;
+
+    ParticleForce(const Vector3& force) : _force(force)
+    {
+    }
+
+    void UpdateForce(Particle* particle, real_t delta) override;
+
+    // clang-format off
+    void SetForce(const Vector3& force) { _force = force; }
+    const Vector3& GetForce() const { return _force; }
+
+    // clang-format on
+
+private:
+    Vector3 _force;
+};
+
+/**
  * @brief To apply gravity force on a particle.
  * @note
  * Although particles can have intrinsic acceleration, using a force generator

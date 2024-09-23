@@ -340,4 +340,64 @@ protected:
     real_t _restitution;
 };
 
+/**
+ * @brief
+ * A segment that restricts the movement of a particle to a certain line.
+ * Instead of a plane, it restricts the movement to a limited segment.
+ */
+class ParticleSegment : public ParticleContactGenerator
+{
+public:
+    ParticleSegment() : _particle(nullptr), _start(Vector3::Zero), _end(Vector3::UnitX), _restitution(0.2f)
+    {
+        _UpdateDirection();
+    }
+
+    ParticleSegment(Particle* particle, const Vector3& start, const Vector3& end, real_t restitution = 0.2f)
+        : _particle(particle), _start(start), _end(end), _restitution(restitution)
+    {
+        _UpdateDirection();
+    }
+
+    uint32_t AddContact(ParticleContact* contact, uint32_t limit) const override;
+
+    // clang-format off
+    void SetParticle(Particle* particle) { _particle = particle; }
+    Particle* GetParticle() const { return _particle; }
+
+    void SetStart(const Vector3& start) { _start = start; _UpdateDirection(); }
+    const Vector3& GetStart() const { return _start; }
+
+    void SetEnd(const Vector3& end) { _end = end; _UpdateDirection(); }
+    const Vector3& GetEnd() const { return _end; }
+
+    void SetRestitution(real_t restitution) { _restitution = restitution; }
+    real_t GetRestitution() const { return _restitution; }
+
+    void SetRadius(real_t radius) { _radius = radius; }
+    real_t GetRadius() const { return _radius; }
+
+    // clang-format on
+
+private:
+    void _UpdateDirection()
+    {
+        _direction = _end - _start;
+    }
+
+protected:
+    Particle* _particle;
+
+    Vector3 _start;
+    Vector3 _end;
+    Vector3 _direction;
+
+    real_t _restitution;
+
+    /**
+     * @brief Radius of the particle.
+     */
+    real_t _radius;
+};
+
 DPHX_END

@@ -28,7 +28,7 @@ void SetViewport(int x, int y, int width, int height);
  * @brief Set clear color, i.e. background color.
  * @param color clear color
  */
-void SetClearColor(const Color& color);
+void SetClearColor(const glm::vec4& color);
 
 /**
  * @brief Clear the device, i.e. clear the screen.

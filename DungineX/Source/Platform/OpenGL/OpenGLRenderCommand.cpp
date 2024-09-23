@@ -15,7 +15,14 @@ void Init()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_POLYGON_OFFSET_FILL);
+    glPolygonOffset(1.0f, 1.0f);
+    glDepthFunc(GL_LEQUAL);
+
     glEnable(GL_LINE_SMOOTH);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+
+    glEnable(GL_MULTISAMPLE);
 }
 
 void SetViewport(int x, int y, int width, int height)
@@ -23,9 +30,9 @@ void SetViewport(int x, int y, int width, int height)
     glViewport(x, y, width, height);
 }
 
-void SetClearColor(const Color& color)
+void SetClearColor(const glm::vec4& color)
 {
-    glClearColor(color.R, color.G, color.B, color.A);
+    glClearColor(color.r, color.g, color.b, color.a);
 }
 
 void ClearDevice()

@@ -206,4 +206,56 @@ uint32_t ParticlesPanel::AddContact(ParticleContact* contact, uint32_t limit) co
     return added;
 }
 
+uint32_t ParticleSegment::AddContact(ParticleContact* contact, uint32_t limit) const
+{
+    Vector3 relativePosition = _particle->GetPosition() - _start;
+    real_t projected = relativePosition * _direction;
+
+    if (projected <= 0)
+    {
+        // nearest to the start
+        if (relativePosition.MagnitudeSquare() < _radius * _radius)
+        {
+            contact->SetFirst(_particle);
+            contact->SetSecond(nullptr);
+            contact->ContactNormal = relativePosition.Normalized();
+            contact->Penetration = _radius - relativePosition.Magnitude();
+            contact->Restitution = _restitution;
+            return 1;
+        }
+    }
+    else if (projected >= _direction.Magnitude())
+    {
+        // nearest to the end
+        relativePosition = _particle->GetPosition() - _end;
+        if (relativePosition.MagnitudeSquare() < _radius * _radius)
+        {
+            contact->SetFirst(_particle);
+            contact->SetSecond(nullptr);
+            contact->ContactNormal = relativePosition.Normalized();
+            contact->Penetration = _radius - relativePosition.Magnitude();
+            contact->Restitution = _restitution;
+            return 1;
+        }
+    }
+    else
+    {
+        // nearest to the middle
+        real_t distanceSquare = relativePosition.MagnitudeSquare() - projected * projected;
+        if (distanceSquare < _radius * _radius)
+        {
+            Vector3 contactPoint = _start + _direction * (projected / _direction.Magnitude());
+
+            contact->SetFirst(_particle);
+            contact->SetSecond(nullptr);
+            contact->ContactNormal = (_particle->GetPosition() - contactPoint).Normalized();
+            contact->Penetration = _radius - Math::Sqrt(distanceSquare);
+            contact->Restitution = _restitution;
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
 DPHX_END

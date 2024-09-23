@@ -2,6 +2,14 @@
 
 DPHX_BEGIN
 
+void ParticleForce::UpdateForce(Particle* particle, real_t delta)
+{
+    if (particle->HasFiniteMass())
+    {
+        particle->ApplyForce(_force);
+    }
+}
+
 void ParticleGravity::UpdateForce(Particle* particle, real_t delta)
 {
     // only apply force to particles with finite mass

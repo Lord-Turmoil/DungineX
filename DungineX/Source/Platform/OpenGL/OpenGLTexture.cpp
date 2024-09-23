@@ -46,6 +46,9 @@ OpenGLTexture::OpenGLTexture(const TextureSpecification& specification)
 
     glTextureParameteri(_rendererId, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTextureParameteri(_rendererId, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    DGEX_CORE_INFO("Texture created: {0}x{1}, format: {2}", _width, _height,
+                   ImageFormatToString(_specification.Format));
 }
 
 OpenGLTexture::OpenGLTexture(const std::string& path)

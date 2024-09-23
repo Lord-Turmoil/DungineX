@@ -7,6 +7,8 @@
 #include "DgeX/Physics/Core/Macros.h"
 #include "DgeX/Utils/Math.h"
 
+#include <glm/vec3.hpp>
+
 DPHX_BEGIN
 
 #ifdef DPHX_HIGH_PRECISION
@@ -39,7 +41,7 @@ struct Vector3
      * The explicit constructor creates a vector with the given
      * components.
      */
-    Vector3(const real_t x, const real_t y, const real_t z) : X(x), Y(y), Z(z)
+    Vector3(const real_t x, const real_t y, const real_t z = 0) : X(x), Y(y), Z(z)
     {
     }
 
@@ -262,6 +264,13 @@ struct Vector3
         }
     }
 
+    Vector3 Normalized() const
+    {
+        Vector3 v = *this;
+        v.Normalize();
+        return v;
+    }
+
     void Invert()
     {
         X = -X;
@@ -301,6 +310,16 @@ struct Vector3
     bool IsZero() const
     {
         return (X == 0) && (Y == 0) && (Z == 0);
+    }
+
+    glm::vec3 ToGlmVec3() const
+    {
+        return glm::vec3(X, Y, Z);
+    }
+
+    glm::vec3 ToGlmVec3(float z) const
+    {
+        return glm::vec3(X, Y, z);
     }
 };
 

@@ -32,6 +32,11 @@ Application::Application(ApplicationSpecification specification) : _specificatio
     Renderer::OnWindowResize(_window->GetWidth(), _window->GetHeight());
 }
 
+Application::~Application()
+{
+    Renderer::Shutdown();
+}
+
 void Application::Run()
 {
     if (_isRunning)

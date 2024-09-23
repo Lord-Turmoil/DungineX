@@ -11,7 +11,7 @@ void Renderer::Init()
     RenderCommand::Init();
     RenderApi::Init();
 
-    RenderCommand::SetClearColor(Color::FromUInt32(0xFF000000));
+    RenderApi::SetClearColor(Color::Black.ToVec4());
 }
 
 void Renderer::Shutdown()

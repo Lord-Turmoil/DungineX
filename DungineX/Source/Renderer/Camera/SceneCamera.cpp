@@ -36,6 +36,13 @@ void SceneCamera::SetZoom(float zoom)
     _RecalculateViewProjection();
 }
 
+void SceneCamera::CenterWorldPoint(float x, float y)
+{
+    x = (x - GetWorldWidth() * 0.5f) * _scale;
+    y = (y - GetWorldHeight() * 0.5f) * _scale;
+    SetTranslation(x, y);
+}
+
 Physics::Vector3 SceneCamera::ScreenToWorld(float x, float y) const
 {
     auto pos = _view * glm::vec4(x, y, 0.0f, 1.0f);
