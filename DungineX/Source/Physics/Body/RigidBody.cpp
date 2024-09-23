@@ -6,7 +6,7 @@ static void CalculateTransformMatrix(Matrix4& transformMatrix, const Vector3& po
 static void TransformInertiaTensor(Matrix3& inverseInertiaTensorWorld, const Quaternion& orientation,
                                    const Matrix3& inverseInertiaTensor, const Matrix4& transformMatrix);
 
-static real_t sSleepEpsilon = static_cast<real_t>(0.3);
+static real_t sSleepEpsilon = 0.3f;
 
 void RigidBody::Integrate(real_t delta)
 {
