@@ -2,7 +2,7 @@
 
 DPHX_BEGIN
 
-ParticleWorld::ParticleWorld(int maxContacts, uint32_t iterations)
+ParticleWorld::ParticleWorld(uint32_t maxContacts, uint32_t iterations)
     : _contacts(new ParticleContact[maxContacts]), _maxContacts(maxContacts), _resolver(iterations),
       _iterations(iterations)
 {
@@ -21,12 +21,12 @@ void ParticleWorld::Step(real_t delta)
 
     _Integrate(delta);
 
-    size_t count = _GenerateContacts();
+    uint32_t count = _GenerateContacts();
     if (count > 0)
     {
         if (_iterations == 0)
         {
-            _resolver.SetIterations(static_cast<uint32_t>(count * 2));
+            _resolver.SetIterations(count * 2);
         }
         _resolver.Resolve(_contacts, count, delta);
     }
@@ -55,7 +55,7 @@ void ParticleWorld::_Integrate(real_t delta)
     }
 }
 
-size_t ParticleWorld::_GenerateContacts()
+uint32_t ParticleWorld::_GenerateContacts() const
 {
     return _contactRegistry.AddContact(_contacts, _maxContacts);
 }

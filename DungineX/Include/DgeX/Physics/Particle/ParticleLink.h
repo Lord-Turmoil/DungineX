@@ -56,7 +56,7 @@ public:
 
     ~ParticleAnchoredCable() override = default;
 
-    int AddContact(ParticleContact* contact, int limit) const override;
+    uint32_t AddContact(ParticleContact* contact, uint32_t limit) const override;
 
     // clang-format off
     void SetRestitution(real_t restitution) { _restitution = restitution; }
@@ -88,7 +88,7 @@ public:
 
     ~ParticleAnchoredHalfRod() override = default;
 
-    int AddContact(ParticleContact* contact, int limit) const override;
+    uint32_t AddContact(ParticleContact* contact, uint32_t limit) const override;
 
     // clang-format off
     void SetRestitution(real_t restitution) { _restitution = restitution; }
@@ -120,7 +120,7 @@ public:
 
     ~ParticleAnchoredRod() override = default;
 
-    int AddContact(ParticleContact* contact, int limit) const override;
+    uint32_t AddContact(ParticleContact* contact, uint32_t limit) const override;
 
     // clang-format off
     void SetLength(real_t length) { _length = length; }
@@ -180,7 +180,7 @@ public:
 
     ~ParticleCable() override = default;
 
-    int AddContact(ParticleContact* contact, int limit) const override;
+    uint32_t AddContact(ParticleContact* contact, uint32_t limit) const override;
 
     // clang-format off
     void SetRestitution(real_t restitution) { _restitution = restitution; }
@@ -212,7 +212,7 @@ public:
 
     ~ParticleHalfRod() override = default;
 
-    int AddContact(ParticleContact* contact, int limit) const override;
+    uint32_t AddContact(ParticleContact* contact, uint32_t limit) const override;
 
     // clang-format off
     void SetRestitution(real_t restitution) { _restitution = restitution; }
@@ -243,7 +243,7 @@ public:
 
     ~ParticleRod() override = default;
 
-    int AddContact(ParticleContact* contact, int limit) const override;
+    uint32_t AddContact(ParticleContact* contact, uint32_t limit) const override;
 
     // clang-format off
     void SetLength(real_t length) { _length = length; }
@@ -272,7 +272,7 @@ public:
         _normal.Normalize(); // ensure we have a valid normal
     }
 
-    int AddContact(ParticleContact* contact, int limit) const override;
+    uint32_t AddContact(ParticleContact* contact, uint32_t limit) const override;
 
     // clang-format off
     void SetParticle(Particle* particle) { _particle = particle; }
@@ -313,7 +313,7 @@ public:
     {
     }
 
-    int AddContact(ParticleContact* contact, int limit) const override;
+    uint32_t AddContact(ParticleContact* contact, uint32_t limit) const override;
 
     // clang-format off
     void SetParticles(Particle* particles, size_t count) { _particles = particles; _count = count; }

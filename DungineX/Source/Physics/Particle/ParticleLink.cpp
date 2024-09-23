@@ -8,7 +8,7 @@ real_t ParticleAnchoredLink::_Length() const
     return (_particle->GetPosition() - *_anchor).Magnitude();
 }
 
-int ParticleAnchoredCable::AddContact(ParticleContact* contact, int limit) const
+uint32_t ParticleAnchoredCable::AddContact(ParticleContact* contact, uint32_t limit) const
 {
     real_t length = _Length();
     if (length < _maxLength)
@@ -21,15 +21,15 @@ int ParticleAnchoredCable::AddContact(ParticleContact* contact, int limit) const
 
     Vector3 normal = *_anchor - _particle->GetPosition();
     normal.Normalize();
-    contact->SetContactNormal(normal);
+    contact->ContactNormal = normal;
 
-    contact->SetPenetration(length - _maxLength);
-    contact->SetRestitution(_restitution);
+    contact->Penetration = length - _maxLength;
+    contact->Restitution = _restitution;
 
     return 1;
 }
 
-int ParticleAnchoredHalfRod::AddContact(ParticleContact* contact, int limit) const
+uint32_t ParticleAnchoredHalfRod::AddContact(ParticleContact* contact, uint32_t limit) const
 {
     real_t length = _Length();
     if (length > _minLength)
@@ -42,15 +42,15 @@ int ParticleAnchoredHalfRod::AddContact(ParticleContact* contact, int limit) con
 
     Vector3 normal = _particle->GetPosition() - *_anchor;
     normal.Normalize();
-    contact->SetContactNormal(normal);
+    contact->ContactNormal = normal;
 
-    contact->SetPenetration(_minLength - length);
-    contact->SetRestitution(_restitution);
+    contact->Penetration = _minLength - length;
+    contact->Restitution = _restitution;
 
     return 1;
 }
 
-int ParticleAnchoredRod::AddContact(ParticleContact* contact, int limit) const
+uint32_t ParticleAnchoredRod::AddContact(ParticleContact* contact, uint32_t limit) const
 {
     real_t length = _Length();
     if (length == _length)
@@ -66,16 +66,16 @@ int ParticleAnchoredRod::AddContact(ParticleContact* contact, int limit) const
 
     if (length > _length)
     {
-        contact->SetContactNormal(normal);
-        contact->SetPenetration(length - _length);
+        contact->ContactNormal = normal;
+        contact->Penetration = length - _length;
     }
     else
     {
-        contact->SetContactNormal(-normal);
-        contact->SetPenetration(_length - length);
+        contact->ContactNormal = -normal;
+        contact->Penetration = _length - length;
     }
 
-    contact->SetRestitution(0.0);
+    contact->Restitution = 0.0;
 
     return 1;
 }
@@ -85,7 +85,7 @@ real_t ParticleLink::_Length() const
     return (_particles[0]->GetPosition() - _particles[1]->GetPosition()).Magnitude();
 }
 
-int ParticleCable::AddContact(ParticleContact* contact, int limit) const
+uint32_t ParticleCable::AddContact(ParticleContact* contact, uint32_t limit) const
 {
     real_t length = _Length();
     if (length < _maxLength)
@@ -99,15 +99,15 @@ int ParticleCable::AddContact(ParticleContact* contact, int limit) const
     // Normal points to the direction that particle[0] should move.
     Vector3 normal = _particles[1]->GetPosition() - _particles[0]->GetPosition();
     normal.Normalize();
-    contact->SetContactNormal(normal);
+    contact->ContactNormal = normal;
 
-    contact->SetPenetration(length - _maxLength);
-    contact->SetRestitution(_restitution);
+    contact->Penetration = length - _maxLength;
+    contact->Restitution = _restitution;
 
     return 1;
 }
 
-int ParticleHalfRod::AddContact(ParticleContact* contact, int limit) const
+uint32_t ParticleHalfRod::AddContact(ParticleContact* contact, uint32_t limit) const
 {
     real_t length = _Length();
     if (length > _minLength)
@@ -121,15 +121,15 @@ int ParticleHalfRod::AddContact(ParticleContact* contact, int limit) const
     // Normal points to the direction that particle[0] should move.
     Vector3 normal = _particles[0]->GetPosition() - _particles[1]->GetPosition();
     normal.Normalize();
-    contact->SetContactNormal(normal);
+    contact->ContactNormal = normal;
 
-    contact->SetPenetration(_minLength - length);
-    contact->SetRestitution(_restitution);
+    contact->Penetration = _minLength - length;
+    contact->Restitution = _restitution;
 
     return 1;
 }
 
-int ParticleRod::AddContact(ParticleContact* contact, int limit) const
+uint32_t ParticleRod::AddContact(ParticleContact* contact, uint32_t limit) const
 {
     real_t length = _Length();
     if (length == _length)
@@ -146,21 +146,21 @@ int ParticleRod::AddContact(ParticleContact* contact, int limit) const
 
     if (length > _length)
     {
-        contact->SetContactNormal(normal);
-        contact->SetPenetration(length - _length);
+        contact->ContactNormal = normal;
+        contact->Penetration = length - _length;
     }
     else
     {
-        contact->SetContactNormal(-normal);
-        contact->SetPenetration(_length - length);
+        contact->ContactNormal = -normal;
+        contact->Penetration = _length - length;
     }
 
-    contact->SetRestitution(0.0);
+    contact->Restitution = 0.0;
 
     return 1;
 }
 
-int ParticlePanel::AddContact(ParticleContact* contact, int limit) const
+uint32_t ParticlePanel::AddContact(ParticleContact* contact, uint32_t limit) const
 {
     Vector3 position = _particle->GetPosition() - _anchor;
     real_t penetration = -(position * _normal);
@@ -172,19 +172,19 @@ int ParticlePanel::AddContact(ParticleContact* contact, int limit) const
 
     contact->SetFirst(_particle);
     contact->SetSecond(nullptr);
-    contact->SetContactNormal(_normal);
-    contact->SetPenetration(penetration);
-    contact->SetRestitution(_restitution);
+    contact->ContactNormal = _normal;
+    contact->Penetration = penetration;
+    contact->Restitution = _restitution;
 
     return 1;
 }
 
-int ParticlesPanel::AddContact(ParticleContact* contact, int limit) const
+uint32_t ParticlesPanel::AddContact(ParticleContact* contact, uint32_t limit) const
 {
-    int added = 0;
+    uint32_t added = 0;
 
     Particle* end = _particles + _count;
-    for (Particle* particle = _particles; (particle != end) && (added <= limit); particle++)
+    for (Particle* particle = _particles; particle != end && added <= limit; particle++)
     {
         Vector3 position = particle->GetPosition() - _anchor;
         real_t penetration = -(position * _normal);
@@ -195,9 +195,9 @@ int ParticlesPanel::AddContact(ParticleContact* contact, int limit) const
 
         contact->SetFirst(particle);
         contact->SetSecond(nullptr);
-        contact->SetContactNormal(_normal);
-        contact->SetPenetration(penetration);
-        contact->SetRestitution(_restitution);
+        contact->ContactNormal = _normal;
+        contact->Penetration = penetration;
+        contact->Restitution = _restitution;
 
         contact++;
         added++;

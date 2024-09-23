@@ -20,16 +20,28 @@ public:
     void SetSecond(Particle* particle) { _particles[1] = particle; }
     Particle* GetSecond() const { return _particles[1]; }
 
-    void SetContactNormal(const Vector3& contactNormal) { _contactNormal = contactNormal; }
-    const Vector3& GetContactNormal() const { return _contactNormal; }
-
-    void SetPenetration(real_t penetration) { _penetration = penetration; }
-    real_t GetPenetration() const { return _penetration; }
-
-    void SetRestitution(real_t restitution) { _restitution = restitution; }
-    real_t GetRestitution() const { return _restitution; }
-
     // clang-format on
+
+    /**
+     * @brief The direction of the contact in world coordinates.
+     * @note
+     * It is calculated based on the first particle, and points to the direction
+     * that separate the two particles.
+     */
+    Vector3 ContactNormal;
+
+    /**
+     * @brief The depth of penetration at the contact.
+     */
+    real_t Penetration;
+
+    /**
+     * @brief
+     * The normal restitution coefficient at the contact.
+     * 1.0 means the contact is perfectly elastic, 0.0 means no bounce and the
+     * two particles will stick together.
+     */
+    real_t Restitution;
 
 protected:
     void _Resolve(real_t delta);
@@ -46,27 +58,6 @@ protected:
      * the scenery, the second particle is set to nullptr.
      */
     Particle* _particles[2];
-
-    /**
-     * @brief
-     * The normal restitution coefficient at the contact.
-     * 1.0 means the contact is perfectly elastic, 0.0 means no bounce and the
-     * two particles will stick together.
-     */
-    real_t _restitution;
-
-    /**
-     * @brief The depth of penetration at the contact.
-     */
-    real_t _penetration;
-
-    /**
-     * @brief The direction of the contact in world coordinates.
-     * @note
-     * It is calculated based on the first particle, and points to the direction
-     * that separate the two particles.
-     */
-    Vector3 _contactNormal;
 
     /**
      * @brief Movement of the particles during the resolution.
@@ -93,7 +84,7 @@ public:
      * Resolve a set of particle contacts for both penetration and velocity.
      * Use raw array for compatibility.
      */
-    void Resolve(ParticleContact* contacts, size_t count, real_t delta);
+    void Resolve(ParticleContact* contacts, uint32_t count, real_t delta) const;
 
 protected:
     /**
@@ -101,12 +92,6 @@ protected:
      * The number of iterations allowed for the resolution of contacts.
      */
     uint32_t _iterations;
-
-    /**
-     * @brief
-     * The number of iterations used in the last call to resolve contacts.
-     */
-    uint32_t _iterationsUsed;
 };
 
 /**
@@ -122,13 +107,17 @@ public:
      * @brief
      * Add contacts to the contact list with the given limit.
      * The contact should be a pointer in an array of contacts.
+     *
      * @note
      * The limit is the maximum number of contacts that can be written, it
      * is greater than or equal to 1.
      */
-    virtual int AddContact(ParticleContact* contact, int limit) const = 0;
+    virtual uint32_t AddContact(ParticleContact* contact, uint32_t limit) const = 0;
 };
 
+/**
+ * @brief A registry to hold all particle contact generators.
+ */
 class ParticleContactRegistry
 {
 public:
@@ -136,7 +125,7 @@ public:
     void Remove(ParticleContactGenerator* contactGenerator);
     void Clear();
 
-    int AddContact(ParticleContact* contacts, int limit);
+    uint32_t AddContact(ParticleContact* contacts, uint32_t limit) const;
 
 private:
     std::vector<ParticleContactGenerator*> _contactGenerators;

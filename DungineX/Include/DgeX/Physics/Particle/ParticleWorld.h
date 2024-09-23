@@ -8,7 +8,7 @@ DPHX_BEGIN
 class ParticleWorld final
 {
 public:
-    ParticleWorld(int maxContacts, uint32_t iterations = 0);
+    ParticleWorld(uint32_t maxContacts, uint32_t iterations = 0);
     ~ParticleWorld();
 
     /**
@@ -48,7 +48,7 @@ private:
     /**
      * @brief Generate contacts between particles.
      */
-    size_t _GenerateContacts();
+    uint32_t _GenerateContacts() const;
 
 private:
     std::vector<Particle*> _particles;
@@ -57,7 +57,7 @@ private:
 
     ParticleContactRegistry _contactRegistry;
     ParticleContact* _contacts;
-    int _maxContacts;
+    uint32_t _maxContacts;
 
     ParticleContactResolver _resolver;
     uint32_t _iterations;

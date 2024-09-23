@@ -16,7 +16,7 @@ real_t ParticleContact::_CalculateSeparatingVelocity() const
     {
         relativeVelocity -= _particles[1]->GetVelocity();
     }
-    return relativeVelocity * _contactNormal;
+    return relativeVelocity * ContactNormal;
 }
 
 void ParticleContact::_ResolveVelocity(real_t delta) const
@@ -43,7 +43,7 @@ void ParticleContact::_ResolveVelocity(real_t delta) const
         return;
     }
     // Correct the separating velocity with the restitution coefficient.
-    real_t correctedSeparatingVelocity = -separatingVelocity * _restitution;
+    real_t correctedSeparatingVelocity = -separatingVelocity * Restitution;
 
     // Acceleration may cause static objects to have a closing velocity which
     // may cause the particles to penetrate each other.
@@ -52,12 +52,12 @@ void ParticleContact::_ResolveVelocity(real_t delta) const
     {
         accCausedVelocity -= _particles[1]->GetAcceleration();
     }
-    real_t accCausedSepVelocity = accCausedVelocity * _contactNormal * delta;
+    real_t accCausedSepVelocity = accCausedVelocity * ContactNormal * delta;
     // Avoid the velocity due to acceleration so that the particles
     // can be more 'static'.
     if (accCausedSepVelocity < 0)
     {
-        correctedSeparatingVelocity += _restitution * accCausedSepVelocity;
+        correctedSeparatingVelocity += Restitution * accCausedSepVelocity;
         if (correctedSeparatingVelocity < 0)
         {
             correctedSeparatingVelocity = 0;
@@ -69,7 +69,7 @@ void ParticleContact::_ResolveVelocity(real_t delta) const
     // then each particle gets impulse * inverseMass
     real_t impulse = deltaVelocity / totalInverseMass;
     // Find the amount of impulse per unit of inverse mass
-    Vector3 impulsePerIMass = _contactNormal * impulse;
+    Vector3 impulsePerIMass = ContactNormal * impulse;
 
     // Apply the impulse to the particles.
     _particles[0]->AddVelocity(impulsePerIMass * _particles[0]->GetInverseMass());
@@ -82,7 +82,7 @@ void ParticleContact::_ResolveVelocity(real_t delta) const
 void ParticleContact::_ResolveInterpenetration(real_t delta)
 {
     // If there is no penetration, do nothing.
-    if (_penetration <= 0)
+    if (Penetration <= 0)
     {
         return;
     }
@@ -99,7 +99,7 @@ void ParticleContact::_ResolveInterpenetration(real_t delta)
     }
 
     // Find the amount of penetration resolution per unit of inverse mass.
-    Vector3 movePerIMass = _contactNormal * (_penetration / totalInverseMass);
+    Vector3 movePerIMass = ContactNormal * (Penetration / totalInverseMass);
 
     // Calculate the movement amounts.
     _movements[0] = movePerIMass * _particles[0]->GetInverseMass();
@@ -120,22 +120,27 @@ void ParticleContact::_ResolveInterpenetration(real_t delta)
     }
 }
 
-ParticleContactResolver::ParticleContactResolver(uint32_t iterations) : _iterations(iterations), _iterationsUsed(0)
+ParticleContactResolver::ParticleContactResolver(uint32_t iterations) : _iterations(iterations)
 {
 }
 
-void ParticleContactResolver::Resolve(ParticleContact* contacts, size_t count, real_t delta)
+void ParticleContactResolver::Resolve(ParticleContact* contacts, uint32_t count, real_t delta) const
 {
-    _iterationsUsed = 0;
-    while (_iterationsUsed < _iterations)
+    if (count == 0)
+    {
+        return;
+    }
+
+    uint32_t iterationsUsed = 0;
+    while (iterationsUsed < _iterations)
     {
         // Find the contact with the largest closing velocity.
         real_t max = MAX_REAL;
-        size_t maxIndex = count;
-        for (size_t i = 0; i < count; i++)
+        uint32_t maxIndex = count;
+        for (uint32_t i = 0; i < count; i++)
         {
             real_t sepVel = contacts[i]._CalculateSeparatingVelocity();
-            if ((sepVel < max) && (sepVel < 0 || contacts[i].GetPenetration() > 0))
+            if ((sepVel < max) && (sepVel < 0 || contacts[i].Penetration > 0))
             {
                 max = sepVel;
                 maxIndex = i;
@@ -151,31 +156,31 @@ void ParticleContactResolver::Resolve(ParticleContact* contacts, size_t count, r
 
         // Update all other contacts if they share the same particles.
         Vector3* move = contacts[maxIndex]._movements;
-        for (size_t i = 0; i < count; i++)
+        for (uint32_t i = 0; i < count; i++)
         {
             if (contacts[i].GetFirst() == contacts[maxIndex].GetFirst())
             {
-                contacts[i]._penetration -= move[0] * contacts[i].GetContactNormal();
+                contacts[i].Penetration -= move[0] * contacts[i].ContactNormal;
             }
             else if (contacts[i].GetFirst() == contacts[maxIndex].GetSecond())
             {
-                contacts[i]._penetration -= move[1] * contacts[i].GetContactNormal();
+                contacts[i].Penetration -= move[1] * contacts[i].ContactNormal;
             }
 
             if (contacts[i].GetSecond())
             {
                 if (contacts[i].GetSecond() == contacts[maxIndex].GetFirst())
                 {
-                    contacts[i]._penetration += move[0] * contacts[i].GetContactNormal();
+                    contacts[i].Penetration += move[0] * contacts[i].ContactNormal;
                 }
                 else if (contacts[i].GetSecond() == contacts[maxIndex].GetSecond())
                 {
-                    contacts[i]._penetration += move[1] * contacts[i].GetContactNormal();
+                    contacts[i].Penetration += move[1] * contacts[i].ContactNormal;
                 }
             }
         }
 
-        _iterationsUsed++;
+        iterationsUsed++;
     }
 }
 
@@ -201,9 +206,9 @@ void ParticleContactRegistry::Clear()
     _contactGenerators.clear();
 }
 
-int ParticleContactRegistry::AddContact(ParticleContact* contacts, int limit)
+uint32_t ParticleContactRegistry::AddContact(ParticleContact* contacts, uint32_t limit) const
 {
-    int available = limit;
+    uint32_t available = limit;
 
     for (auto generator : _contactGenerators)
     {
