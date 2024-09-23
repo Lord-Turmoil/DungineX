@@ -109,6 +109,7 @@
     <ClInclude Include="Include\DgeX\Application\Application.h" />
     <ClInclude Include="Include\DgeX\Application\Event\EventEmitter.h" />
     <ClInclude Include="Include\DgeX\Core\ObjectQueue.h" />
+    <ClInclude Include="Include\DgeX\Physics\Body\Contact.h" />
     <ClInclude Include="Include\DgeX\Physics\Particle\Particle.h" />
     <ClInclude Include="Include\DgeX\Core\ObjectPool.h" />
     <ClInclude Include="Include\DgeX\Physics\Particle\ParticleContact.h" />
@@ -286,6 +287,8 @@
     <ClCompile Include="Source\Application\Event\EventBuffer.cpp" />
     <ClCompile Include="Source\Application\Event\EventEmitter.cpp" />
     <ClCompile Include="Source\Application\Input\Input.cpp" />
+    <ClCompile Include="Source\Physics\Body\Contact.cpp" />
+    <ClCompile Include="Source\Physics\Body\ContactResolver.cpp" />
     <ClCompile Include="Source\Physics\Body\RigidBody.cpp" />
     <ClCompile Include="Source\Physics\Core\Base.cpp" />
     <ClCompile Include="Source\Physics\Particle\ParticleContact.cpp" />

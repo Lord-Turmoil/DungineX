@@ -101,6 +101,10 @@ bool PlatformInterface::_OnKeyPressed(KeyPressedEvent& event)
         _bungees[0].SetRestLength(Math::Clamp(_bungees[0].GetRestLength() + 5, 10.0, 60.0));
         DGEX_LOG_DEBUG("Right length: {}", _bungees[0].GetRestLength());
     }
+    if (event.GetKeyCode() == Key::S)
+    {
+        _slide = 0.5;
+    }
 
     return true;
 }

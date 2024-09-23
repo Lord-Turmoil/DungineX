@@ -3,8 +3,6 @@
 
 #pragma once
 
-#include "DgeX/dgexpch.h"
-
 #include "DgeX/Renderer/Camera/Camera.h"
 #include "DgeX/Renderer/Texture.h"
 
