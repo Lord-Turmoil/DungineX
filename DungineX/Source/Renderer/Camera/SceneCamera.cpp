@@ -68,10 +68,11 @@ void SceneCamera::_RecalculateViewProjection()
     }
     if (_zoom != 1.0f)
     {
-        float correctionWidth = _width * (_zoom - 1) * 0.5f;
-        float correctionHeight = _height * (_zoom - 1) * 0.5f;
+        float zoom = 1.0f / _zoom;
+        float correctionWidth = _width * (zoom - 1) * 0.5f;
+        float correctionHeight = _height * (zoom - 1) * 0.5f;
         _view *= translate(glm::mat4(1.0f), glm::vec3(-correctionWidth, -correctionHeight, 0.0f)) *
-                 scale(glm::mat4(1.0f), glm::vec3(_zoom, _zoom, 1.0f));
+                 scale(glm::mat4(1.0f), glm::vec3(zoom, zoom, 1.0f));
     }
     if (_rotation != 0.0f)
     {

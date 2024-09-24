@@ -123,6 +123,21 @@ void ParticleBungee::UpdateForce(Particle* particle, real_t delta)
     particle->ApplyForce(force);
 }
 
+void ParticleAbsorber::UpdateForce(Particle* particle, real_t delta)
+{
+    Vector3 force = particle->GetPosition() - _other->GetPosition();
+
+    real_t springForce = force.Magnitude();
+    springForce = (_restLength - springForce) * _springConstant;
+
+    force.Normalize();
+    real_t dampingForce = (particle->GetVelocity() - _other->GetVelocity()) * force * _damping;
+
+    force *= (springForce - dampingForce);
+
+    particle->ApplyForce(force);
+}
+
 void ParticleForceRegistry::Add(Particle* particle, ParticleForceGenerator* forceGenerator)
 {
     _registrations.emplace_back(particle, forceGenerator);

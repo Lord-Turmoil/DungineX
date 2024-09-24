@@ -19,6 +19,8 @@ public:
 private:
     bool _OnKeyPressed(DgeX::KeyPressedEvent& event);
 
+    void _InitMap();
+
 private:
     Car _car;
     CarController _controller;
@@ -27,4 +29,5 @@ private:
     DgeX::Physics::ParticleWorld _world;
 
     DgeX::SceneCamera _camera;
+    DgeX::Physics::Vector3 _cameraCenter;
 };

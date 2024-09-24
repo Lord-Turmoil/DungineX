@@ -60,6 +60,7 @@ public:
      * @brief Center the given location in world. 
      */
     void CenterWorldPoint(float x, float y);
+    void CenterWorldPoint(const Physics::Vector3 &point) { CenterWorldPoint(static_cast<float>(point.X), static_cast<float>(point.Y)); }
 
     /**
      * @brief

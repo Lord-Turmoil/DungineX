@@ -254,6 +254,36 @@ public:
 };
 
 /**
+ * @brief
+ * In particle world, the spring will stretch and compress forever as we don't
+ * have friction. In this case, we provide spring with absorber to add damping
+ * to this process so that the spring will stop moving after a while.
+ */
+class ParticleAbsorber : public ParticleSpring
+{
+public:
+    ParticleAbsorber() : _damping(0)
+    {
+    }
+
+    ParticleAbsorber(Particle* other, real_t springConstant, real_t restLength, real_t damping)
+        : ParticleSpring(other, springConstant, restLength), _damping(damping)
+    {
+    }
+
+    // clang-format off
+    void SetDamping(real_t damping) { _damping = damping; }
+    real_t GetDamping() const { return _damping; }
+
+    // clang-format on
+
+    void UpdateForce(Particle* particle, real_t delta) override;
+
+private:
+    real_t _damping;
+};
+
+/**
  * @brief Holds a list of force generators and the particles they apply to.
  */
 class ParticleForceRegistry

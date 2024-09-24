@@ -5,21 +5,7 @@
 
 #include "DgeX/Physics/Body/Contact.h"
 
-/*
-This is our car, four body particles, two wheel particles, eight frame rods
-and two springs. Two crossed rods (4 and 5) are omitted for brevity.
-
-(0)                    [0]                   (1)
- o____________________________________________o body
-  \`-. [2]                             [3].-'/
-   \  `-. (3)                      (2) .-'  /
-    \    `-o________________________o-'    / spring
-     \     /           [1]          \     /
-      \   /[6]                    [7]\   /
-       \o/                            \o/ wheel
-       (0)                            (1)
-*/
-
+// The car. :)
 class Car
 {
     friend class Map;
@@ -60,9 +46,19 @@ public:
     void OnUpdate(DgeX::Physics::real_t delta);
     void OnRender() const;
 
+    const DgeX::Physics::Vector3& GetCenter() const
+    {
+        return _center;
+    }
+
+    DgeX::Physics::real_t GetSpeed() const
+    {
+        return _body[0].GetVelocity().Magnitude();
+    }
+
 private:
     // Maximum engine force.
-    static DgeX::Physics::real_t _sPower;
+    static DgeX::Physics::real_t _sGasPower;
     static DgeX::Physics::real_t _sRotatePower;
 
     DgeX::Physics::real_t _wheelRadian[2];
@@ -82,8 +78,9 @@ private:
     DgeX::Physics::Particle* _body;
     DgeX::Physics::Particle* _wheel;
     DgeX::Physics::ParticleRod* _frame;
-    DgeX::Physics::ParticleSpring* _spring;
-    DgeX::Physics::ParticleHalfRod* _springLimit;
+    DgeX::Physics::ParticleAbsorber* _absorber;
+    DgeX::Physics::ParticleHalfRod* _absorberMinConstraint;
+    DgeX::Physics::ParticleCable* _absorberMaxConstraint;
 
     // The direction of the wheel contact.
     DgeX::Physics::Vector3 _wheelNormal[2];
@@ -97,10 +94,18 @@ private:
 
     // Car body and wheel offset from the center of mass
     static DgeX::Physics::Vector3 _sCenterOffset;
-    static DgeX::Physics::Vector3 _sBodyOffset[4];
+    static DgeX::Physics::Vector3 _sBodyOffset[6];
     static DgeX::Physics::Vector3 _sWheelOffset[2];
+
     static DgeX::Physics::real_t _sWheelRadius;
+
+    static DgeX::Physics::real_t _sWheelMass;
+    static DgeX::Physics::real_t _sBodyMass;
+    static DgeX::Physics::real_t _sFrameMass;
+    static DgeX::Physics::real_t _sTotalMass;
+
     static DgeX::Physics::real_t _sSpringConstant;
+    static DgeX::Physics::real_t _sSpringDamping;
     static DgeX::Physics::real_t _sSpringRestLength;
 };
 
@@ -139,12 +144,17 @@ public:
         _vertices.pop_front();
     }
 
+    void Clear()
+    {
+        _vertices.clear();
+    }
+
     void OnRender();
 
 private:
     Car* _car = nullptr;
     std::deque<DgeX::Physics::Vector3> _vertices;
-    DgeX::Physics::real_t _restitution = 0.5;
+    DgeX::Physics::real_t _restitution = 0.1;
 };
 
 class CarController
