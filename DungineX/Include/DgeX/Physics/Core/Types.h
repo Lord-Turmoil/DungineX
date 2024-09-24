@@ -288,6 +288,26 @@ struct Vector3
         X = Y = Z = static_cast<real_t>(0);
     }
 
+    /**
+     * @brief Rotate the vector counter-clockwise around the Z axis.
+     */
+    void RotateZ(real_t radian)
+    {
+        real_t c = Math::Cos(radian);
+        real_t s = Math::Sin(radian);
+        real_t x = X * c - Y * s;
+        real_t y = X * s + Y * c;
+        X = x;
+        Y = y;
+    }
+
+    Vector3 RotatedZ(real_t radian) const
+    {
+        Vector3 v = *this;
+        v.RotateZ(radian);
+        return v;
+    }
+
     void Set(real_t x, real_t y, real_t z)
     {
         X = x;

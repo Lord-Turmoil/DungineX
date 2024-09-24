@@ -3,7 +3,7 @@
 using namespace DgeX;
 using namespace DgeX::Physics;
 
-CarInterface::CarInterface() : Interface("Car"), _world(128)
+CarInterface::CarInterface() : Interface("Car"), _dustController(512), _world(128)
 {
 }
 
@@ -18,7 +18,9 @@ void CarInterface::OnLoad()
     _map.SetCar(&_car);
     _world.GetContactRegistry().Add(&_map);
 
-    _controller.SetCar(&_car);
+    _carController.SetCar(&_car);
+    _dustController.SetCar(&_car);
+    _dustController.SetWorld(&_world);
 
     _camera.SetProjection(static_cast<float>(GetWidth()), static_cast<float>(GetHeight()));
     _camera.SetWorldHeight(12);
@@ -38,8 +40,9 @@ void CarInterface::OnUpdate(DeltaTime delta)
 
     _world.Step(delta);
     _car.ResetState();
-    _controller.OnUpdate(delta);
+    _carController.OnUpdate(delta);
     _car.OnUpdate(delta);
+    _dustController.OnUpdate(delta);
 
     using namespace DgeX::Utils::Easing;
 
@@ -72,6 +75,7 @@ void CarInterface::OnRender()
 
     _car.OnRender();
     _map.OnRender();
+    _dustController.OnRender();
 
     RenderApi::EndScene();
 }

@@ -9,6 +9,7 @@
 class Car
 {
     friend class Map;
+    friend class DustController;
 
 public:
     Car();
@@ -107,6 +108,66 @@ private:
     static DgeX::Physics::real_t _sSpringConstant;
     static DgeX::Physics::real_t _sSpringDamping;
     static DgeX::Physics::real_t _sSpringRestLength;
+};
+
+/**
+ * @brief The dust effect.
+ */
+class Dust : public DgeX::Physics::Particle, public DgeX::PooledObject<Dust>
+{
+public:
+    void OnUpdate(DgeX::Physics::real_t delta);
+    void OnRender();
+
+    void Init(DgeX::Physics::real_t timeToLive, float size);
+
+    bool IsDead() const
+    {
+        return _elapsed > _timeToLive;
+    }
+
+private:
+    DgeX::Physics::real_t _timeToLive = 0.0;
+    DgeX::Physics::real_t _elapsed = 0.0;
+    float _size = 0.1f;
+    float _alpha = 1.0f;
+};
+
+class DustController
+{
+public:
+    DustController(uint32_t capacity) : _pool(capacity)
+    {
+    }
+
+    void OnUpdate(DgeX::Physics::real_t delta);
+    void OnRender();
+
+    void SetCar(Car* car)
+    {
+        _car = car;
+    }
+
+    void SetWorld(DgeX::Physics::ParticleWorld* world)
+    {
+        _world = world;
+    }
+
+private:
+    void _Create(const DgeX::Physics::Vector3& position, const DgeX::Physics::Vector3& velocity);
+
+private:
+    DgeX::ObjectPool<Dust> _pool;
+    DgeX::ObjectQueue<Dust> _dusts;
+    Car* _car = nullptr;
+    DgeX::Physics::ParticleWorld* _world = nullptr;
+
+    DgeX::Physics::real_t _elapsed = 0.0;
+
+    DgeX::Physics::real_t _minTimeToLive = 0.3;
+    DgeX::Physics::real_t _maxTimeToLive = 1.0;
+    DgeX::Physics::real_t _minVelocity = 0.5;
+    DgeX::Physics::real_t _maxVelocity = 10.0;
 };
 
 /**

@@ -449,6 +449,119 @@ void Car::_UpdateCenter()
 
 /*
  * ===================================================================
+ * ------------------------------- Dust ------------------------------
+ * ===================================================================
+ */
+
+void Dust::OnUpdate(real_t delta)
+{
+    _elapsed += delta;
+}
+
+void Dust::OnRender()
+{
+    using namespace DgeX::Utils::Easing;
+    static glm::vec4 color = Color::Brown.ToVec4();
+    color.a = Interpolate(_alpha, 0.0f, RangeToStep(0.0, _timeToLive, _elapsed), EaseInQuad);
+    RenderApi::DrawFilledRect(GetPosition().ToGlmVec3(1.0f), { _size, _size }, color);
+}
+
+void Dust::Init(real_t timeToLive, float size)
+{
+    _timeToLive = timeToLive;
+    _elapsed = 0.0;
+    _size = size;
+    _alpha = DgeX::Utils::Random::RandomNumber(0.8f, 1.0f);
+}
+
+void DustController::OnUpdate(real_t delta)
+{
+    _dusts.Lock();
+    for (auto dust : _dusts)
+    {
+        dust->OnUpdate(delta);
+        if (dust->IsDead())
+        {
+            dust->Dispose();
+            _dusts.Remove(dust);
+            _world->RemoveParticle(dust);
+        }
+    }
+    _dusts.Unlock();
+
+    _elapsed += delta;
+    if (_elapsed > 0.001)
+    {
+        _elapsed = 0.0;
+        for (int i = 0; i < 2; i++)
+        {
+            if (!_car->_wheelNormal[i].IsZero())
+            {
+                Vector3 pos = _car->_wheel[i].GetPosition() +
+                              _car->_wheelNormal[i].RotatedZ(-Math::PI<real_t> / 2.0) * Car::_sWheelRadius;
+                _Create(pos, _car->_wheel[i].GetVelocity());
+            }
+        }
+    }
+}
+
+void DustController::OnRender()
+{
+    for (auto dust : _dusts)
+    {
+        dust->OnRender();
+    }
+}
+
+void DustController::_Create(const Vector3& position, const Vector3& velocity)
+{
+    using namespace DgeX::Utils::Easing;
+    static Vector3 minGravity = Vector3(0, -5.0, 0);
+    static Vector3 maxGravity = Vector3(0, 1.0, 0);
+
+    Vector3 horizontal = -_car->_wheelNormal[0];
+    real_t speed = velocity.Magnitude();
+    if (speed < 1.0)
+    {
+        return;
+    }
+
+    // int count = Interpolate(1, 3, RangeToStep(0.1, 20.0, speed), Linear);
+    int count = 1;
+    for (int i = 0; i < count; i++)
+    {
+        Dust* dust = _pool.TryAcquire();
+        if (!dust)
+        {
+            DGEX_LOG_WARN("Dust pool is full");
+            break;
+        }
+
+        Vector3 normal =
+            horizontal.RotatedZ(DgeX::Utils::Random::RandomNumber(Math::ToRadians(-80.0), Math::ToRadians(-20.0)));
+
+        real_t step = RangeToStep(1.0, 25.0, speed);
+        float maxSize = Interpolate(0.1f, 0.5f, step, Linear);
+        real_t maxVelocity = Interpolate(_minVelocity, _maxVelocity, step, Linear);
+        real_t maxTTL = Interpolate(_minTimeToLive, _maxTimeToLive, step, Linear);
+
+        normal *= DgeX::Utils::Random::RandomNumber(_minVelocity, maxVelocity);
+
+        dust->SetPosition(position);
+        dust->SetVelocity(normal);
+        dust->SetAcceleration(Physics::Utils::RandomVector(minGravity, maxGravity));
+        dust->SetMass(1.0);
+        dust->SetDamping(0.9);
+        dust->Init(DgeX::Utils::Random::RandomNumber(_minTimeToLive, maxTTL),
+                   DgeX::Utils::Random::RandomNumber(0.05f, maxSize));
+
+        _dusts.Add(dust);
+        _world->AddParticle(dust);
+    }
+}
+
+/*
+ * ===================================================================
  * ------------------------------- Map -------------------------------
  * ===================================================================
  */

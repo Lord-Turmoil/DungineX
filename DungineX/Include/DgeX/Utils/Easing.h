@@ -43,7 +43,7 @@ template <typename T> constexpr T RangeToStep(T begin, T end, T t)
  */
 template <typename T, typename S> constexpr T Interpolate(T initial, T target, S step, EasingFn<S> fn)
 {
-    return initial + (target - initial) * fn(step);
+    return static_cast<T>(initial + (target - initial) * fn(step));
 }
 
 template <typename T> constexpr T Linear(T t)

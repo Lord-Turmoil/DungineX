@@ -23,8 +23,9 @@ private:
 
 private:
     Car _car;
-    CarController _controller;
+    CarController _carController;
     Map _map;
+    DustController _dustController;
 
     DgeX::Physics::ParticleWorld _world;
 
