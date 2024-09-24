@@ -2,9 +2,6 @@
 
 #define DUNGEON_ENGINE_X
 
-// define this to publish the application
-// #define DGEX_PUBLISH
-
 // Define the DungineX version
 #define DGEX_VERSION_MAJOR 0
 #define DGEX_VERSION_MINOR 1
@@ -15,6 +12,10 @@
 #define DGEX_DEBUG
 #else
 #define DGEX_RELEASE
+#endif
+
+#if defined(PUBLISH) || defined(_PUBLISH)
+#define DGEX_PUBLISH
 #endif
 
 // Enable assertions only in debug and release builds

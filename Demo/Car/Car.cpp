@@ -537,13 +537,13 @@ void DustController::_Create(const Vector3& position, const Vector3& velocity)
             break;
         }
 
-        Vector3 normal =
-            horizontal.RotatedZ(DgeX::Utils::Random::RandomNumber(Math::ToRadians(-80.0), Math::ToRadians(-20.0)));
-
         real_t step = RangeToStep(1.0, 25.0, speed);
         float maxSize = Interpolate(0.1f, 0.5f, step, Linear);
         real_t maxVelocity = Interpolate(_minVelocity, _maxVelocity, step, Linear);
         real_t maxTTL = Interpolate(_minTimeToLive, _maxTimeToLive, step, Linear);
+        double minRadian = Interpolate(-10.0, -40.0, step, Linear);
+        Vector3 normal =
+            horizontal.RotatedZ(DgeX::Utils::Random::RandomNumber(Math::ToRadians(-80.0), Math::ToRadians(minRadian)));
 
         normal *= DgeX::Utils::Random::RandomNumber(_minVelocity, maxVelocity);
 
