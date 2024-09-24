@@ -20,5 +20,9 @@ DgeX::Application* DgeX::CreateApplication(ApplicationCommandLineArgs args)
     specification.Height = 720;
     specification.Flags = Default | DisableResize;
     specification.CommandLineArgs = args;
-    return new Application(specification);
+
+    auto app = new Application(specification);
+    app->SetFixedRefreshRate(144); // not recommended in low-end machine
+
+    return app;
 }

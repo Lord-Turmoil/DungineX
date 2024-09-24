@@ -58,6 +58,13 @@ void OpenGLWindow::SetVSync(bool enabled)
     }
 }
 
+int OpenGLWindow::GetRefreshRate() const
+{
+    auto monitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+    return mode->refreshRate;
+}
+
 void* OpenGLWindow::GetNativeWindow() const
 {
     return _window;

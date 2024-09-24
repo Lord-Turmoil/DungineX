@@ -41,6 +41,8 @@ public:
         return _data.Flags & VSync;
     }
 
+    int GetRefreshRate() const override;
+
     void* GetNativeWindow() const override;
 
 private:

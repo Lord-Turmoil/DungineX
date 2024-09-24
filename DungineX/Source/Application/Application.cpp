@@ -12,7 +12,8 @@ DGEX_BEGIN
 
 Application* Application::_sInstance = nullptr;
 
-Application::Application(ApplicationSpecification specification) : _specification(std::move(specification))
+Application::Application(ApplicationSpecification specification)
+    : _specification(std::move(specification)), _sync(false)
 {
     DGEX_ASSERT(!_sInstance, DGEX_MSG_APPLICATION_ALREADY_CREATED);
     _sInstance = this;
@@ -85,6 +86,35 @@ void Application::Close()
 
         _interfaces.PopInterface();
         interface = _interfaces.CurrentInterface();
+    }
+}
+
+void Application::SetFixedRefreshRate(int refreshRate, bool sync)
+{
+    if (refreshRate == 0)
+    {
+        _sync = true;
+        return;
+    }
+
+    int hardware = _window->GetRefreshRate();
+    if ((refreshRate == hardware) && sync)
+    {
+        _sync = true;
+        return;
+    }
+
+    _sync = false;
+    if (refreshRate < hardware)
+    {
+        // update is slower than hardware
+        _updateInterval = _renderInterval = 1.0f / static_cast<float>(refreshRate);
+    }
+    else
+    {
+        // hardware is slower than update
+        _updateInterval = 1.0f / static_cast<float>(refreshRate);
+        _renderInterval = 1.0f / static_cast<float>(hardware);
     }
 }
 
@@ -190,8 +220,12 @@ bool Application::_OnInterfaceClose(InterfaceCloseEvent& e)
 
 void Application::_Run()
 {
-    float frameCount = 0.0;
+    float updateFrameCount = 0.0;
+    float renderFrameCount = 0.0;
     float frameTime = 0.0;
+
+    timestamp_t lastUpdate = 0.0;
+    timestamp_t lastRender = 0.0;
 
     _window->Attach();
     while (_isRunning)
@@ -201,49 +235,86 @@ void Application::_Run()
         _lastFrameTime = time;
 
         // Poll events
-        _eventBuffer.SwapBuffer();
-
-        // Dispatch window events
-        for (auto& event : _eventBuffer)
+        if (_sync)
         {
-            EventDispatcher dispatcher(event);
-            dispatcher.Dispatch<WindowCloseEvent>(DGEX_BIND_EVENT_FN(Application::_OnWindowClose));
-            dispatcher.Dispatch<WindowResizeEvent>(DGEX_BIND_EVENT_FN(Application::_OnWindowResize));
-            dispatcher.Dispatch<InterfaceTransitEvent>(DGEX_BIND_EVENT_FN(Application::_OnInterfaceTransit));
-            dispatcher.Dispatch<InterfaceChangeEvent>(DGEX_BIND_EVENT_FN(Application::_OnInterfaceChange));
-            dispatcher.Dispatch<InterfaceCloseEvent>(DGEX_BIND_EVENT_FN(Application::_OnInterfaceClose));
-        }
-        if (!_isRunning)
-        {
-            break;
-        }
-        for (auto& event : _eventBuffer)
-        {
-            if (!event->Handled)
+            if (_Update(delta))
             {
-                _currentInterface->_OnEvent(event);
+                break;
+            }
+            updateFrameCount += 1.0f;
+            _Render();
+            renderFrameCount += 1.0f;
+        }
+        else
+        {
+            lastUpdate += delta;
+            if (lastUpdate > _updateInterval)
+            {
+                if (_Update(_updateInterval))
+                {
+                    break;
+                }
+                lastUpdate = 0.0;
+                updateFrameCount += 1.0f;
+            }
+
+            lastRender += delta;
+            if (lastRender > _renderInterval)
+            {
+                _Render();
+                lastRender = 0.0;
+                renderFrameCount += 1.0f;
             }
         }
 
-        // Update and render
-        _currentInterface->OnUpdate(delta);
-
-        RenderCommand::ClearDevice();
-        _currentInterface->_OnRender();
-
-        _window->OnRender();
-
-        frameCount += 1.0f;
         frameTime += delta;
         if (frameTime > 1.0f)
         {
-            _fps = frameCount / frameTime;
-            frameCount = 0.0f;
+            _updateFps = updateFrameCount / frameTime;
+            _renderFps = renderFrameCount / frameTime;
+            updateFrameCount = 0.0f;
+            renderFrameCount = 0.0f;
             frameTime = 0.0f;
-            DGEX_CORE_DEBUG("FPS: {0}", _fps);
+            DGEX_CORE_INFO("FPS (Update/Render): {0}/{1}", _updateFps, _renderFps);
         }
     }
     _window->Detach();
+}
+
+inline bool Application::_Update(DeltaTime delta)
+{
+    _eventBuffer.SwapBuffer();
+    // Dispatch window events
+    for (auto& event : _eventBuffer)
+    {
+        EventDispatcher dispatcher(event);
+        dispatcher.Dispatch<WindowCloseEvent>(DGEX_BIND_EVENT_FN(Application::_OnWindowClose));
+        dispatcher.Dispatch<WindowResizeEvent>(DGEX_BIND_EVENT_FN(Application::_OnWindowResize));
+        dispatcher.Dispatch<InterfaceTransitEvent>(DGEX_BIND_EVENT_FN(Application::_OnInterfaceTransit));
+        dispatcher.Dispatch<InterfaceChangeEvent>(DGEX_BIND_EVENT_FN(Application::_OnInterfaceChange));
+        dispatcher.Dispatch<InterfaceCloseEvent>(DGEX_BIND_EVENT_FN(Application::_OnInterfaceClose));
+    }
+    if (!_isRunning)
+    {
+        return true;
+    }
+    for (auto& event : _eventBuffer)
+    {
+        if (!event->Handled)
+        {
+            _currentInterface->_OnEvent(event);
+        }
+    }
+    _currentInterface->OnUpdate(delta);
+
+    return false;
+}
+
+inline void Application::_Render() const
+{
+    RenderCommand::ClearDevice();
+    _currentInterface->_OnRender();
+    _window->OnRender();
 }
 
 DGEX_END
