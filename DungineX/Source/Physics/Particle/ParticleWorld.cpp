@@ -13,7 +13,14 @@ ParticleWorld::~ParticleWorld()
     delete[] _contacts;
 }
 
-void ParticleWorld::Step(real_t delta)
+void ParticleWorld::RemoveParticle(Particle* particle)
+{
+    auto it = std::find(_particles.begin(), _particles.end(), particle);
+    std::swap(*it, _particles.back());
+    _particles.pop_back();
+}
+
+void ParticleWorld::_Step(real_t delta)
 {
     _StartFrame();
 
@@ -32,14 +39,7 @@ void ParticleWorld::Step(real_t delta)
     }
 }
 
-void ParticleWorld::RemoveParticle(Particle* particle)
-{
-    auto it = std::find(_particles.begin(), _particles.end(), particle);
-    std::swap(*it, _particles.back());
-    _particles.pop_back();
-}
-
-void ParticleWorld::_StartFrame()
+void ParticleWorld::_StartFrame() const
 {
     for (auto particle : _particles)
     {
@@ -47,7 +47,7 @@ void ParticleWorld::_StartFrame()
     }
 }
 
-void ParticleWorld::_Integrate(real_t delta)
+void ParticleWorld::_Integrate(real_t delta) const
 {
     for (auto particle : _particles)
     {

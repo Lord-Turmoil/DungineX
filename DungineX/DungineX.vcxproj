@@ -166,6 +166,7 @@
     <ClInclude Include="Include\DgeX\Physics\Particle\ParticleWorld.h" />
     <ClInclude Include="Include\DgeX\Physics\Body\RigidBody.h" />
     <ClInclude Include="Include\DgeX\Physics\Utils\Utils.h" />
+    <ClInclude Include="Include\DgeX\Physics\Core\DWorld.h" />
     <ClInclude Include="Include\DgeX\Renderer\Camera\SceneCamera.h" />
     <ClInclude Include="Include\DgeX\Utils\Math.h" />
     <ClInclude Include="Include\DgeX\EntryPoint.h" />
@@ -343,6 +344,7 @@
     <ClCompile Include="Source\Physics\Particle\ParticleForceGenerator.cpp" />
     <ClCompile Include="Source\Physics\Particle\ParticleLink.cpp" />
     <ClCompile Include="Source\Physics\Particle\ParticleWorld.cpp" />
+    <ClCompile Include="Source\Physics\Core\DWorld.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLInput.cpp" />
     <ClCompile Include="Source\Application\Interface\Interface.cpp" />
     <ClCompile Include="Source\Application\Interface\InterfaceStack.cpp" />

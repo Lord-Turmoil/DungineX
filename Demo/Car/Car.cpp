@@ -36,8 +36,8 @@ real_t Car::_sSpringConstant = 40000.0;
 real_t Car::_sSpringDamping  = 8000.0;
 real_t Car::_sSpringRestLength = (_sBodyOffset[4] - _sWheelOffset[0]).Magnitude() + 0.3;
 
-real_t Car::_sGasPower    = 60000.0;
-real_t Car::_sRotatePower = 10000.0;
+real_t Car::_sGasPower    = 15000.0;
+real_t Car::_sRotatePower = 12000.0;
 
 // clang-format on
 
@@ -127,7 +127,7 @@ void Car::Jump() const
 {
     for (int i = 2; i < 4; i++)
     {
-        _absorber[i].SetSpringConstant(_sSpringConstant * 20);
+        _absorber[i].SetSpringConstant(_sSpringConstant * 1.2);
         _absorber[i].SetRestLength(_sSpringRestLength * 1.2);
         _absorber[i].SetDamping(0.0);
     }
@@ -287,7 +287,7 @@ void Car::OnUpdate(real_t delta)
         {
             if (_desiredRotation[i] == 0.0)
             {
-                _actualRotation[i] *= 0.99;
+                _actualRotation[i] *= 1 - 0.9 * delta;
             }
             else
             {
@@ -381,7 +381,7 @@ void Car::OnRender() const
 
 void Car::_Init(const Vector3& center)
 {
-    Vector3 gravity = Vector3(0, -10.0, 0);
+    Vector3 gravity = Vector3(0, -20.0, 0);
 
     for (int i = 0; i < 2; i++)
     {
@@ -666,7 +666,7 @@ uint32_t Map::AddContact(ParticleContact* contact, uint32_t limit) const
 
 real_t CarController::_sGasTime = 1.5;
 real_t CarController::_sRotateTime = 0.2;
-real_t CarController::_sJumpTime = 0.5;
+real_t CarController::_sJumpTime = 0.1;
 
 void Map::OnRender()
 {
@@ -710,11 +710,6 @@ void CarController::OnUpdate(DeltaTime delta)
             _jumping = true;
             _jumpTime = 0;
             _car->Jump();
-        }
-        else
-        {
-            // prevent constant jump
-            _car->StopJump();
         }
     }
     else

@@ -17,6 +17,8 @@ void CarInterface::OnLoad()
     _InitMap();
     _map.SetCar(&_car);
     _world.GetContactRegistry().Add(&_map);
+    _world.SetSimulationRate(1000);
+    _world.EnableAdaptive(Application::GetInstance()->GetRefreshRate());
 
     _carController.SetCar(&_car);
     _dustController.SetCar(&_car);
@@ -39,6 +41,7 @@ void CarInterface::OnUpdate(DeltaTime delta)
     static timestamp_t elapsed = 0;
 
     _world.Step(delta);
+
     _car.ResetState();
     _carController.OnUpdate(delta);
     _car.OnUpdate(delta);

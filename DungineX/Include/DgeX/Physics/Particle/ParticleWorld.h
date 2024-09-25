@@ -1,21 +1,16 @@
 #pragma once
 
+#include "DgeX/Physics/Core/DWorld.h"
 #include "DgeX/Physics/Particle/ParticleContact.h"
 #include "DgeX/Physics/Particle/ParticleForceGenerator.h"
 
 DPHX_BEGIN
 
-class ParticleWorld final
+class ParticleWorld final : public DWorld
 {
 public:
     ParticleWorld(uint32_t maxContacts, uint32_t iterations = 0);
-    ~ParticleWorld();
-
-    /**
-     * @brief Step the simulation.
-     * @param delta elapsed time since last update
-     */
-    void Step(real_t delta);
+    ~ParticleWorld() override;
 
     void AddParticle(Particle* particle)
     {
@@ -34,16 +29,23 @@ public:
         return _contactRegistry;
     }
 
+protected:
+    /**
+     * @brief Step the simulation.
+     * @param delta elapsed time since last update
+     */
+    void _Step(real_t delta) override;
+
 private:
     /**
      * @brief Prepare the world for the next frame.
      */
-    void _StartFrame();
+    void _StartFrame() const;
 
     /**
      * @brief Integrate to update the position and velocity of particles.
      */
-    void _Integrate(real_t delta);
+    void _Integrate(real_t delta) const;
 
     /**
      * @brief Generate contacts between particles.

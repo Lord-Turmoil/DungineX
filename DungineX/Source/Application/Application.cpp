@@ -12,8 +12,7 @@ DGEX_BEGIN
 
 Application* Application::_sInstance = nullptr;
 
-Application::Application(ApplicationSpecification specification)
-    : _specification(std::move(specification)), _sync(false)
+Application::Application(ApplicationSpecification specification) : _specification(std::move(specification))
 {
     DGEX_ASSERT(!_sInstance, DGEX_MSG_APPLICATION_ALREADY_CREATED);
     _sInstance = this;
@@ -86,35 +85,6 @@ void Application::Close()
 
         _interfaces.PopInterface();
         interface = _interfaces.CurrentInterface();
-    }
-}
-
-void Application::SetFixedRefreshRate(int refreshRate, bool sync)
-{
-    if (refreshRate == 0)
-    {
-        _sync = true;
-        return;
-    }
-
-    int hardware = _window->GetRefreshRate();
-    if ((refreshRate == hardware) && sync)
-    {
-        _sync = true;
-        return;
-    }
-
-    _sync = false;
-    if (refreshRate < hardware)
-    {
-        // update is slower than hardware
-        _updateInterval = _renderInterval = 1.0f / static_cast<float>(refreshRate);
-    }
-    else
-    {
-        // hardware is slower than update
-        _updateInterval = 1.0f / static_cast<float>(refreshRate);
-        _renderInterval = 1.0f / static_cast<float>(hardware);
     }
 }
 
@@ -220,12 +190,9 @@ bool Application::_OnInterfaceClose(InterfaceCloseEvent& e)
 
 void Application::_Run()
 {
-    float updateFrameCount = 0.0;
-    float renderFrameCount = 0.0;
-    float frameTime = 0.0;
-
-    timestamp_t lastUpdate = 0.0;
-    timestamp_t lastRender = 0.0;
+#ifdef DGEX_DEBUG
+    static timestamp_t elapsedTime;
+#endif
 
     _window->Attach();
     while (_isRunning)
@@ -234,49 +201,29 @@ void Application::_Run()
         DeltaTime delta = time - _lastFrameTime;
         _lastFrameTime = time;
 
-        // Poll events
-        if (_sync)
+        if (_Update(delta))
         {
-            if (_Update(delta))
-            {
-                break;
-            }
-            updateFrameCount += 1.0f;
-            _Render();
-            renderFrameCount += 1.0f;
+            break;
+        }
+        _Render();
+
+        if (_averageFrameTime == 0.0f)
+        {
+            _averageFrameTime = delta;
         }
         else
         {
-            lastUpdate += delta;
-            if (lastUpdate > _updateInterval)
-            {
-                if (_Update(_updateInterval))
-                {
-                    break;
-                }
-                lastUpdate = 0.0;
-                updateFrameCount += 1.0f;
-            }
-
-            lastRender += delta;
-            if (lastRender > _renderInterval)
-            {
-                _Render();
-                lastRender = 0.0;
-                renderFrameCount += 1.0f;
-            }
+            _averageFrameTime = _averageFrameTime * 0.99f + delta * 0.01f;
         }
 
-        frameTime += delta;
-        if (frameTime > 1.0f)
+#ifdef DGEX_DEBUG
+        elapsedTime += delta;
+        if (elapsedTime > 1.0f)
         {
-            _updateFps = updateFrameCount / frameTime;
-            _renderFps = renderFrameCount / frameTime;
-            updateFrameCount = 0.0f;
-            renderFrameCount = 0.0f;
-            frameTime = 0.0f;
-            DGEX_CORE_INFO("FPS (Update/Render): {0}/{1}", _updateFps, _renderFps);
+            DGEX_CORE_DEBUG("FPS: {0}", GetFps());
+            elapsedTime = 0.0f;
         }
+#endif
     }
     _window->Detach();
 }

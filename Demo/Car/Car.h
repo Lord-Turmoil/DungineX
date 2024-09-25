@@ -165,7 +165,7 @@ private:
     DgeX::Physics::real_t _elapsed = 0.0;
 
     DgeX::Physics::real_t _minTimeToLive = 0.3;
-    DgeX::Physics::real_t _maxTimeToLive = 1.0;
+    DgeX::Physics::real_t _maxTimeToLive = 0.9;
     DgeX::Physics::real_t _minVelocity = 0.5;
     DgeX::Physics::real_t _maxVelocity = 10.0;
 };

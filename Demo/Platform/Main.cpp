@@ -22,8 +22,5 @@ Application* DgeX::CreateApplication(ApplicationCommandLineArgs args)
     specification.Flags = Default | DisableResize;
     specification.CommandLineArgs = args;
 
-    auto app = new Application(specification);
-    app->SetFixedRefreshRate(60);
-
-    return app;
+    return new Application(specification);
 }

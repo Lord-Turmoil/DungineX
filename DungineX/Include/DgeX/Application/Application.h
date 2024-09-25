@@ -81,39 +81,16 @@ public:
         return { static_cast<float>(GetWidth()), static_cast<float>(GetHeight()) };
     }
 
-    // Update every second.
-    float GetUpdateFps() const
-    {
-        return _updateFps;
-    }
-
-    // Update every second.
     float GetFps() const
     {
-        return _renderFps;
+        DGEX_ASSERT(_averageFrameTime != 0.0f);
+        return 1.0f / _averageFrameTime;
     }
 
-    /**
-     * @brief De-sync the update and render interval.
-     *
-     * @paragraph
-     *
-     * By default, the application will run at the refresh rate of the monitor.
-     * However, if you want higher FPS on a lower refresh rate monitor, you can
-     * manually set the refresh rate. In this case, the application will update
-     * at the desired refresh rate, but still render at the monitor's refresh rate.
-     *
-     * @note
-     *
-     * This is not recommended to set refresh rate higher than hardware, as
-     * performance is not guaranteed.
-     *
-     * @param refreshRate The desired update refresh rate. 0 to sync with monitor.
-     * @param sync Whether to sync with monitor's refresh rate.
-     *             If is true, when refreshRate is the same as monitor's one,
-     *             will ignore the refreshRate and just sync with monitor.
-     */
-    void SetFixedRefreshRate(int refreshRate, bool sync = true);
+    int GetRefreshRate() const
+    {
+        return _window->GetRefreshRate();
+    }
 
 private:
     bool _OnWindowClose(WindowCloseEvent& e);
@@ -139,20 +116,13 @@ private:
     bool _isMinimized = false;
 
     timestamp_t _lastFrameTime = 0.0f;
+    timestamp_t _averageFrameTime = 0.0f;
 
     EventBuffer _eventBuffer;
 
     InterfaceStack _interfaces;
     Interface* _currentInterface = nullptr;
     Interface* _nextInterface = nullptr;
-
-    float _renderFps = 0.0f;
-    float _updateFps = 0.0f;
-
-    float _updateInterval;
-    float _renderInterval;
-
-    bool _sync;
 
 private:
     static Application* _sInstance;
