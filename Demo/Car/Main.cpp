@@ -22,7 +22,7 @@ DgeX::Application* DgeX::CreateApplication(ApplicationCommandLineArgs args)
     specification.CommandLineArgs = args;
 
     auto app = new Application(specification);
-    app->SetFixedRefreshRate(144); // not recommended in low-end machine
+    app->SetFixedRefreshRate(10000, false); // not recommended in low-end machine
 
     return app;
 }

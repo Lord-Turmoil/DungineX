@@ -4,15 +4,15 @@ DGEX_BEGIN
 
 void EventBuffer::PushEvent(const Ref<Event>& event)
 {
+    std::lock_guard lock(_mutex);
     _backBuffer.emplace_back(event);
 }
 
 void EventBuffer::SwapBuffer()
 {
-    _frontBuffer.swap(_backBuffer);
+    std::lock_guard lock(_mutex);
 
-    // There is little chance that new events are pushed during the swap
-    // in which case clear will accidentally delete them.
+    _frontBuffer.swap(_backBuffer);
     _backBuffer.clear();
 }
 

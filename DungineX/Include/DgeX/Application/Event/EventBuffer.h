@@ -2,6 +2,8 @@
 
 #include "DgeX/Application/Event/Event.h"
 
+#include <mutex>
+
 DGEX_BEGIN
 
 // clang-format off
@@ -26,6 +28,7 @@ public:
 private:
     std::vector<Ref<Event>> _frontBuffer;
     std::vector<Ref<Event>> _backBuffer;
+    std::mutex _mutex;  // for thread safety and race condition
 };
 
 // clang-format on
