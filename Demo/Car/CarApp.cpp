@@ -71,7 +71,7 @@ void CarInterface::OnUpdate(DeltaTime delta)
     _camera.SetZoom(static_cast<float>(zoom));
 
     elapsed += delta;
-    if (elapsed > 1.0)
+    if (elapsed > 5.0)
     {
         DGEX_LOG_INFO("Speed: {0}", _car.GetSpeed());
         elapsed = 0.0;

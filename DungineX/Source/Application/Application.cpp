@@ -228,7 +228,7 @@ void Application::_Run()
 
 #ifdef DGEX_DEBUG
         elapsedTime += delta;
-        if (elapsedTime > 1.0f)
+        if (elapsedTime > 5.0f)
         {
             DGEX_CORE_DEBUG("FPS: {0}", GetFps());
             elapsedTime = 0.0f;
