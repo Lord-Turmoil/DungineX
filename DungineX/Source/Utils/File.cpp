@@ -1,5 +1,3 @@
-#include <fstream>
-
 #include "DgeX/Utils/File.h"
 
 DGEX_BEGIN

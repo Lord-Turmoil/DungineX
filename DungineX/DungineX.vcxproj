@@ -81,6 +81,11 @@
       <AdditionalIncludeDirectories>$(ProjectDir)Include;$(ProjectDir)Vendor\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <ForcedIncludeFiles>
+      </ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -108,6 +113,11 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <ForcedIncludeFiles>
+      </ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -137,6 +147,11 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <ForcedIncludeFiles>
+      </ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -221,7 +236,6 @@
     <ClInclude Include="Include\DgeX\Utils\Random.h" />
     <ClInclude Include="Include\DgeX\Utils\String.h" />
     <ClInclude Include="Include\DgeX\Physics\Core\Macros.h" />
-    <ClInclude Include="Include\pch.h" />
     <ClInclude Include="Vendor\Include\freetype\config\ftconfig.h" />
     <ClInclude Include="Vendor\Include\freetype\config\ftheader.h" />
     <ClInclude Include="Vendor\Include\freetype\config\ftmodule.h" />
@@ -502,7 +516,6 @@
     <ClInclude Include="Vendor\Include\stb\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\pch.cpp" />
     <ClCompile Include="Source\Renderer\Font.cpp" />
     <ClCompile Include="Vendor\Include\msdf-atlas-gen\bitmap-blit.cpp" />
     <ClCompile Include="Vendor\Include\msdf-atlas-gen\charset-parser.cpp" />
@@ -599,7 +612,7 @@
     <ClCompile Include="Source\Renderer\VertexArray.cpp" />
     <ClCompile Include="Source\Utils\File.cpp" />
     <ClCompile Include="Source\Utils\Random.cpp" />
-    <ClCompile Include="Source\Utils\stb_image.cpp" />
+    <ClCompile Include="Vendor\Source\stb\stb_image.cpp" />
     <ClCompile Include="Source\Utils\String.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
