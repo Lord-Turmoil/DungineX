@@ -2,7 +2,7 @@
 #include "image-save.h"
 
 #include <cstdio>
-#include <msdfgen-ext.h>
+#include <msdfgen/msdfgen-ext.h>
 
 namespace msdf_atlas {
 
