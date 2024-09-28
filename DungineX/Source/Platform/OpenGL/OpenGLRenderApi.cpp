@@ -16,6 +16,8 @@
 
 #include "DgeX/Platform/OpenGL/OpenGLShaderTemplate.h"
 #include "DgeX/Renderer/Buffer.h"
+#include "DgeX/Renderer/Camera/Camera.h"
+#include "DgeX/Renderer/Font.h"
 #include "DgeX/Renderer/RenderApi.h"
 #include "DgeX/Renderer/RenderCommand.h"
 #include "DgeX/Renderer/Shader.h"

@@ -1,9 +1,9 @@
 #pragma once
 
-#include <GLFW/glfw3.h>
-
 #include "DgeX/Application/Window.h"
 #include "DgeX/Renderer/GraphicsContext.h"
+
+#include <GLFW/glfw3.h>
 
 DGEX_BEGIN
 

@@ -25,3 +25,6 @@
 #define NOMINMAX
 #endif
 #include <Windows.h>
+#ifdef INFINITE
+#undef INFINITE
+#endif

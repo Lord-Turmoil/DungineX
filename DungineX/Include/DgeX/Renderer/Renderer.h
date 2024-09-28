@@ -2,11 +2,13 @@
 
 #include "DgeX/dgexpch.h"
 
-#include "DgeX/Renderer/Camera/Camera.h"
-#include "DgeX/Renderer/Shader.h"
-#include "Dgex/Renderer/VertexArray.h"
+#include <glm/glm.hpp>
 
 DGEX_BEGIN
+
+class VertexArray;
+class Shader;
+class Camera;
 
 class Renderer
 {

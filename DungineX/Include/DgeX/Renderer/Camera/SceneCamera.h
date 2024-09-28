@@ -1,10 +1,9 @@
 #pragma once
 
+#include "DgeX/Physics/Core/Types.h"
 #include "DgeX/Renderer/Camera/Camera.h"
 
 #include <glm/glm.hpp>
-
-#include "DgeX/Physics/Core/Types.h"
 
 DGEX_BEGIN
 

@@ -6,6 +6,8 @@
 
 DGEX_BEGIN
 
+class Layer;
+
 // clang-format off
 /**
  * @brief Interface is a collection of layers, so that we can manage interface
@@ -73,8 +75,8 @@ public:
     void PopOverlay(Layer* overlay);
 
     const std::string& GetName() const { return _name; }
-    int GetWidth() const { return _width; };
-    int GetHeight() const { return _height; };
+    int GetWidth() const { return _width; }
+    int GetHeight() const { return _height; }
 
 private:
     // Some wrapper functions to hide the implementation details.

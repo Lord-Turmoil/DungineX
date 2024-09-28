@@ -3,6 +3,7 @@
  */
 
 #include "DgeX/Renderer/Font.h"
+#include "DgeX/Renderer/Texture.h"
 
 DGEX_BEGIN
 

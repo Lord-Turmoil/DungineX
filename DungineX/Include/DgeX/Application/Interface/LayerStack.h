@@ -1,8 +1,10 @@
 #pragma once
 
-#include "DgeX/Application/Interface/Layer.h"
+#include "DgeX/dgexpch.h"
 
 DGEX_BEGIN
+
+class Layer;
 
 // clang-format off
 /**

@@ -1,6 +1,8 @@
 #include "DgeX/Renderer/RenderCommand.h"
+#include "DgeX/Renderer/VertexArray.h"
 
 #include <glad/glad.h>
+#include <glm/glm.hpp>
 
 #ifdef DGEX_OPENGL
 

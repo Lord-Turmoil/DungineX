@@ -1,8 +1,10 @@
 #pragma once
 
-#include "DgeX/Application/Interface/Interface.h"
+#include "DgeX/dgexpch.h"
 
 DGEX_BEGIN
+
+class Interface;
 
 class InterfaceStack
 {

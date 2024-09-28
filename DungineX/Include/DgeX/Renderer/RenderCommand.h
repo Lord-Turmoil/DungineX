@@ -2,10 +2,11 @@
 
 #include "DgeX/dgexpch.h"
 
-#include "DgeX/Renderer/Color.h"
-#include "DgeX/Renderer/VertexArray.h"
+#include <glm/glm.hpp>
 
 DGEX_BEGIN
+
+class VertexArray;
 
 namespace RenderCommand
 {

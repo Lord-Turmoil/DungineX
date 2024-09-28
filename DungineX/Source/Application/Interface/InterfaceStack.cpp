@@ -1,4 +1,5 @@
 #include "DgeX/Application/Interface/InterfaceStack.h"
+#include "DgeX/Application/Interface/Interface.h"
 
 DGEX_BEGIN
 

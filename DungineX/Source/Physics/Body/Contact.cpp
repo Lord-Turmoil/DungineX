@@ -1,4 +1,5 @@
 #include "DgeX/Physics/Body/Contact.h"
+#include "DgeX/Physics/Body/RigidBody.h"
 
 DPHX_BEGIN
 

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <cmath>
-
 #include "DgeX/dgexpch.h"
+
+#include <cmath>
 
 DGEX_BEGIN
 

@@ -76,11 +76,6 @@ public:
         return _window->GetHeight();
     }
 
-    glm::vec2 GetSize() const
-    {
-        return { static_cast<float>(GetWidth()), static_cast<float>(GetHeight()) };
-    }
-
     float GetFps() const
     {
         DGEX_ASSERT(_averageFrameTime != 0.0f);

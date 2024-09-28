@@ -3,11 +3,15 @@
 
 #pragma once
 
-#include "DgeX/Renderer/Camera/Camera.h"
-#include "DgeX/Renderer/Texture.h"
-#include "Font.h"
+#include "DgeX/dgexpch.h"
+
+#include <glm/glm.hpp>
 
 DGEX_BEGIN
+
+class Texture;
+class Camera;
+class Font;
 
 namespace RenderApi
 {

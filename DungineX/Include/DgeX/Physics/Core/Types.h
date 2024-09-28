@@ -7,7 +7,7 @@
 #include "DgeX/Physics/Core/Macros.h"
 #include "DgeX/Utils/Math.h"
 
-#include <glm/vec3.hpp>
+#include <glm/glm.hpp>
 
 DPHX_BEGIN
 

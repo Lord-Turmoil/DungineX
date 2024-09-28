@@ -1,8 +1,8 @@
 #pragma once
 
-#include <glm/glm.hpp>
-
 #include "DgeX/dgexpch.h"
+
+#include <glm/glm.hpp>
 
 DGEX_BEGIN
 

@@ -1,11 +1,12 @@
 #pragma once
 
-#include <DgeX/Renderer/Texture.h>
+#include "DgeX/dgexpch.h"
 
-#undef INFINITE
 #include <msdf-atlas-gen/msdf-atlas-gen.h>
 
 DGEX_BEGIN
+
+class Texture;
 
 struct MsdfData
 {

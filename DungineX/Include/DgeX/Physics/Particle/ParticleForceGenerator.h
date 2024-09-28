@@ -1,8 +1,10 @@
 #pragma once
 
-#include "DgeX/Physics/Particle/Particle.h"
+#include "DgeX/Physics/phxpch.h"
 
 DPHX_BEGIN
+
+class Particle;
 
 class ParticleForceGenerator
 {
@@ -14,7 +16,7 @@ public:
      * @param particle apply force on this particle
      * @param delta delta time since last update
      */
-    virtual void UpdateForce(Particle* particle, real_t delta) = 0;
+    virtual void UpdateForce(DgeX::Physics::Particle* particle, real_t delta) = 0;
 };
 
 /**

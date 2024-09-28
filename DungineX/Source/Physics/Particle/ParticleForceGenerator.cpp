@@ -1,4 +1,5 @@
 #include "DgeX/Physics/Particle/ParticleForceGenerator.h"
+#include "DgeX/Physics/Particle/Particle.h"
 
 DPHX_BEGIN
 

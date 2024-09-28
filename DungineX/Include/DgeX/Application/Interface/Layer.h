@@ -1,8 +1,10 @@
 #pragma once
 
-#include "DgeX/Application/Event/Event.h"
+#include "DgeX/dgexpch.h"
 
 DGEX_BEGIN
+
+class Event;
 
 // clang-format off
 /**

@@ -1,9 +1,4 @@
-#include "DgeX/Application/Application.h"
-#include "DgeX/Application/Event/ApplicationEvent.h"
-#include "DgeX/Application/Event/EventEmitter.h"
-#include "DgeX/Application/Interface/Interface.h"
-#include "DgeX/Renderer/RenderApi.h"
-#include "DgeX/Utils/Easing.h"
+#include "DgeX/DgeX.h"
 
 DGEX_BEGIN
 

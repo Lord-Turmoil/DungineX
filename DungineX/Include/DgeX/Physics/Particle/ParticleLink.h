@@ -1,7 +1,6 @@
 #pragma once
 
-#include "DgeX/Physics/phxpch.h"
-#include "ParticleContact.h"
+#include "DgeX/Physics/Particle/ParticleContact.h"
 
 DPHX_BEGIN
 

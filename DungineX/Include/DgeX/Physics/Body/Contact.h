@@ -2,9 +2,9 @@
 
 #include "DgeX/Physics/phxpch.h"
 
-#include "DgeX/Physics/Body/RigidBody.h"
-
 DPHX_BEGIN
+
+class RigidBody;
 
 class Contact
 {
