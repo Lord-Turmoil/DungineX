@@ -3,8 +3,18 @@
 using namespace DgeX;
 using namespace DgeX::Physics;
 
+void CarLayer::OnRender()
+{
+    RenderApi::SetFontFamily(32);
+    RenderApi::DrawString("Use 'W' and 'S' to accelerate and brake.", { 10.0f, 10.0f }, Color::Black.ToVec4());
+    RenderApi::DrawString("Use 'A' and 'D' to steer left and right.", { 10.0f, 40.0f }, Color::Black.ToVec4());
+    RenderApi::DrawString("Press 'R' to reset the car.", { 10.0f, 70.0f }, Color::Black.ToVec4());
+    RenderApi::DrawString("Press 'F' to reset the game.", { 10.0f, 100.0f }, Color::Black.ToVec4());
+}
+
 CarInterface::CarInterface() : Interface("Car"), _dustController(512), _world(128)
 {
+    _carLayer = CreateRef<CarLayer>();
 }
 
 void CarInterface::OnLoad()
@@ -29,6 +39,8 @@ void CarInterface::OnLoad()
 
     _cameraCenter = _car.GetCenter();
     _camera.CenterWorldPoint(_cameraCenter);
+
+    PushLayer(_carLayer.get());
 }
 
 void CarInterface::OnUnload()

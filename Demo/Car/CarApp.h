@@ -3,6 +3,11 @@
 #include <DgeX/DgeX.h>
 #include "Car.h"
 
+class CarLayer : public DgeX::Layer
+{
+    void OnRender() override;
+};
+
 class CarInterface : public DgeX::Interface
 {
 public:
@@ -31,4 +36,6 @@ private:
 
     DgeX::SceneCamera _camera;
     DgeX::Physics::Vector3 _cameraCenter;
+
+    DgeX::Ref<CarLayer> _carLayer;
 };

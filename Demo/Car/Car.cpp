@@ -658,16 +658,6 @@ uint32_t Map::AddContact(ParticleContact* contact, uint32_t limit) const
     return used;
 }
 
-/*
- * ===================================================================
- * ------------------------- CarController ---------------------------
- *  ===================================================================
- */
-
-real_t CarController::_sGasTime = 1.5;
-real_t CarController::_sRotateTime = 0.2;
-real_t CarController::_sJumpTime = 0.1;
-
 void Map::OnRender()
 {
     glm::vec4 color = Color::Black.ToVec4();
@@ -679,9 +669,19 @@ void Map::OnRender()
         {
             break;
         }
-        RenderApi::DrawLine({ it->X, it->Y - 0.1f, -1.0f }, { next->X, next->Y - 0.1f, -2.0f }, color);
+        RenderApi::DrawLine({ it->X, it->Y - 0.05f, -1.0f }, { next->X, next->Y - 0.05f, -2.0f }, color);
     }
 }
+
+/*
+ * ===================================================================
+ * ------------------------- CarController ---------------------------
+ *  ===================================================================
+ */
+
+real_t CarController::_sGasTime = 1.5;
+real_t CarController::_sRotateTime = 0.2;
+real_t CarController::_sJumpTime = 0.1;
 
 void CarController::OnUpdate(DeltaTime delta)
 {
