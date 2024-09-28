@@ -36,6 +36,11 @@ public:
                                           DgeX::Color::FromUInt32(0xFF00CCFF).ToVec4());
         DgeX::RenderApi::DrawFilledCircle({ GetWidth() * 0.75f, GetHeight() * 0.25f }, 100.0f,
                                           DgeX::Color::FromUInt32(0xFFFF00FF).ToVec4());
+
+        DgeX::RenderApi::SetFontFamily(72);
+        DgeX::RenderApi::DrawString("Greetings from DgeX!\nI mean it.", { GetWidth() * 0.5f, GetHeight() * 0.15f },
+                                    DgeX::RenderApi::StringAlignEnum::SA_Center |
+                                        DgeX::RenderApi::StringAlignEnum::SA_VCenter);
     }
 
 private:

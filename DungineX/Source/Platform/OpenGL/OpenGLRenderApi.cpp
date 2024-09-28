@@ -81,6 +81,10 @@ struct RendererData
     static const uint32_t MaxLine = 10000;
     static const uint32_t MaxLineVertices = MaxLine * 2;
 
+    static const uint32_t MaxText = 1000;
+    static const uint32_t MaxTextVertices = MaxText * 4;
+    static const uint32_t MaxTextIndices = MaxText * 6;
+
     Ref<VertexArray> QuadVertexArray;
     Ref<VertexBuffer> QuadVertexBuffer;
     Ref<Shader> QuadShader;
@@ -110,7 +114,7 @@ struct RendererData
     LineVertex* LineVertexBufferBase = nullptr;
     LineVertex* LineVertexBufferPtr = nullptr;
 
-    uint32_t TextCount = 0;
+    uint32_t TextIndexCount = 0;
     TextVertex* TextVertexBufferBase = nullptr;
     TextVertex* TextVertexBufferPtr = nullptr;
 
@@ -119,9 +123,12 @@ struct RendererData
     std::array<Ref<Texture>, MaxTextureSlots> TextureSlots;
     uint32_t TextureSlotIndex = 1; // 0 is reserved for white texture
 
-    Ref<Texture> FontAtlasTexture;
-
     glm::vec4 QuadVertexPositions[4];
+
+    Ref<Texture> FontAtlasTexture;
+    const MsdfData* FontData;
+    FontStyle CurrentFontStyle;
+    bool InvertFont; // Invert Y-axis of font.
 
     Statistics Stats;
 
@@ -216,6 +223,11 @@ void Init()
     sData.QuadVertexPositions[1] = { 0.5f, -0.5f, 0.0f, 1.0f };
     sData.QuadVertexPositions[2] = { 0.5f, 0.5f, 0.0f, 1.0f };
     sData.QuadVertexPositions[3] = { -0.5f, 0.5f, 0.0f, 1.0f };
+
+    sData.FontAtlasTexture = Font::GetDefault()->GetAtlasTexture();
+    sData.FontData = Font::GetDefault()->GetMsdfData();
+    sData.CurrentFontStyle = { { 1.0f, 1.0f, 1.0f, 1.0f }, 48.0f, 0.0f, 0.0f };
+    sData.InvertFont = true;
 
     sData.CameraUniformBuffer = UniformBuffer::Create(sizeof(RendererData::CameraData), 0);
 
@@ -322,7 +334,7 @@ void Flush()
         sData.Stats.DrawCalls++;
     }
 
-    if (sData.TextCount)
+    if (sData.TextIndexCount)
     {
         uint32_t dataSize = static_cast<uint32_t>(reinterpret_cast<uint8_t*>(sData.TextVertexBufferPtr) -
                                                   reinterpret_cast<uint8_t*>(sData.TextVertexBufferBase));
@@ -331,12 +343,17 @@ void Flush()
         sData.FontAtlasTexture->Bind(0);
 
         sData.TextShader->Bind();
-        RenderCommand::DrawIndexed(sData.TextVertexArray, sData.TextCount);
+        RenderCommand::DrawIndexed(sData.TextVertexArray, sData.TextIndexCount);
         sData.Stats.DrawCalls++;
     }
 }
 
-// Primitives
+/*
+ * ===================================================================
+ * -------------------------- Draw Rectangle -------------------------
+ * ===================================================================
+ */
+
 void DrawFilledRect(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
 {
     DrawFilledRect({ position.x, position.y, 0.0f }, size, color);
@@ -347,20 +364,6 @@ void DrawFilledRect(const glm::vec3& position, const glm::vec2& size, const glm:
     glm::mat4 transform = translate(glm::mat4(1.0f), position) * scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
     DrawFilledRect(transform, color);
-}
-
-void DrawFilledRect(const glm::vec2& position, const glm::vec2& size, const Ref<Texture>& texture, float tilingFactor,
-                    const glm::vec4& tintColor)
-{
-    DrawFilledRect({ position.x, position.y, 0.0f }, size, texture, tilingFactor, tintColor);
-}
-
-void DrawFilledRect(const glm::vec3& position, const glm::vec2& size, const Ref<Texture>& texture, float tilingFactor,
-                    const glm::vec4& tintColor)
-{
-    glm::mat4 transform = translate(glm::mat4(1.0f), position) * scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-
-    DrawFilledRect(transform, texture, tilingFactor, tintColor);
 }
 
 void DrawFilledRect(const glm::mat4& transform, const glm::vec4& color)
@@ -386,8 +389,100 @@ void DrawFilledRect(const glm::mat4& transform, const glm::vec4& color)
     sData.Stats.QuadCount++;
 }
 
-void DrawFilledRect(const glm::mat4& transform, const Ref<Texture>& texture, float tilingFactor,
-                    const glm::vec4& tintColor)
+void DrawRotatedFilledRect(const glm::vec2& position, const glm::vec2& size, float radian, const glm::vec4& color)
+{
+    DrawRotatedFilledRect({ position.x, position.y, 0.0f }, size, radian, color);
+}
+
+void DrawRotatedFilledRect(const glm::vec3& position, const glm::vec2& size, float radian, const glm::vec4& color)
+{
+    glm::mat4 transform = translate(glm::mat4(1.0f), position) * rotate(glm::mat4(1.0f), radian, { 0.0f, 0.0f, 1.0f }) *
+                          scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+    DrawFilledRect(transform, color);
+}
+
+void DrawRotatedRect(const glm::vec2& position, const glm::vec2& size, float radian, const glm::vec4& color)
+{
+    DrawRotatedRect({ position.x, position.y, 0.0f }, size, radian, color);
+}
+
+void DrawRotatedRect(const glm::vec3& position, const glm::vec2& size, float radian, const glm::vec4& color)
+{
+    glm::mat4 transform = translate(glm::mat4(1.0f), position) * rotate(glm::mat4(1.0f), radian, { 0.0f, 0.0f, 1.0f }) *
+                          scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+    DrawRect(transform, color);
+}
+
+void DrawRect(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
+{
+    DrawRect({ position.x, position.y, 0.0f }, size, color);
+}
+
+void DrawRect(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
+{
+    glm::vec3 p0 = glm::vec3(position.x - size.x * 0.5f, position.y - size.y * 0.5f, position.z);
+    glm::vec3 p1 = glm::vec3(position.x + size.x * 0.5f, position.y - size.y * 0.5f, position.z);
+    glm::vec3 p2 = glm::vec3(position.x + size.x * 0.5f, position.y + size.y * 0.5f, position.z);
+    glm::vec3 p3 = glm::vec3(position.x - size.x * 0.5f, position.y + size.y * 0.5f, position.z);
+
+    DrawLine(p0, p1, color);
+    DrawLine(p1, p2, color);
+    DrawLine(p2, p3, color);
+    DrawLine(p3, p0, color);
+}
+
+void DrawRect(const glm::mat4& transform, const glm::vec4& color)
+{
+    glm::vec3 lineVertices[4];
+    for (size_t i = 0; i < 4; i++)
+    {
+        lineVertices[i] = transform * sData.QuadVertexPositions[i];
+    }
+    DrawLine(lineVertices[0], lineVertices[1], color);
+    DrawLine(lineVertices[1], lineVertices[2], color);
+    DrawLine(lineVertices[2], lineVertices[3], color);
+    DrawLine(lineVertices[3], lineVertices[0], color);
+}
+
+/*
+ * ===================================================================
+ * -------------------------- Draw Texture ---------------------------
+ * ===================================================================
+ */
+
+void DrawTexture(const glm::vec2& position, const glm::vec2& size, const Ref<Texture>& texture, float tilingFactor,
+                 const glm::vec4& tintColor)
+{
+    DrawTexture({ position.x, position.y, 0.0f }, size, texture, tilingFactor, tintColor);
+}
+
+void DrawTexture(const glm::vec3& position, const glm::vec2& size, const Ref<Texture>& texture, float tilingFactor,
+                 const glm::vec4& tintColor)
+{
+    glm::mat4 transform = translate(glm::mat4(1.0f), position) * scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+    DrawTexture(transform, texture, tilingFactor, tintColor);
+}
+
+void DrawRotatedTexture(const glm::vec2& position, const glm::vec2& size, float radian, const Ref<Texture>& texture,
+                        float tilingFactor, const glm::vec4& tintColor)
+{
+    DrawRotatedTexture({ position.x, position.y, 0.0f }, size, radian, texture, tilingFactor, tintColor);
+}
+
+void DrawRotatedTexture(const glm::vec3& position, const glm::vec2& size, float radian, const Ref<Texture>& texture,
+                        float tilingFactor, const glm::vec4& tintColor)
+{
+    glm::mat4 transform = translate(glm::mat4(1.0f), position) * rotate(glm::mat4(1.0f), radian, { 0.0f, 0.0f, 1.0f }) *
+                          scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+    DrawTexture(transform, texture, tilingFactor, tintColor);
+}
+
+void DrawTexture(const glm::mat4& transform, const Ref<Texture>& texture, float tilingFactor,
+                 const glm::vec4& tintColor)
 {
     constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
 
@@ -431,81 +526,11 @@ void DrawFilledRect(const glm::mat4& transform, const Ref<Texture>& texture, flo
     sData.Stats.QuadCount++;
 }
 
-void DrawRotatedFilledRect(const glm::vec2& position, const glm::vec2& size, float radian, const glm::vec4& color)
-{
-    DrawRotatedFilledRect({ position.x, position.y, 0.0f }, size, radian, color);
-}
-
-void DrawRotatedFilledRect(const glm::vec3& position, const glm::vec2& size, float radian, const glm::vec4& color)
-{
-    glm::mat4 transform = translate(glm::mat4(1.0f), position) * rotate(glm::mat4(1.0f), radian, { 0.0f, 0.0f, 1.0f }) *
-                          scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-
-    DrawFilledRect(transform, color);
-}
-
-void DrawRotatedFilledRect(const glm::vec2& position, const glm::vec2& size, float radian, const Ref<Texture>& texture,
-                           float tilingFactor, const glm::vec4& tintColor)
-{
-    DrawRotatedFilledRect({ position.x, position.y, 0.0f }, size, radian, texture, tilingFactor, tintColor);
-}
-
-void DrawRotatedFilledRect(const glm::vec3& position, const glm::vec2& size, float radian, const Ref<Texture>& texture,
-                           float tilingFactor, const glm::vec4& tintColor)
-{
-    glm::mat4 transform = translate(glm::mat4(1.0f), position) * rotate(glm::mat4(1.0f), radian, { 0.0f, 0.0f, 1.0f }) *
-                          scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-
-    DrawFilledRect(transform, texture, tilingFactor, tintColor);
-}
-
-void DrawRect(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
-{
-    DrawRect({ position.x, position.y, 0.0f }, size, color);
-}
-
-void DrawRect(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
-{
-    glm::vec3 p0 = glm::vec3(position.x - size.x * 0.5f, position.y - size.y * 0.5f, position.z);
-    glm::vec3 p1 = glm::vec3(position.x + size.x * 0.5f, position.y - size.y * 0.5f, position.z);
-    glm::vec3 p2 = glm::vec3(position.x + size.x * 0.5f, position.y + size.y * 0.5f, position.z);
-    glm::vec3 p3 = glm::vec3(position.x - size.x * 0.5f, position.y + size.y * 0.5f, position.z);
-
-    DrawLine(p0, p1, color);
-    DrawLine(p1, p2, color);
-    DrawLine(p2, p3, color);
-    DrawLine(p3, p0, color);
-}
-
-void DrawRect(const glm::mat4& transform, const glm::vec4& color)
-{
-    glm::vec3 lineVertices[4];
-    for (size_t i = 0; i < 4; i++)
-    {
-        lineVertices[i] = transform * sData.QuadVertexPositions[i];
-    }
-    DrawLine(lineVertices[0], lineVertices[1], color);
-    DrawLine(lineVertices[1], lineVertices[2], color);
-    DrawLine(lineVertices[2], lineVertices[3], color);
-    DrawLine(lineVertices[3], lineVertices[0], color);
-}
-
-void DrawRotatedRect(const glm::vec2& position, const glm::vec2& size, float radian, const glm::vec4& color)
-{
-    DrawRotatedRect({ position.x, position.y, 0.0f }, size, radian, color);
-}
-
-void DrawRotatedRect(const glm::vec3& position, const glm::vec2& size, float radian, const glm::vec4& color)
-{
-    glm::mat4 transform = translate(glm::mat4(1.0f), position) * rotate(glm::mat4(1.0f), radian, { 0.0f, 0.0f, 1.0f }) *
-                          scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-    DrawRect(transform, color);
-}
-
-// static void DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src);
-// static void DrawString(const std::string& string, Ref<Font> font, const glm::mat4& transform,
-//                        const TextParams& textParams);
-// static void DrawString(const std::string& string, const glm::mat4& transform, const TextComponent& component);
+/*
+ * ===================================================================
+ * -------------------------- Draw Circle ----------------------------
+ * ===================================================================
+ */
 
 void DrawFilledCircle(const glm::vec2& position, float radius, const glm::vec4& color)
 {
@@ -554,6 +579,26 @@ void DrawCircle(const glm::vec3& position, float radius, const glm::vec4& color)
     }
 }
 
+/*
+ * ===================================================================
+ * --------------------------- Draw Line -----------------------------
+ * ===================================================================
+ */
+
+float GetLineWidth()
+{
+    return sData.LineWidth;
+}
+
+void SetLineWidth(float width)
+{
+    // Flush line buffer if line width changes.
+    NextBatch();
+
+    sData.LineWidth = width;
+    RenderCommand::SetLineWidth(width);
+}
+
 void DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color)
 {
     if (sData.LineVertexCount >= RendererData::MaxLineVertices)
@@ -572,19 +617,315 @@ void DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color)
     sData.LineVertexCount += 2;
 }
 
-float GetLineWidth()
+/*
+ * ===================================================================
+ * --------------------------- Draw Text -----------------------------
+ * ===================================================================
+ */
+
+void SetFontFamily(float fontSize, const Ref<Font>& font)
 {
-    return sData.LineWidth;
+    sData.CurrentFontStyle.FontSize = fontSize;
+
+    if (font)
+    {
+        NextBatch();
+        sData.FontAtlasTexture = font->GetAtlasTexture();
+        sData.FontData = font->GetMsdfData();
+    }
 }
 
-void SetLineWidth(float width)
+bool InvertFont()
 {
-    // Flush line buffer if line width changes.
-    NextBatch();
-
-    sData.LineWidth = width;
-    RenderCommand::SetLineWidth(width);
+    return sData.InvertFont;
 }
+
+void InvertFont(bool invert)
+{
+    sData.InvertFont = invert;
+}
+
+void GetFontColor(glm::vec4* color)
+{
+    if (color)
+    {
+        *color = sData.CurrentFontStyle.Color;
+    }
+}
+
+void SetFontColor(const glm::vec4& color, glm::vec4* old)
+{
+    GetFontColor(old);
+    sData.CurrentFontStyle.Color = color;
+}
+
+void GetFontStyle(FontStyle* style)
+{
+    if (style)
+    {
+        *style = sData.CurrentFontStyle;
+    }
+}
+
+void SetFontStyle(const FontStyle* style, FontStyle* old)
+{
+    GetFontStyle(old);
+    if (style)
+    {
+        sData.CurrentFontStyle = *style;
+    }
+}
+
+void DrawString(const std::string& string, const glm::vec2& position, StringAlign align)
+{
+    DrawString(string, { position.x, position.y, 0.0f }, align);
+}
+
+void DrawString(const std::string& string, const glm::vec3& position, StringAlign align)
+{
+    DrawString(string, position, sData.CurrentFontStyle.Color, align);
+}
+
+void DrawString(const std::string& string, const glm::vec2& position, const glm::vec4& color, StringAlign align)
+{
+    DrawString(string, { position.x, position.y, 0.0f }, color, align);
+}
+
+void DrawString(const std::string& string, const glm::vec3& position, const glm::vec4& color, StringAlign align)
+{
+    glm::mat4 transform =
+        translate(glm::mat4(1.0f), position) *
+        scale(glm::mat4(1.0f),
+              { sData.CurrentFontStyle.FontSize,
+                sData.InvertFont ? -sData.CurrentFontStyle.FontSize : sData.CurrentFontStyle.FontSize, 1.0f });
+    DrawString(transform, string, color, align);
+}
+
+void DrawRotatedString(const std::string& string, const glm::vec2& position, float radian, StringAlign align)
+{
+    DrawRotatedString(string, { position.x, position.y, 0.0f }, radian, align);
+}
+
+void DrawRotatedString(const std::string& string, const glm::vec3& position, float radian, StringAlign align)
+{
+    DrawRotatedString(string, position, radian, sData.CurrentFontStyle.Color, align);
+}
+
+void DrawRotatedString(const std::string& string, const glm::vec2& position, float radian, const glm::vec4& color,
+                       StringAlign align)
+{
+    DrawRotatedString(string, { position.x, position.y, 0.0f }, radian, color, align);
+}
+
+void DrawRotatedString(const std::string& string, const glm::vec3& position, float radian, const glm::vec4& color,
+                       StringAlign align)
+{
+    glm::mat4 transform =
+        translate(glm::mat4(1.0f), position) * rotate(glm::mat4(1.0f), radian, { 0.0f, 0.0f, 1.0f }) *
+        scale(glm::mat4(1.0f),
+              { sData.CurrentFontStyle.FontSize,
+                sData.InvertFont ? -sData.CurrentFontStyle.FontSize : sData.CurrentFontStyle.FontSize, 1.0f });
+    DrawString(transform, string, color, align);
+}
+
+void DrawString(const glm::mat4& transform, const std::string& string, StringAlign align)
+{
+    DrawString(transform, string, sData.CurrentFontStyle.Color, align);
+}
+
+static void AlignTextHorizontal(TextVertex** begin, TextVertex* end, float lineWidth, StringAlign align);
+static void AlignTextVertical(TextVertex* begin, TextVertex* end, float lineHeight, float textHeight,
+                              StringAlign align);
+
+void DrawString(const glm::mat4& transform, const std::string& string, const glm::vec4& color, StringAlign align)
+{
+    if (sData.TextIndexCount >= RendererData::MaxTextIndices)
+    {
+        NextBatch();
+    }
+
+    const auto& fontGeometry = sData.FontData->FontGeometry;
+    const auto& metrics = fontGeometry.getMetrics();
+
+    const float spaceGlyphAdvance = static_cast<float>(fontGeometry.getGlyph(' ')->getAdvance());
+
+    double x = 0.0;
+    double fsScale = 1.0 / (metrics.ascenderY - metrics.descenderY);
+    double y = 0.0;
+
+    TextVertex* lineBegin = sData.TextVertexBufferPtr;
+    TextVertex* textBegin = sData.TextVertexBufferPtr;
+    for (size_t i = 0; i < string.size(); i++)
+    {
+        char character = string[i];
+        if (character == '\r')
+        {
+            continue;
+        }
+
+        if (character == '\n')
+        {
+            AlignTextHorizontal(&lineBegin, sData.TextVertexBufferPtr, static_cast<float>(x), align);
+            x = 0;
+            y -= fsScale * metrics.lineHeight + sData.CurrentFontStyle.LineSpacing;
+            continue;
+        }
+
+        if (character == ' ')
+        {
+            float advance = spaceGlyphAdvance;
+            if (i < string.size() - 1)
+            {
+                char nextCharacter = string[i + 1];
+                double dAdvance;
+                fontGeometry.getAdvance(dAdvance, character, nextCharacter);
+                advance = static_cast<float>(dAdvance);
+            }
+            x += fsScale * advance + sData.CurrentFontStyle.LetterSpacing;
+            continue;
+        }
+
+        if (character == '\t')
+        {
+            // We assume tab width is 4 spaces.
+            x += 4.0f * (fsScale * spaceGlyphAdvance + sData.CurrentFontStyle.LetterSpacing);
+            continue;
+        }
+
+        auto glyph = fontGeometry.getGlyph(character);
+        if (!glyph)
+        {
+            glyph = fontGeometry.getGlyph('?');
+        }
+        if (!glyph)
+        {
+            return;
+        }
+
+        double al, ab, ar, at;
+        glyph->getQuadAtlasBounds(al, ab, ar, at);
+        glm::vec2 texCoordMin(static_cast<float>(al), static_cast<float>(ab));
+        glm::vec2 texCoordMax(static_cast<float>(ar), static_cast<float>(at));
+
+        double pl, pb, pr, pt;
+        glyph->getQuadPlaneBounds(pl, pb, pr, pt);
+        glm::vec2 quadMin(static_cast<float>(pl), static_cast<float>(pb));
+        glm::vec2 quadMax(static_cast<float>(pr), static_cast<float>(pt));
+
+        quadMin *= fsScale;
+        quadMax *= fsScale;
+        quadMin += glm::vec2(x, y);
+        quadMax += glm::vec2(x, y);
+
+        float texWidth = 1.0f / static_cast<float>(sData.FontAtlasTexture->GetWidth());
+        float texHeight = 1.0f / static_cast<float>(sData.FontAtlasTexture->GetHeight());
+        texCoordMin *= glm::vec2(texWidth, texHeight);
+        texCoordMax *= glm::vec2(texWidth, texHeight);
+
+        // render here
+        sData.TextVertexBufferPtr->Position = transform * glm::vec4(quadMin, 0.0f, 1.0f);
+        sData.TextVertexBufferPtr->Color = color;
+        sData.TextVertexBufferPtr->TexCoord = texCoordMin;
+        sData.TextVertexBufferPtr++;
+
+        sData.TextVertexBufferPtr->Position = transform * glm::vec4(quadMin.x, quadMax.y, 0.0f, 1.0f);
+        sData.TextVertexBufferPtr->Color = color;
+        sData.TextVertexBufferPtr->TexCoord = { texCoordMin.x, texCoordMax.y };
+        sData.TextVertexBufferPtr++;
+
+        sData.TextVertexBufferPtr->Position = transform * glm::vec4(quadMax, 0.0f, 1.0f);
+        sData.TextVertexBufferPtr->Color = color;
+        sData.TextVertexBufferPtr->TexCoord = texCoordMax;
+        sData.TextVertexBufferPtr++;
+
+        sData.TextVertexBufferPtr->Position = transform * glm::vec4(quadMax.x, quadMin.y, 0.0f, 1.0f);
+        sData.TextVertexBufferPtr->Color = color;
+        sData.TextVertexBufferPtr->TexCoord = { texCoordMax.x, texCoordMin.y };
+        sData.TextVertexBufferPtr++;
+
+        sData.TextIndexCount += 6;
+        sData.Stats.QuadCount++;
+
+        if (i < string.size() - 1)
+        {
+            double advance = glyph->getAdvance();
+            char nextCharacter = string[i + 1];
+            fontGeometry.getAdvance(advance, character, nextCharacter);
+            x += fsScale * advance + sData.CurrentFontStyle.LetterSpacing;
+        }
+    }
+
+    AlignTextHorizontal(&lineBegin, sData.TextVertexBufferPtr, static_cast<float>(x), align);
+    AlignTextVertical(textBegin, sData.TextVertexBufferPtr, static_cast<float>(fsScale * metrics.lineHeight),
+                      static_cast<float>(y), align);
+}
+
+void AlignTextHorizontal(TextVertex** begin, TextVertex* end, float lineWidth, StringAlign align)
+{
+    if (*begin == end)
+    {
+        return;
+    }
+
+    float translateX;
+    if (align & SA_Center)
+    {
+        translateX = -lineWidth * 0.5f;
+    }
+    else if (align & SA_Right)
+    {
+        translateX = -lineWidth;
+    }
+    else
+    {
+        *begin = end;
+        return;
+    }
+    translateX *= sData.CurrentFontStyle.FontSize;
+    glm::mat4 transform = glm::translate(glm::mat4(1.0f), { translateX, 0.0f, 0.0f });
+
+    for (auto it = *begin; it != end; it++)
+    {
+        it->Position = transform * glm::vec4(it->Position, 1.0f);
+    }
+
+    *begin = end;
+}
+
+void AlignTextVertical(TextVertex* begin, TextVertex* end, float lineHeight, float textHeight, StringAlign align)
+{
+    if (begin == end)
+    {
+        return;
+    }
+
+    float translateY;
+    if (align & SA_Bottom)
+    {
+        translateY = textHeight - lineHeight * 0.2f;
+    }
+    else if (align & SA_VCenter)
+    {
+        translateY = textHeight * 0.5f + lineHeight * 0.2f;
+    }
+    else
+    {
+        translateY = lineHeight * 0.8f;
+    }
+    translateY *= sData.CurrentFontStyle.FontSize;
+    glm::mat4 transform = glm::translate(glm::mat4(1.0f), { 0.0f, translateY, 0.0f });
+
+    for (auto it = begin; it != end; it++)
+    {
+        it->Position = transform * glm::vec4(it->Position, 1.0f);
+    }
+}
+
+/*
+ * ===================================================================
+ * ---------------------------- Stats --------------------------------
+ * ===================================================================
+ */
 
 void ResetStats()
 {
@@ -596,7 +937,7 @@ Statistics GetStats()
     return sData.Stats;
 }
 
-static void StartBatch()
+void StartBatch()
 {
     sData.QuadIndexCount = 0;
     sData.QuadVertexBufferPtr = sData.QuadVertexBufferBase;
@@ -607,13 +948,13 @@ static void StartBatch()
     sData.LineVertexCount = 0;
     sData.LineVertexBufferPtr = sData.LineVertexBufferBase;
 
-    sData.TextCount = 0;
+    sData.TextIndexCount = 0;
     sData.TextVertexBufferPtr = sData.TextVertexBufferBase;
 
     sData.TextureSlotIndex = 1;
 }
 
-static void NextBatch()
+void NextBatch()
 {
     Flush();
     StartBatch();

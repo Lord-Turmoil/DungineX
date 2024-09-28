@@ -106,7 +106,7 @@ OpenGLTexture::~OpenGLTexture()
     DGEX_CORE_INFO("Texture deleted: {0}", _path);
 }
 
-void OpenGLTexture::SetData(void* data, uint32_t size)
+void OpenGLTexture::SetData(const void* data, uint32_t size)
 {
     uint32_t bpp = _dataFormat == GL_RGBA ? 4 : 3;
     DGEX_ASSERT(size == _width * _height * bpp, DGEX_MSG_TEXTURE_DATA_SIZE);

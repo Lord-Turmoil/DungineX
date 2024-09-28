@@ -38,7 +38,7 @@ public:
         return _path;
     }
 
-    void SetData(void* data, uint32_t size) override;
+    void SetData(const void* data, uint32_t size) override;
 
     void Bind(uint32_t slot = 0) const override;
 
