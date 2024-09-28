@@ -204,13 +204,16 @@ void Application::_Run()
         DeltaTime delta = time - _lastFrameTime;
         _lastFrameTime = time;
 
-        // Skip the frame if the delta time is too large.
-        if (delta < maxDelta)
+        if (delta > maxDelta)
         {
-            if (_Update(delta))
-            {
-                break;
-            }
+            // Skip the frame update if the delta time is too large.
+            _Render();
+            continue;
+        }
+
+        if (_Update(delta))
+        {
+            break;
         }
         _Render();
 
