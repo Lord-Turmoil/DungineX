@@ -194,6 +194,9 @@ void Application::_Run()
     static timestamp_t elapsedTime;
 #endif
 
+    // We need to limit the delta time to prevent a sudden jump in the game.
+    timestamp_t maxDelta = 2.0f * 1.0f / static_cast<timestamp_t>(_window->GetRefreshRate());
+
     _window->Attach();
     while (_isRunning)
     {
@@ -201,9 +204,13 @@ void Application::_Run()
         DeltaTime delta = time - _lastFrameTime;
         _lastFrameTime = time;
 
-        if (_Update(delta))
+        // Skip the frame if the delta time is too large.
+        if (delta < maxDelta)
         {
-            break;
+            if (_Update(delta))
+            {
+                break;
+            }
         }
         _Render();
 
