@@ -1,5 +1,6 @@
 #pragma once
 
+#include <filesystem>
 #include <spdlog/spdlog.h>
 
 #include "DgeX/Common/Base.h"
@@ -101,6 +102,68 @@ private:
 #define DGEX_LOG_WARN(...)
 #define DGEX_LOG_ERROR(...)
 #define DGEX_LOG_CRITICAL(...)
+
+#endif
+
+#ifdef _DGEX_CORE_
+#define DGEX_TIME_LOG DGEX_CORE_INFO
+#else
+#define DGEX_TIME_LOG DGEX_LOG_INFO
+#endif
+
+class TimeLog
+{
+public:
+    TimeLog(std::string message, std::string file, int startLine)
+        : _message(std::move(message)), _start(std::chrono::steady_clock::now()), _file(std::move(file)),
+          _startLine(startLine), _endLine(0)
+    {
+        DGEX_TIME_LOG(">>>>> [{}] {}:{}", _message, _file, _startLine);
+    }
+
+    void End(int endLine)
+    {
+        _endLine = endLine;
+    }
+
+    ~TimeLog()
+    {
+        auto end = std::chrono::steady_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - _start).count();
+        DGEX_TIME_LOG("<<<<< [{}] {}:{} in {:.4} s", _message, _file, _endLine, static_cast<double>(duration) / 1000.0);
+    }
+
+private:
+    std::string _message;
+    std::chrono::time_point<std::chrono::steady_clock> _start;
+    std::string _file;
+    int _startLine;
+    int _endLine;
+};
+
+#ifdef DGEX_ENABLE_TIMING
+
+#define _DGEX_TIME(message, file, line) DgeX::TimeLog __time_log(std::string(message), file, line)
+
+#define DGEX_TIME(message) _DGEX_TIME(message, std::filesystem::path(__FILE__).filename().string(), __LINE__)
+#define DGEX_TIME_BEGIN(message)                                                                                       \
+    do                                                                                                                 \
+    {                                                                                                                  \
+    DGEX_TIME(message)
+#define DGEX_TIME_END()                                                                                                \
+    __time_log.End(__LINE__);                                                                                          \
+    }                                                                                                                  \
+    while (0)
+
+#else
+
+#define _DGEX_TIME_BEGIN(message, file, line) DGEX_TIME_LOG(">>>>> [{}] {}:{}", message, file, line)
+#define _DGEX_TIME_END(file, line)            DGEX_TIME_LOG("<<<<< {}:{}", file, line)
+
+#define DGEX_TIME(message) DGEX_TIME_LOG(message)
+#define DGEX_TIME_BEGIN(message)                                                                                       \
+    _DGEX_TIME_BEGIN(message, std::filesystem::path(__FILE__).filename().string(), __LINE__)
+#define DGEX_TIME_END() _DGEX_TIME_END(std::filesystem::path(__FILE__).filename().string(), __LINE__)
 
 #endif
 

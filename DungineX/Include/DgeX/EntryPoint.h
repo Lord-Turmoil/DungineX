@@ -33,16 +33,19 @@ int main(int argc, char* argv[])
     DGEX_CORE_ERROR("DgeX Engine {0}.{1}.{2}", DGEX_VERSION_MAJOR, DGEX_VERSION_MINOR, DGEX_VERSION_PATCH);
     DGEX_CORE_ERROR("Copyright (C) 2024 New Desire Studios");
 
-    DGEX_LOG_INFO("Initializing application");
-    const auto app = DGEX CreateApplication({ argc, argv });
-    DGEX_LOG_INFO("Application initialized");
+    DgeX::Application* app;
+    DGEX_TIME_BEGIN("Initialize application");
+    app = DGEX CreateApplication({ argc, argv });
+    DGEX_TIME_END();
 
     DGEX_LOG_INFO("Running application");
     app->Run();
     DGEX_LOG_INFO("Application stopped");
 
-    DGEX_CORE_INFO("Shutting down DgeX Engine");
+    DGEX_TIME_BEGIN("Shutting down DgeX Engine");
     delete app;
+    DGEX_TIME_END();
+
     DGEX_LOG_INFO("See you next time!");
 
 #ifdef DGEX_ATTACH_CONSOLE

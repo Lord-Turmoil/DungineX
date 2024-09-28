@@ -16,5 +16,7 @@ IncludeCategories:
     Priority: 3
 AlignConsecutiveMacros: true
 SeparateDefinitionBlocks: Always
+BreakBeforeBraces: Custom
 BraceWrapping:
   AfterUnion: true
+  BeforeWhile: false

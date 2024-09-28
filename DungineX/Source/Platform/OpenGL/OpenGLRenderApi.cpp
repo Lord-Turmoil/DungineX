@@ -148,6 +148,8 @@ static void NextBatch();
 
 void Init()
 {
+    DGEX_TIME_BEGIN("Initialize OpenGL render API");
+
     sData.QuadVertexBuffer = VertexBuffer::Create(RendererData::MaxQuadVertices * sizeof(QuadVertex));
     sData.QuadVertexBuffer->SetLayout({ { ShaderDataType::Float3, "a_Position" },
                                         { ShaderDataType::Float4, "a_Color" },
@@ -224,18 +226,23 @@ void Init()
     sData.QuadVertexPositions[2] = { 0.5f, 0.5f, 0.0f, 1.0f };
     sData.QuadVertexPositions[3] = { -0.5f, 0.5f, 0.0f, 1.0f };
 
-    sData.FontAtlasTexture = Font::GetDefault()->GetAtlasTexture();
-    sData.FontData = Font::GetDefault()->GetMsdfData();
+    DGEX_TIME_BEGIN("Initialize font");
+    FontRegistry::Init();
+    sData.FontAtlasTexture = FontRegistry::GetDefault()->GetAtlasTexture();
+    sData.FontData = FontRegistry::GetDefault()->GetMsdfData();
     sData.CurrentFontStyle = { { 1.0f, 1.0f, 1.0f, 1.0f }, 48.0f, 0.0f, 0.0f };
     sData.InvertFont = true;
+    DGEX_TIME_END();
 
     sData.CameraUniformBuffer = UniformBuffer::Create(sizeof(RendererData::CameraData), 0);
 
-    DGEX_CORE_INFO("Render API initialized");
+    DGEX_TIME_END();
 }
 
 void Shutdown()
 {
+    DGEX_TIME_BEGIN("Shutdown render API");
+
     delete[] sData.QuadVertexBufferBase;
     sData.QuadVertexBufferBase = nullptr;
     delete[] sData.CircleVertexBufferBase;
@@ -256,7 +263,12 @@ void Shutdown()
     sData.TextureSlots.fill(nullptr);
     sData.WhiteTexture.reset();
 
-    DGEX_CORE_INFO("Render API shutdown");
+    DGEX_TIME_BEGIN("Shutdown font registry");
+    FontRegistry::Shutdown();
+    sData.FontAtlasTexture.reset();
+    DGEX_TIME_END();
+
+    DGEX_TIME_END();
 }
 
 static glm::vec4 sClearColor = { 0.f, 0.f, 0.f, 1.f };

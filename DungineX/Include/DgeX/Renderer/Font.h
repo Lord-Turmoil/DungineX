@@ -29,12 +29,31 @@ public:
         return _atlasTexture;
     }
 
-    static Ref<Font> GetDefault();
     static Ref<Font> Load(const std::filesystem::path& path);
 
 private:
     MsdfData* _data;
     Ref<Texture> _atlasTexture;
+};
+
+/**
+ * @brief
+ * A class to hold all loaded fonts.
+ */
+class FontRegistry
+{
+public:
+    static void Init();
+    static void Shutdown();
+
+    static void Add(const std::string& fontName, const Ref<Font>& font);
+    static Ref<Font> Load(const std::string& fontName, const std::filesystem::path& path);
+    static void UnLoad(const std::string& fontName);
+    static Ref<Font> Get(const std::string& fontName);
+    static Ref<Font> GetDefault();
+
+private:
+    static std::unordered_map<std::string, Ref<Font>> _sFonts;
 };
 
 DGEX_END

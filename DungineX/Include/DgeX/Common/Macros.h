@@ -25,6 +25,7 @@
 
 // Only do logging with this macro defined
 #define DGEX_ENABLE_LOGGING
+#define DGEX_ENABLE_TIMING
 
 // Whether log trace messages
 // #define DGEX_VERBOSE_LOGGING

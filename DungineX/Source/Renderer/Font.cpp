@@ -107,22 +107,60 @@ Font::~Font()
     delete _data;
 }
 
-Ref<Font> Font::GetDefault()
-{
-    static Ref<Font> sDefaultFont;
-    if (!sDefaultFont)
-    {
-        sDefaultFont = Load("C:/Windows/Fonts/segoeui.ttf");
-    }
-
-    DGEX_ASSERT(sDefaultFont, "Default font not available!");
-
-    return sDefaultFont;
-}
-
 Ref<Font> Font::Load(const std::filesystem::path& path)
 {
     return CreateRef<Font>(path);
+}
+
+std::unordered_map<std::string, Ref<Font>> FontRegistry::_sFonts;
+
+void FontRegistry::Init()
+{
+}
+
+void FontRegistry::Shutdown()
+{
+    _sFonts.clear();
+}
+
+void FontRegistry::Add(const std::string& fontName, const Ref<Font>& font)
+{
+    _sFonts[fontName] = font;
+}
+
+Ref<Font> FontRegistry::Load(const std::string& fontName, const std::filesystem::path& path)
+{
+    Ref<Font> font = Font::Load(path);
+    _sFonts[fontName] = font;
+    return font;
+}
+
+void FontRegistry::UnLoad(const std::string& fontName)
+{
+    _sFonts.erase(fontName);
+}
+
+Ref<Font> FontRegistry::Get(const std::string& fontName)
+{
+    auto it = _sFonts.find(fontName);
+    if (it != _sFonts.end())
+    {
+        return it->second;
+    }
+    return nullptr;
+}
+
+Ref<Font> FontRegistry::GetDefault()
+{
+    Ref<Font> font = Get("SegoeUI");
+    if (!font)
+    {
+        font = Load("SegoeUI", "C:/Windows/Fonts/segoeui.ttf");
+    }
+
+    DGEX_ASSERT(font, "Default font not available!");
+
+    return font;
 }
 
 DGEX_END
