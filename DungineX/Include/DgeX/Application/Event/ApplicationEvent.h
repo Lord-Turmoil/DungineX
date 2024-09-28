@@ -2,6 +2,8 @@
 
 #include "DgeX/Application/Event/Event.h"
 
+#include <sstream>
+
 DGEX_BEGIN
 
 class WindowEvent : public Event

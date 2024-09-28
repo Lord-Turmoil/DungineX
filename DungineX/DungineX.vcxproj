@@ -197,12 +197,12 @@
     <ClInclude Include="Include\DgeX\Application\Interface\InterfaceStack.h" />
     <ClInclude Include="Include\DgeX\Application\Interface\Layer.h" />
     <ClInclude Include="Include\DgeX\Application\Interface\LayerStack.h" />
-    <ClInclude Include="Include\DgeX\Common\DeltaTime.h" />
+    <ClInclude Include="Include\DgeX\Core\DeltaTime.h" />
     <ClInclude Include="Include\DgeX\Core\UUID.h" />
-    <ClInclude Include="Include\DgeX\dgexpch.h" />
+    <ClInclude Include="Include\DgeX\Common\Common.h" />
     <ClInclude Include="Include\DgeX\Physics\Core\Base.h" />
     <ClInclude Include="Include\DgeX\Physics\Core\Types.h" />
-    <ClInclude Include="Include\DgeX\Physics\phxpch.h" />
+    <ClInclude Include="Include\DgeX\Physics\Common.h" />
     <ClInclude Include="Include\DgeX\Physics\Physics.h" />
     <ClInclude Include="Include\DgeX\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="Include\DgeX\Platform\OpenGL\OpenGLGraphicsContext.h" />
@@ -585,10 +585,8 @@
     <ClCompile Include="Source\Application\Window.cpp" />
     <ClCompile Include="Source\Common\Log.cpp" />
     <ClCompile Include="Source\Core\UUID.cpp" />
-    <ClCompile Include="Source\dgexpch.cpp" />
     <ClCompile Include="Source\Physics\Core\Types.cpp" />
     <ClCompile Include="Source\Physics\Particle\Particle.cpp" />
-    <ClCompile Include="Source\Physics\phxpch.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLGraphicsContext.cpp" />
     <ClCompile Include="Source\Platform\OpenGL\OpenGLRenderApi.cpp" />

@@ -1,6 +1,9 @@
 #pragma once
 
-#include "DgeX/dgexpch.h"
+#include "DgeX/Common/Common.h"
+#include "DgeX/Core/DeltaTime.h"
+
+#include <string>
 
 DGEX_BEGIN
 

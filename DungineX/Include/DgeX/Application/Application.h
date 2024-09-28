@@ -4,6 +4,7 @@
 #include "DgeX/Application/Event/EventBuffer.h"
 #include "DgeX/Application/Interface/InterfaceStack.h"
 #include "DgeX/Application/Window.h"
+#include "DgeX/Core/DeltaTime.h"
 
 DGEX_BEGIN
 

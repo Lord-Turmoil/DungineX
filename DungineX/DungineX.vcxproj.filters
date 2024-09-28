@@ -72,7 +72,7 @@
     <ClInclude Include="Include\DgeX\Core\UUID.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Include\DgeX\Common\DeltaTime.h">
+    <ClInclude Include="Include\DgeX\Core\DeltaTime.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\DgeX\Application\Interface\Interface.h">
@@ -432,7 +432,7 @@
     <ClInclude Include="Include\DgeX\Utils\Math.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Include\DgeX\dgexpch.h">
+    <ClInclude Include="Include\DgeX\Common\Common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\DgeX\Renderer\Shader.h">
@@ -501,7 +501,7 @@
     <ClInclude Include="Include\DgeX\Physics\Physics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Include\DgeX\Physics\phxpch.h">
+    <ClInclude Include="Include\DgeX\Physics\Common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\DgeX\Physics\Core\Macros.h">
@@ -1109,9 +1109,6 @@
     <ClCompile Include="Source\Platform\OpenGL\OpenGLRenderCommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\dgexpch.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1161,9 +1158,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Utils\Random.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Physics\phxpch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Physics\Core\Types.cpp">

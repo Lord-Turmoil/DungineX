@@ -4,8 +4,10 @@
 #include "DgeX/Platform/OpenGL/OpenGLShader.h"
 #include "DgeX/Utils/File.h"
 
-#include <fstream>
 #include <glad/glad.h>
+
+#include <fstream>
+#include <sstream>
 
 #ifdef DGEX_OPENGL
 

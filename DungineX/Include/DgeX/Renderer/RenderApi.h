@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "DgeX/dgexpch.h"
+#include "DgeX/Common/Common.h"
 
 #include <glm/glm.hpp>
 

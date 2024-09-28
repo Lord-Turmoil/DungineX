@@ -1,12 +1,9 @@
 // precompiled header file for DungineX Physics engine
 #pragma once
 
-#include <vector>
-
 #include "DgeX/Common/Base.h"
 #include "DgeX/Common/Macros.h"
 
-#include "DgeX/Common/DeltaTime.h"
 #include "DgeX/Utils/Math.h"
 #include "DgeX/Utils/Random.h"
 

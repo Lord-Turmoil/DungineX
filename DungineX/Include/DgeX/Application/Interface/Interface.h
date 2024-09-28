@@ -2,6 +2,7 @@
 
 #include "DgeX/Application/Event/ApplicationEvent.h"
 #include "DgeX/Application/Interface/LayerStack.h"
+#include "DgeX/Core/DeltaTime.h"
 
 DGEX_BEGIN
 
