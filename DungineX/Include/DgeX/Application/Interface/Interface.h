@@ -2,11 +2,11 @@
 
 #include "DgeX/Application/Event/ApplicationEvent.h"
 #include "DgeX/Application/Interface/LayerStack.h"
-#include "DgeX/Renderer/Camera/InterfaceCamera.h"
 
 DGEX_BEGIN
 
 class Layer;
+class InterfaceCamera;
 
 // clang-format off
 /**

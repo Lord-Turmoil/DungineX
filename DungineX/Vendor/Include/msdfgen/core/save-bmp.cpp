@@ -1,6 +1,4 @@
 
-#define _CRT_SECURE_NO_WARNINGS
-
 #include "save-bmp.h"
 
 #include <cstdio>

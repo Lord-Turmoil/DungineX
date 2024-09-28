@@ -2,9 +2,10 @@
 #include "DgeX/Application/Application.h"
 #include "DgeX/Application/Interface/Layer.h"
 #include "DgeX/Core/UUID.h"
+#include "DgeX/Renderer/Camera/InterfaceCamera.h"
 #include "DgeX/Renderer/RenderApi.h"
 
-#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/glm.hpp>
 
 DGEX_BEGIN
 

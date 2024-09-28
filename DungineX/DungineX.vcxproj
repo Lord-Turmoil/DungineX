@@ -76,7 +76,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)Include;$(ProjectDir)Vendor\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -101,7 +101,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)Include;$(ProjectDir)Vendor\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -130,7 +130,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_PUBLISH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_PUBLISH;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)Include;$(ProjectDir)Vendor\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -221,6 +221,7 @@
     <ClInclude Include="Include\DgeX\Utils\Random.h" />
     <ClInclude Include="Include\DgeX\Utils\String.h" />
     <ClInclude Include="Include\DgeX\Physics\Core\Macros.h" />
+    <ClInclude Include="Include\pch.h" />
     <ClInclude Include="Vendor\Include\freetype\config\ftconfig.h" />
     <ClInclude Include="Vendor\Include\freetype\config\ftheader.h" />
     <ClInclude Include="Vendor\Include\freetype\config\ftmodule.h" />
@@ -501,6 +502,7 @@
     <ClInclude Include="Vendor\Include\stb\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\pch.cpp" />
     <ClCompile Include="Source\Renderer\Font.cpp" />
     <ClCompile Include="Vendor\Include\msdf-atlas-gen\bitmap-blit.cpp" />
     <ClCompile Include="Vendor\Include\msdf-atlas-gen\charset-parser.cpp" />

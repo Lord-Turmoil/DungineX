@@ -1,5 +1,6 @@
 #pragma once
 
+#include "DgeX/Physics/Particle/Particle.h"
 #include "DgeX/Physics/Particle/ParticleForceGenerator.h"
 #include "DgeX/Physics/Particle/ParticleLink.h"
 #include "DgeX/Physics/Particle/ParticleWorld.h"

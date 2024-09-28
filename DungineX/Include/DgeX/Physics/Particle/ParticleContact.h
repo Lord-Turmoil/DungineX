@@ -33,7 +33,7 @@ public:
     /**
      * @brief The depth of penetration at the contact.
      */
-    real_t Penetration;
+    real_t Penetration = 0;
 
     /**
      * @brief
@@ -41,7 +41,7 @@ public:
      * 1.0 means the contact is perfectly elastic, 0.0 means no bounce and the
      * two particles will stick together.
      */
-    real_t Restitution;
+    real_t Restitution = 0;
 
 protected:
     void _Resolve(real_t delta);

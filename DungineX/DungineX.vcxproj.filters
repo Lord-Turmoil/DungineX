@@ -1056,6 +1056,9 @@
     <ClInclude Include="Include\DgeX\Renderer\Font.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\pch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLWindow.cpp">
@@ -1344,6 +1347,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Renderer\Font.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

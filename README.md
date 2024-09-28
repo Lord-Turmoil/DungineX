@@ -72,6 +72,7 @@ For Debug profile (only), in "Linker > Input", add "Ignore Specific Default Libr
 
 ```
 msvcrt.lib
+libcmt.lib
 ```
 
 To avoid creating default console, go to "Linker > System" and change SubSystem to "Windows", then in "Linker > Advanced" set "Entry Point" to "mainCRTStartup" to use `main` instead of `WinMain`.
