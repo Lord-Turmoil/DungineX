@@ -24,11 +24,11 @@
 #include "DgeX/Renderer/Texture.h"
 #include "DgeX/Renderer/UniformBuffer.h"
 #include "DgeX/Renderer/VertexArray.h"
-
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
 #include "DgeX/Utils/Math.h"
+
+#include <glm/ext/matrix_transform.hpp>
+
+#include "DgeX/Physics/Core/Base.h"
 
 #ifdef DGEX_OPENGL
 
@@ -69,23 +69,23 @@ struct TextVertex
 
 struct RendererData
 {
-    static const uint32_t MaxTextureSlots = 32;
+    static constexpr uint32_t MaxTextureSlots = 32;
 
-    static const uint32_t MaxQuad = 10000;
-    static const uint32_t MaxQuadVertices = MaxQuad * 4;
-    static const uint32_t MaxQuadIndices = MaxQuad * 6;
+    static constexpr uint32_t MaxQuad = 10000;
+    static constexpr uint32_t MaxQuadVertices = MaxQuad * 4;
+    static constexpr uint32_t MaxQuadIndices = MaxQuad * 6;
 
-    static const uint32_t MaxCircle = 100;
-    static const uint32_t CircleFragments = 30;
-    static const uint32_t CircleVertices = CircleFragments + 2;
-    static const uint32_t MaxCircleVertices = MaxCircle * CircleVertices;
+    static constexpr uint32_t MaxCircle = 100;
+    static constexpr uint32_t CircleFragments = 30;
+    static constexpr uint32_t CircleVertices = CircleFragments + 2;
+    static constexpr uint32_t MaxCircleVertices = MaxCircle * CircleVertices;
 
-    static const uint32_t MaxLine = 10000;
-    static const uint32_t MaxLineVertices = MaxLine * 2;
+    static constexpr uint32_t MaxLine = 10000;
+    static constexpr uint32_t MaxLineVertices = MaxLine * 2;
 
-    static const uint32_t MaxText = 1000;
-    static const uint32_t MaxTextVertices = MaxText * 4;
-    static const uint32_t MaxTextIndices = MaxText * 6;
+    static constexpr uint32_t MaxText = 1000;
+    static constexpr uint32_t MaxTextVertices = MaxText * 4;
+    static constexpr uint32_t MaxTextIndices = MaxText * 6;
 
     Ref<VertexArray> QuadVertexArray;
     Ref<VertexBuffer> QuadVertexBuffer;
@@ -145,8 +145,8 @@ struct RendererData
 
 static RendererData sData;
 
-static void StartBatch();
-static void NextBatch();
+static void _StartBatch();
+static void _NextBatch();
 
 void Init()
 {
@@ -290,7 +290,7 @@ void BeginScene(const Camera& camera, const glm::mat4& transform)
     sData.CameraBuffer.ViewProjection = camera.GetProjection() * inverse(transform);
     sData.CameraUniformBuffer->SetData(&sData.CameraBuffer, sizeof(RendererData::CameraData));
 
-    StartBatch();
+    _StartBatch();
 }
 
 void BeginScene(const Camera& camera)
@@ -298,7 +298,7 @@ void BeginScene(const Camera& camera)
     sData.CameraBuffer.ViewProjection = camera.GetViewProjection();
     sData.CameraUniformBuffer->SetData(&sData.CameraBuffer, sizeof(RendererData::CameraData));
 
-    StartBatch();
+    _StartBatch();
 }
 
 void EndScene()
@@ -386,7 +386,7 @@ void DrawFilledRect(const glm::mat4& transform, const glm::vec4& color)
 
     if (sData.QuadIndexCount >= RendererData::MaxQuadIndices)
     {
-        NextBatch();
+        _NextBatch();
     }
 
     for (size_t i = 0; i < 4; i++)
@@ -502,7 +502,7 @@ void DrawTexture(const glm::mat4& transform, const Ref<Texture>& texture, float 
 
     if (sData.QuadIndexCount >= RendererData::MaxQuad)
     {
-        NextBatch();
+        _NextBatch();
     }
 
     float textureIndex = 0.0f;
@@ -519,7 +519,7 @@ void DrawTexture(const glm::mat4& transform, const Ref<Texture>& texture, float 
     {
         if (sData.TextureSlotIndex >= RendererData::MaxTextureSlots)
         {
-            NextBatch();
+            _NextBatch();
         }
         textureIndex = static_cast<float>(sData.TextureSlotIndex);
         sData.TextureSlots[sData.TextureSlotIndex] = texture;
@@ -555,7 +555,7 @@ void DrawFilledCircle(const glm::vec3& position, float radius, const glm::vec4& 
 {
     if (sData.CircleVertexCount >= RendererData::MaxCircleVertices)
     {
-        NextBatch();
+        _NextBatch();
     }
 
     sData.CircleVertexBufferPtr->Position = position;
@@ -607,17 +607,22 @@ float GetLineWidth()
 void SetLineWidth(float width)
 {
     // Flush line buffer if line width changes.
-    NextBatch();
+    _NextBatch();
 
     sData.LineWidth = width;
     RenderCommand::SetLineWidth(width);
+}
+
+void DrawLine(const glm::vec2& p0, const glm::vec2& p1, const glm::vec4& color)
+{
+    DrawLine({ p0.x, p0.y, 0.0f }, { p1.x, p1.y, 0.0f }, color);
 }
 
 void DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color)
 {
     if (sData.LineVertexCount >= RendererData::MaxLineVertices)
     {
-        NextBatch();
+        _NextBatch();
     }
 
     sData.LineVertexBufferPtr->Position = p0;
@@ -643,7 +648,7 @@ void SetFontFamily(float fontSize, const Ref<Font>& font)
 
     if (font)
     {
-        NextBatch();
+        _NextBatch();
         sData.FontAtlasTexture = font->GetAtlasTexture();
         sData.FontData = font->GetMsdfData();
     }
@@ -690,6 +695,27 @@ void SetFontStyle(const FontStyle* style, FontStyle* old)
     }
 }
 
+/**
+ * @brief
+ * Same as DrawString, but with extra internal correct to adjust the position
+ * of the first line.
+ */
+static void _DrawString(const std::string& string, float* width, float* height, float* correct);
+static void _PreAdjustTextPosition(const std::string& string, const glm::vec3& position, float* translateX,
+                                   float* translateY, StringAlign align, float* width, float* height, float* correct);
+static void _PostAdjustTextPosition(TextVertex* begin, TextVertex* end, float lineWidth, float textWidth,
+                                    StringAlign align);
+
+static void _DrawString(const glm::mat4& transform, const std::string& string, const glm::vec4& color,
+                        StringAlign align, float textWidth);
+
+// static glm::vec2
+
+void DrawString(const std::string& string, float* width, float* height)
+{
+    _DrawString(string, width, height, nullptr);
+}
+
 void DrawString(const std::string& string, const glm::vec2& position, StringAlign align)
 {
     DrawString(string, { position.x, position.y, 0.0f }, align);
@@ -707,12 +733,17 @@ void DrawString(const std::string& string, const glm::vec2& position, const glm:
 
 void DrawString(const std::string& string, const glm::vec3& position, const glm::vec4& color, StringAlign align)
 {
+    float translateX, translateY;
+    float width;
+    _PreAdjustTextPosition(string, position, &translateX, &translateY, align, &width, nullptr, nullptr);
+
     glm::mat4 transform =
-        translate(glm::mat4(1.0f), position) *
+        translate(glm::mat4(1.0f), { translateX, translateY, 0.0f }) *
         scale(glm::mat4(1.0f),
               { sData.CurrentFontStyle.FontSize,
                 sData.InvertFont ? -sData.CurrentFontStyle.FontSize : sData.CurrentFontStyle.FontSize, 1.0f });
-    DrawString(transform, string, color, align);
+
+    _DrawString(transform, string, color, align, width);
 }
 
 void DrawRotatedString(const std::string& string, const glm::vec2& position, float radian, StringAlign align)
@@ -734,12 +765,21 @@ void DrawRotatedString(const std::string& string, const glm::vec2& position, flo
 void DrawRotatedString(const std::string& string, const glm::vec3& position, float radian, const glm::vec4& color,
                        StringAlign align)
 {
+    float width, height, correct;
+    float translateX, translateY;
+    _PreAdjustTextPosition(string, position, &translateX, &translateY, align, &width, &height, &correct);
+
+    // rotate around the center
     glm::mat4 transform =
-        translate(glm::mat4(1.0f), position) * rotate(glm::mat4(1.0f), radian, { 0.0f, 0.0f, 1.0f }) *
+        translate(glm::mat4(1.0f), { translateX, translateY, 0.0f }) *
+        translate(glm::mat4(1.0f), { width * 0.5f, height * 0.5f - correct, 0.0f }) *
+        rotate(glm::mat4(1.0f), radian, glm::vec3(0.0f, 0.0f, 1.0f)) *
+        translate(glm::mat4(1.0f), { -width * 0.5f, -(height * 0.5f - correct), 0.0f }) *
         scale(glm::mat4(1.0f),
               { sData.CurrentFontStyle.FontSize,
                 sData.InvertFont ? -sData.CurrentFontStyle.FontSize : sData.CurrentFontStyle.FontSize, 1.0f });
-    DrawString(transform, string, color, align);
+
+    _DrawString(transform, string, color, align, width);
 }
 
 void DrawString(const glm::mat4& transform, const std::string& string, StringAlign align)
@@ -747,15 +787,19 @@ void DrawString(const glm::mat4& transform, const std::string& string, StringAli
     DrawString(transform, string, sData.CurrentFontStyle.Color, align);
 }
 
-static void AlignTextHorizontal(TextVertex** begin, TextVertex* end, float lineWidth, StringAlign align);
-static void AlignTextVertical(TextVertex* begin, TextVertex* end, float lineHeight, float textHeight,
-                              StringAlign align);
-
 void DrawString(const glm::mat4& transform, const std::string& string, const glm::vec4& color, StringAlign align)
+{
+    float width;
+    DrawString(string, &width, nullptr);
+    _DrawString(transform, string, color, align, width);
+}
+
+void _DrawString(const glm::mat4& transform, const std::string& string, const glm::vec4& color, StringAlign align,
+                 float textWidth)
 {
     if (sData.TextIndexCount >= RendererData::MaxTextIndices)
     {
-        NextBatch();
+        _NextBatch();
     }
 
     const auto& fontGeometry = sData.FontData->FontGeometry;
@@ -768,7 +812,6 @@ void DrawString(const glm::mat4& transform, const std::string& string, const glm
     double y = 0.0;
 
     TextVertex* lineBegin = sData.TextVertexBufferPtr;
-    TextVertex* textBegin = sData.TextVertexBufferPtr;
     for (size_t i = 0; i < string.size(); i++)
     {
         char character = string[i];
@@ -779,7 +822,8 @@ void DrawString(const glm::mat4& transform, const std::string& string, const glm
 
         if (character == '\n')
         {
-            AlignTextHorizontal(&lineBegin, sData.TextVertexBufferPtr, static_cast<float>(x), align);
+            _PostAdjustTextPosition(lineBegin, sData.TextVertexBufferPtr, static_cast<float>(x), textWidth, align);
+            lineBegin = sData.TextVertexBufferPtr;
             x = 0;
             y -= fsScale * metrics.lineHeight + sData.CurrentFontStyle.LineSpacing;
             continue;
@@ -860,78 +904,185 @@ void DrawString(const glm::mat4& transform, const std::string& string, const glm
         sData.TextIndexCount += 6;
         sData.Stats.QuadCount++;
 
-        if (i < string.size() - 1)
+        double advance = glyph->getAdvance();
+        char nextCharacter = (i < string.size() - 1) ? string[i + 1] : ' ';
+        fontGeometry.getAdvance(advance, character, nextCharacter);
+        x += fsScale * advance + sData.CurrentFontStyle.LetterSpacing;
+    }
+
+    if (string.back() != '\n')
+    {
+        _PostAdjustTextPosition(lineBegin, sData.TextVertexBufferPtr, static_cast<float>(x), textWidth, align);
+    }
+}
+
+void _DrawString(const std::string& string, float* width, float* height, float* correct)
+{
+    if (!width && !height)
+    {
+        return;
+    }
+
+    if (width)
+    {
+        *width = 0.0f;
+    }
+    if (height)
+    {
+        *height = 0.0f;
+    }
+
+    const auto& fontGeometry = sData.FontData->FontGeometry;
+    const auto& metrics = fontGeometry.getMetrics();
+
+    const float spaceGlyphAdvance = static_cast<float>(fontGeometry.getGlyph(' ')->getAdvance());
+
+    double x = 0.0;
+    double fsScale = 1.0 / (metrics.ascenderY - metrics.descenderY);
+    double y = 0.0;
+
+    for (size_t i = 0; i < string.size(); i++)
+    {
+        char character = string[i];
+        if (character == '\r')
         {
-            double advance = glyph->getAdvance();
-            char nextCharacter = string[i + 1];
-            fontGeometry.getAdvance(advance, character, nextCharacter);
+            continue;
+        }
+
+        if (character == '\n')
+        {
+            if (width)
+            {
+                *width = Math::Max(*width, static_cast<float>(x));
+            }
+            x = 0;
+            y -= fsScale * metrics.lineHeight + sData.CurrentFontStyle.LineSpacing;
+            continue;
+        }
+
+        if (character == ' ')
+        {
+            float advance = spaceGlyphAdvance;
+            if (i < string.size() - 1)
+            {
+                char nextCharacter = string[i + 1];
+                double dAdvance;
+                fontGeometry.getAdvance(dAdvance, character, nextCharacter);
+                advance = static_cast<float>(dAdvance);
+            }
             x += fsScale * advance + sData.CurrentFontStyle.LetterSpacing;
+            continue;
+        }
+
+        if (character == '\t')
+        {
+            // We assume tab width is 4 spaces.
+            x += 4.0f * (fsScale * spaceGlyphAdvance + sData.CurrentFontStyle.LetterSpacing);
+            continue;
+        }
+
+        auto glyph = fontGeometry.getGlyph(character);
+        if (!glyph)
+        {
+            glyph = fontGeometry.getGlyph('?');
+        }
+        if (!glyph)
+        {
+            return;
+        }
+
+        double advance = glyph->getAdvance();
+        char nextCharacter = (i < string.size() - 1) ? string[i + 1] : ' ';
+        fontGeometry.getAdvance(advance, character, nextCharacter);
+        x += fsScale * advance + sData.CurrentFontStyle.LetterSpacing;
+    }
+
+    if (width)
+    {
+        *width = Math::Max(*width, static_cast<float>(x)) * sData.CurrentFontStyle.FontSize;
+    }
+
+    float heightCorrect = static_cast<float>(fsScale) * sData.CurrentFontStyle.FontSize;
+    if (height)
+    {
+        *height = static_cast<float>(-y) * sData.CurrentFontStyle.FontSize + heightCorrect;
+        *height -= static_cast<float>(fsScale * metrics.descenderY) * sData.CurrentFontStyle.FontSize;
+    }
+
+    if (correct)
+    {
+        *correct = heightCorrect;
+    }
+}
+
+void _PreAdjustTextPosition(const std::string& string, const glm::vec3& position, float* translateX, float* translateY,
+                            StringAlign align, float* width, float* height, float* correct)
+{
+    float _width, _height, _correct;
+    _DrawString(string, &_width, &_height, &_correct);
+
+    if (translateX)
+    {
+        *translateX = position.x;
+        if (align & SA_Right)
+        {
+            *translateX -= _width;
+        }
+        else if (align & SA_Center)
+        {
+            *translateX -= _width * 0.5f;
+        }
+    }
+    if (translateY)
+    {
+        *translateY = position.y + _correct;
+        if (align & SA_Bottom)
+        {
+            *translateY -= _height;
+        }
+        else if (align & SA_Middle)
+        {
+            *translateY -= _height * 0.5f;
         }
     }
 
-    AlignTextHorizontal(&lineBegin, sData.TextVertexBufferPtr, static_cast<float>(x), align);
-    AlignTextVertical(textBegin, sData.TextVertexBufferPtr, static_cast<float>(fsScale * metrics.lineHeight),
-                      static_cast<float>(y), align);
+    if (width)
+    {
+        *width = _width;
+    }
+    if (height)
+    {
+        *height = _height;
+    }
+    if (correct)
+    {
+        *correct = _correct;
+    }
 }
 
-void AlignTextHorizontal(TextVertex** begin, TextVertex* end, float lineWidth, StringAlign align)
+void _PostAdjustTextPosition(TextVertex* begin, TextVertex* end, float lineWidth, float textWidth, StringAlign align)
 {
-    if (*begin == end)
+    if ((begin == end) || !(align & SA_MultiLine) || (align & SA_Left))
     {
         return;
     }
 
     float translateX;
-    if (align & SA_Center)
+    lineWidth *= sData.CurrentFontStyle.FontSize;
+    if (align & SA_Right)
     {
-        translateX = -lineWidth * 0.5f;
-    }
-    else if (align & SA_Right)
-    {
-        translateX = -lineWidth;
+        translateX = textWidth - lineWidth;
     }
     else
     {
-        *begin = end;
-        return;
-    }
-    translateX *= sData.CurrentFontStyle.FontSize;
-    glm::mat4 transform = glm::translate(glm::mat4(1.0f), { translateX, 0.0f, 0.0f });
-
-    for (auto it = *begin; it != end; it++)
-    {
-        it->Position = transform * glm::vec4(it->Position, 1.0f);
+        translateX = (textWidth - lineWidth) * 0.5f;
     }
 
-    *begin = end;
-}
-
-void AlignTextVertical(TextVertex* begin, TextVertex* end, float lineHeight, float textHeight, StringAlign align)
-{
-    if (begin == end)
-    {
-        return;
-    }
-
-    float translateY;
-    if (align & SA_Bottom)
-    {
-        translateY = textHeight - lineHeight * 0.2f;
-    }
-    else if (align & SA_VCenter)
-    {
-        translateY = textHeight * 0.5f + lineHeight * 0.2f;
-    }
-    else
-    {
-        translateY = lineHeight * 0.8f;
-    }
-    translateY *= sData.CurrentFontStyle.FontSize;
-    glm::mat4 transform = glm::translate(glm::mat4(1.0f), { 0.0f, translateY, 0.0f });
-
+    glm::mat4 leftTransform = translate(glm::mat4(1.0f), { translateX + lineWidth * 0.5f, 0.0f, 0.0f });
+    glm::mat4 rightTransform = translate(glm::mat4(1.0f), { -lineWidth * 0.5f, 0.0f, 0.0f });
     for (auto it = begin; it != end; it++)
     {
-        it->Position = transform * glm::vec4(it->Position, 1.0f);
+        it->Position = leftTransform * glm::vec4(it->Position, 1.0f) * rightTransform;
     }
 }
 
@@ -951,7 +1102,7 @@ Statistics GetStats()
     return sData.Stats;
 }
 
-void StartBatch()
+void _StartBatch()
 {
     sData.QuadIndexCount = 0;
     sData.QuadVertexBufferPtr = sData.QuadVertexBufferBase;
@@ -968,10 +1119,10 @@ void StartBatch()
     sData.TextureSlotIndex = 1;
 }
 
-void NextBatch()
+void _NextBatch()
 {
     Flush();
-    StartBatch();
+    _StartBatch();
 }
 
 } // namespace RenderApi

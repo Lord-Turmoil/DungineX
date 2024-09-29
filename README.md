@@ -68,12 +68,14 @@ In "Linker > General", add "Additional Library Directories".
 $(SolutionDir)Lib
 ```
 
-For Debug profile (only), in "Linker > Input", add "Ignore Specific Default Libraries" to avoid some warnings.
+For Debug profile, in "Linker > Input", add "Ignore Specific Default Libraries" to avoid some warnings.
 
 ```
 msvcrt.lib
 libcmt.lib
 ```
+
+And for Release and Publish profile
 
 To avoid creating default console, go to "Linker > System" and change SubSystem to "Windows", then in "Linker > Advanced" set "Entry Point" to "mainCRTStartup" to use `main` instead of `WinMain`.
 

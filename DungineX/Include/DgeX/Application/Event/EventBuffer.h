@@ -14,6 +14,7 @@ public:
 
     void PushEvent(const Ref<Event>& event);
     void SwapBuffer();
+    void Clear();
     
 	std::vector<Ref<Event>>::iterator begin() { return _frontBuffer.begin(); }
 	std::vector<Ref<Event>>::iterator end() { return _frontBuffer.end(); }

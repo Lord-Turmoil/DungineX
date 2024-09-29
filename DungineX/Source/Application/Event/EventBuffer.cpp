@@ -16,4 +16,11 @@ void EventBuffer::SwapBuffer()
     _backBuffer.clear();
 }
 
+void EventBuffer::Clear()
+{
+    std::lock_guard lock(_mutex);
+    _frontBuffer.clear();
+    _backBuffer.clear();
+}
+
 DGEX_END

@@ -86,6 +86,7 @@ void DrawCircle(const glm::vec3& position, float radius, const glm::vec4& color)
 float GetLineWidth();
 void SetLineWidth(float width);
 
+void DrawLine(const glm::vec2& p0, const glm::vec2& p1, const glm::vec4& color);
 void DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color);
 
 /*
@@ -114,17 +115,25 @@ void SetFontStyle(const FontStyle* style, FontStyle* old);
 using StringAlign = uint8_t;
 enum StringAlignEnum : StringAlign
 {
-    SA_Default  = 0,
-    SA_Left     = 0,
-    SA_Top      = 0,
-
-    SA_Right    = BIT(0),
-    SA_Center   = BIT(1),
-    SA_Bottom   = BIT(2),
-    SA_VCenter  = BIT(3),
+    SA_Left     = BIT(0),
+    SA_Right    = BIT(1),
+    SA_Center   = BIT(2),
+    SA_Top      = BIT(3),
+    SA_Bottom   = BIT(4),
+    SA_Middle   = BIT(5),
+    SA_MultiLine     = BIT(6),   // enable align per line
+    SA_Default  = SA_Left | SA_Top
 };
 
 // clang-format on
+
+/**
+ * @brief Only calculate the width and height of the string.
+ * @param string the string to draw
+ * @param width return the width of rendered string
+ * @param height return the height of rendered string
+ */
+void DrawString(const std::string& string, float* width, float* height);
 
 void DrawString(const std::string& string, const glm::vec2& position, StringAlign align = SA_Default);
 void DrawString(const std::string& string, const glm::vec3& position, StringAlign align = SA_Default);
