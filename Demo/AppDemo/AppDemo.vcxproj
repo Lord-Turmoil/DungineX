@@ -32,6 +32,7 @@
     <ProjectGuid>{88e54079-5b17-4945-b362-68ab60c6fe12}</ProjectGuid>
     <RootNamespace>ApplicationTest</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>AppDemo</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -106,7 +107,7 @@
     <IntDir>$(SolutionDir)Build\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)Bin\$(ProjectName)\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)Bin\Demo\$(ProjectName)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)Build\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Publish|x64'">
@@ -237,7 +238,7 @@
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DungineX\DungineX.vcxproj">
+    <ProjectReference Include="..\..\DungineX\DungineX.vcxproj">
       <Project>{68983a10-6f09-4b52-9803-35c8b12ae08c}</Project>
     </ProjectReference>
   </ItemGroup>
