@@ -1,5 +1,7 @@
 #include "DgeX/Platform/OpenGL/OpenGLUniformBuffer.h"
 
+#ifdef DGEX_OPENGL
+
 #include <glad/glad.h>
 
 DGEX_BEGIN
@@ -22,3 +24,5 @@ void OpenGLUniformBuffer::SetData(const void* data, uint32_t size, uint32_t offs
 }
 
 DGEX_END
+
+#endif

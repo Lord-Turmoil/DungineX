@@ -1,6 +1,6 @@
-#include <random>
-
 #include "DgeX/Utils/Random.h"
+
+#include <random>
 
 DGEX_BEGIN
 

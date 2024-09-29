@@ -2,6 +2,8 @@
 
 #include "DgeX/Renderer/Texture.h"
 
+#ifdef DGEX_OPENGL
+
 #include <glad/glad.h>
 
 DGEX_BEGIN
@@ -66,3 +68,5 @@ private:
 };
 
 DGEX_END
+
+#endif

@@ -2,14 +2,15 @@
 //   - https://learnopengl.com/Getting-started/Shaders
 
 #include "DgeX/Platform/OpenGL/OpenGLShader.h"
+
+#ifdef DGEX_OPENGL
+
 #include "DgeX/Utils/File.h"
 
 #include <glad/glad.h>
 
 #include <fstream>
 #include <sstream>
-
-#ifdef DGEX_OPENGL
 
 DGEX_BEGIN
 

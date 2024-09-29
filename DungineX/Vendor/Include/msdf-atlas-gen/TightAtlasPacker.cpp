@@ -1,3 +1,7 @@
+/*
+ * 2024/09/29 Tony: Disable warnings.
+ */
+#pragma warning(disable : 4267)
 
 #include "TightAtlasPacker.h"
 

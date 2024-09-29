@@ -1,9 +1,10 @@
 #include "DgeX/Platform/OpenGL/OpenGLBuffer.h"
+
+#ifdef DGEX_OPENGL
+
 #include "DgeX/Renderer/Buffer.h"
 
 #include <glad/glad.h>
-
-#ifdef DGEX_OPENGL
 
 DGEX_BEGIN
 

@@ -1,9 +1,10 @@
-#include <glad/glad.h>
-
 #include "DgeX/Platform/OpenGL/OpenGLGraphicsContext.h"
-#include "DgeX/Utils/String.h"
 
 #ifdef DGEX_OPENGL
+
+#include "DgeX/Utils/String.h"
+
+#include <glad/glad.h>
 
 DGEX_BEGIN
 
