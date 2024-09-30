@@ -64,7 +64,12 @@ void DrawCircle(const Ref<VertexArray>& vertexArray, uint32_t vertexCount = 0, u
  */
 void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount = 0);
 
-
+/**
+ * @brief Draw line strips. N vertices forms N - 1 line strips.
+ * @param vertexArray vertices to draw
+ * @param vertexCount vertices count for each strip
+ */
+void DrawLineStrip(const Ref<VertexArray>& vertexArray, const std::vector<int>& vertexCount);
 
 } // namespace RenderCommand
 

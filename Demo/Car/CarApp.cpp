@@ -5,14 +5,17 @@ using namespace DgeX::Physics;
 
 void CarLayer::OnRender()
 {
-    RenderApi::InvertFont(32.0f);
-    RenderApi::DrawString("Use 'W' and 'S' to accelerate and brake.", { 10.0f, 10.0f }, Color::Black.ToVec4());
-    RenderApi::DrawString("Use 'A' and 'D' to steer left and right.", { 10.0f, 40.0f }, Color::Black.ToVec4());
-    RenderApi::DrawString("Press 'R' to reset the car.", { 10.0f, 70.0f }, Color::Black.ToVec4());
-    RenderApi::DrawString("Press 'F' to reset the game.", { 10.0f, 100.0f }, Color::Black.ToVec4());
+    static std::string help = R"(How to play?
+Use 'W' and 'S' to accelerate and brake.
+Use 'A' and 'D' to steer left and right.
+Press 'R' to reset the car.
+Press 'F' to reset the game.
+)";
+    RenderApi::SetTextStyle(32.f);
+    RenderApi::DrawString(help, { 5.0f, 5.0f }, Color::Black.ToVec4());
 }
 
-CarInterface::CarInterface() : Interface("Car"), _dustController(512), _world(128)
+CarInterface::CarInterface() : Interface("Car"), _dustController(512), _world(128), _camera()
 {
     _carLayer = CreateRef<CarLayer>();
 }

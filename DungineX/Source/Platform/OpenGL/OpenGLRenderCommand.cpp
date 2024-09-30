@@ -77,6 +77,17 @@ void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount)
     glDrawArrays(GL_LINES, 0, vertexCount ? vertexCount : vertexArray->GetVertexCount());
 }
 
+void DrawLineStrip(const Ref<VertexArray>& vertexArray, const std::vector<int>& vertexCount)
+{
+    vertexArray->Bind();
+    int offset = 0;
+    for (int count : vertexCount)
+    {
+        glDrawArrays(GL_LINE_STRIP, offset, count);
+        offset += count;
+    }
+}
+
 } // namespace RenderCommand
 
 DGEX_END

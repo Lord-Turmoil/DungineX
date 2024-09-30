@@ -149,8 +149,10 @@ void DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color);
  * @brief Draw line strips.
  * @note
  * Using this set of functions to draw lines is more efficient than using DrawLine.
+ * @warning There must not be other rendering calls between BeginLine and EndLine.
  */
 void BeginLine();
+void BeginLine(const glm::vec4& color);
 void AddPoint(const glm::vec2& point, const glm::vec4& color);
 void AddPoint(const glm::vec3& point, const glm::vec4& color);
 void AddPoint(const glm::vec2& point);

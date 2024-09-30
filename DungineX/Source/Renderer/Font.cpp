@@ -34,7 +34,7 @@ static Ref<Texture> CreateAndCacheAtlas(const std::vector<msdf_atlas::GlyphGeome
     return texture;
 }
 
-Font::Font::Font(std::string name, const std::filesystem::path& path) : _name(std::move(name)), _data(new MsdfData())
+Font::Font(std::string name, const std::filesystem::path& path) : _name(std::move(name)), _data(new MsdfData())
 {
     msdfgen::FreetypeHandle* ft = msdfgen::initializeFreetype();
     DGEX_ASSERT(ft);

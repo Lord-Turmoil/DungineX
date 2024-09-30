@@ -25,11 +25,9 @@
 #include "DgeX/Renderer/UniformBuffer.h"
 #include "DgeX/Renderer/VertexArray.h"
 #include "DgeX/Utils/Math.h"
+#include "DgeX/Utils/String.h"
 
 #include <glm/ext/matrix_transform.hpp>
-
-#include "DgeX/Physics/Core/Base.h"
-#include "DgeX/Utils/String.h"
 
 #ifdef DGEX_OPENGL
 
@@ -84,6 +82,9 @@ struct RendererData
     static constexpr uint32_t MaxLine = 10000;
     static constexpr uint32_t MaxLineVertices = MaxLine * 2;
 
+    static constexpr uint32_t MaxLineStrip = 9999;
+    static constexpr uint32_t MaxLineStripVertices = MaxLineStrip + 1;
+
     static constexpr uint32_t MaxText = 1000;
     static constexpr uint32_t MaxTextVertices = MaxText * 4;
     static constexpr uint32_t MaxTextIndices = MaxText * 6;
@@ -99,6 +100,8 @@ struct RendererData
 
     Ref<VertexArray> LineVertexArray;
     Ref<VertexBuffer> LineVertexBuffer;
+    Ref<VertexArray> LineStripVertexArray;
+    Ref<VertexBuffer> LineStripVertexBuffer;
     Ref<Shader> LineShader;
 
     Ref<VertexArray> TextVertexArray;
@@ -117,11 +120,18 @@ struct RendererData
     LineVertex* LineVertexBufferBase = nullptr;
     LineVertex* LineVertexBufferPtr = nullptr;
 
+    uint32_t LineStripVertexCount = 0;
+    LineVertex* LineStripVertexBufferBase = nullptr;
+    LineVertex* LineStripVertexBufferPtr = nullptr;
+
     uint32_t TextIndexCount = 0;
     TextVertex* TextVertexBufferBase = nullptr;
     TextVertex* TextVertexBufferPtr = nullptr;
 
     float LineWidth = 2.0f;
+    glm::vec4 LineStripColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+    int LineStripCount = 0;
+    std::vector<int> LineStripIndices;
 
     std::array<Ref<Texture>, MaxTextureSlots> TextureSlots;
     uint32_t TextureSlotIndex = 1; // 0 is reserved for white texture
@@ -199,6 +209,14 @@ void Init()
     sData.LineVertexArray->AddVertexBuffer(sData.LineVertexBuffer);
     sData.LineVertexBufferBase = new LineVertex[RendererData::MaxLineVertices];
 
+    sData.LineStripVertexBuffer = VertexBuffer::Create(RendererData::MaxLineStripVertices * sizeof(LineVertex));
+    sData.LineStripVertexBuffer->SetLayout(
+        { { ShaderDataType::Float3, "a_Position" }, { ShaderDataType::Float4, "a_Color" } });
+    sData.LineStripVertexArray = VertexArray::Create();
+    sData.LineStripVertexArray->AddVertexBuffer(sData.LineStripVertexBuffer);
+    sData.LineStripVertexBufferBase = new LineVertex[RendererData::MaxLineStripVertices];
+    sData.LineStripIndices.clear();
+
     // Text
     sData.TextVertexArray = VertexArray::Create();
 
@@ -256,6 +274,8 @@ void Shutdown()
     sData.CircleVertexBufferBase = nullptr;
     delete[] sData.LineVertexBufferBase;
     sData.LineVertexBufferBase = nullptr;
+    delete[] sData.LineStripVertexBufferBase;
+    sData.LineStripVertexBufferBase = nullptr;
     delete[] sData.TextVertexBufferBase;
     sData.TextVertexBufferBase = nullptr;
 
@@ -350,6 +370,18 @@ void Flush()
         sData.LineShader->Bind();
         RenderCommand::SetLineWidth(sData.LineWidth);
         RenderCommand::DrawLines(sData.LineVertexArray, sData.LineVertexCount);
+        sData.Stats.DrawCalls++;
+    }
+
+    if (sData.LineStripVertexCount)
+    {
+        uint32_t dataSize = static_cast<uint32_t>(reinterpret_cast<uint8_t*>(sData.LineStripVertexBufferPtr) -
+                                                  reinterpret_cast<uint8_t*>(sData.LineStripVertexBufferBase));
+        sData.LineStripVertexBuffer->SetData(sData.LineStripVertexBufferBase, dataSize);
+
+        sData.LineShader->Bind();
+        RenderCommand::SetLineWidth(sData.LineWidth);
+        RenderCommand::DrawLineStrip(sData.LineStripVertexArray, sData.LineStripIndices);
         sData.Stats.DrawCalls++;
     }
 
@@ -589,13 +621,15 @@ void DrawCircle(const glm::vec3& position, float radius, const glm::vec4& color)
 {
     float angleStep = 2.0f * Math::PI<float> / static_cast<float>(RendererData::CircleFragments);
     glm::vec3 p0 = position + glm::vec3(radius, 0.0f, 0.0f);
+    BeginLine(color);
+    AddPoint(p0);
     for (uint32_t i = 1; i <= RendererData::CircleFragments; i++)
     {
         glm::vec3 p1 = position + glm::vec3(radius * Math::Cos(static_cast<float>(i) * angleStep),
                                             radius * Math::Sin(static_cast<float>(i) * angleStep), 0.0f);
-        DrawLine(p0, p1, color);
-        p0 = p1;
+        AddPoint(p1);
     }
+    EndLine();
 }
 
 /*
@@ -641,12 +675,65 @@ void DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color)
     sData.LineVertexCount += 2;
 }
 
-void BeginLine();
-void AddPoint(const glm::vec2& point, const glm::vec4& color);
-void AddPoint(const glm::vec3& point, const glm::vec4& color);
-void AddPoint(const glm::vec2& point);
-void AddPoint(const glm::vec3& point);
-void EndLine();
+void BeginLine()
+{
+    sData.LineStripVertexCount = 0;
+}
+
+void BeginLine(const glm::vec4& color)
+{
+    sData.LineStripColor = color;
+    sData.LineStripVertexCount = 0;
+}
+
+void AddPoint(const glm::vec2& point, const glm::vec4& color)
+{
+    AddPoint({ point.x, point.y, 0.0f }, color);
+}
+
+void AddPoint(const glm::vec3& point, const glm::vec4& color)
+{
+    if (sData.LineStripVertexCount >= RendererData::MaxLineStripVertices)
+    {
+        glm::vec3 p0 = (sData.LineStripVertexBufferPtr - 1)->Position;
+        glm::vec4 c0 = (sData.LineStripVertexBufferPtr - 1)->Color;
+        EndLine();
+        _NextBatch();
+        BeginLine();
+        AddPoint(p0, c0);
+    }
+
+    sData.LineStripVertexBufferPtr->Position = point;
+    sData.LineStripVertexBufferPtr->Color = color;
+
+    sData.LineStripVertexBufferPtr++;
+    sData.LineStripVertexCount++;
+    sData.LineStripCount++;
+}
+
+void AddPoint(const glm::vec2& point)
+{
+    AddPoint({ point.x, point.y, 0.0f });
+}
+
+void AddPoint(const glm::vec3& point)
+{
+    AddPoint(point, sData.LineStripColor);
+}
+
+void EndLine()
+{
+    if (sData.LineStripCount < 2)
+    {
+        sData.LineStripVertexBufferPtr -= sData.LineStripCount;
+        sData.LineStripVertexCount -= sData.LineStripCount;
+    }
+    else
+    {
+        sData.LineStripIndices.push_back(sData.LineStripCount);
+    }
+    sData.LineStripCount = 0;
+}
 
 /*
  * ===================================================================
@@ -1127,6 +1214,11 @@ void _StartBatch()
 
     sData.LineVertexCount = 0;
     sData.LineVertexBufferPtr = sData.LineVertexBufferBase;
+
+    sData.LineStripVertexCount = 0;
+    sData.LineStripVertexBufferPtr = sData.LineStripVertexBufferBase;
+    sData.LineStripCount = 0;
+    sData.LineStripIndices.clear();
 
     sData.TextIndexCount = 0;
     sData.TextVertexBufferPtr = sData.TextVertexBufferBase;
