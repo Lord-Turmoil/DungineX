@@ -29,6 +29,7 @@
 #include <glm/ext/matrix_transform.hpp>
 
 #include "DgeX/Physics/Core/Base.h"
+#include "DgeX/Utils/String.h"
 
 #ifdef DGEX_OPENGL
 
@@ -129,8 +130,9 @@ struct RendererData
 
     Ref<Texture> FontAtlasTexture;
     const MsdfData* FontData;
-    FontStyle CurrentFontStyle;
-    bool InvertFont; // Invert Y-axis of font.
+    glm::vec4 FontColor;
+    TextStyle FontStyle;
+    char* FontFamily = nullptr;
 
     Statistics Stats;
 
@@ -230,10 +232,13 @@ void Init()
 
     DGEX_TIME_BEGIN("Initialize font");
     FontRegistry::Init();
-    sData.FontAtlasTexture = FontRegistry::GetDefault()->GetAtlasTexture();
-    sData.FontData = FontRegistry::GetDefault()->GetMsdfData();
-    sData.CurrentFontStyle = { { 1.0f, 1.0f, 1.0f, 1.0f }, 48.0f, 0.0f, 0.0f };
-    sData.InvertFont = true;
+    auto defaultFont = FontRegistry::GetDefault();
+    sData.FontAtlasTexture = defaultFont->GetAtlasTexture();
+    sData.FontData = defaultFont->GetMsdfData();
+    sData.FontColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+    sData.FontFamily = new char[256];
+    Utils::String::Copy(sData.FontFamily, defaultFont->GetName().c_str(), 256);
+    sData.FontStyle.FontFamily = sData.FontFamily;
     DGEX_TIME_END();
 
     sData.CameraUniformBuffer = UniformBuffer::Create(sizeof(RendererData::CameraData), 0);
@@ -636,62 +641,74 @@ void DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color)
     sData.LineVertexCount += 2;
 }
 
+void BeginLine();
+void AddPoint(const glm::vec2& point, const glm::vec4& color);
+void AddPoint(const glm::vec3& point, const glm::vec4& color);
+void AddPoint(const glm::vec2& point);
+void AddPoint(const glm::vec3& point);
+void EndLine();
+
 /*
  * ===================================================================
  * --------------------------- Draw Text -----------------------------
  * ===================================================================
  */
 
-void SetFontFamily(float fontSize, const Ref<Font>& font)
+void SetTextColor(const glm::vec4& color)
 {
-    sData.CurrentFontStyle.FontSize = fontSize;
-
-    if (font)
-    {
-        _NextBatch();
-        sData.FontAtlasTexture = font->GetAtlasTexture();
-        sData.FontData = font->GetMsdfData();
-    }
-}
-
-bool InvertFont()
-{
-    return sData.InvertFont;
-}
-
-void InvertFont(bool invert)
-{
-    sData.InvertFont = invert;
+    sData.FontColor = color;
 }
 
 void GetFontColor(glm::vec4* color)
 {
     if (color)
     {
-        *color = sData.CurrentFontStyle.Color;
+        *color = sData.FontColor;
     }
 }
 
-void SetFontColor(const glm::vec4& color, glm::vec4* old)
+void SetTextStyle(float fontSize, const char* fontFace)
 {
-    GetFontColor(old);
-    sData.CurrentFontStyle.Color = color;
-}
-
-void GetFontStyle(FontStyle* style)
-{
-    if (style)
+    sData.FontStyle.FontSize = fontSize;
+    if (fontFace && !Utils::String::Equals(sData.FontFamily, fontFace))
     {
-        *style = sData.CurrentFontStyle;
+        if (auto font = FontRegistry::Get(fontFace))
+        {
+            _NextBatch();
+            sData.FontAtlasTexture = font->GetAtlasTexture();
+            sData.FontData = font->GetMsdfData();
+        }
+        else
+        {
+            DGEX_CORE_ERROR("Font {0} not found in registry.", fontFace);
+        }
     }
 }
 
-void SetFontStyle(const FontStyle* style, FontStyle* old)
+void SetTextStyle(float letterSpacing, float lineSpacing)
 {
-    GetFontStyle(old);
+    sData.FontStyle.LetterSpacing = letterSpacing;
+    sData.FontStyle.LineSpacing = lineSpacing;
+}
+
+void InvertFont(bool invert)
+{
+    sData.FontStyle.Invert = invert;
+}
+
+void SetTextStyle(const TextStyle& style)
+{
+    sData.FontStyle.LetterSpacing = style.LetterSpacing;
+    sData.FontStyle.LineSpacing = style.LineSpacing;
+    sData.FontStyle.Invert = style.Invert;
+    SetTextStyle(style.FontSize, style.FontFamily);
+}
+
+void GetTextStyle(TextStyle* style)
+{
     if (style)
     {
-        sData.CurrentFontStyle = *style;
+        *style = sData.FontStyle;
     }
 }
 
@@ -723,7 +740,7 @@ void DrawString(const std::string& string, const glm::vec2& position, StringAlig
 
 void DrawString(const std::string& string, const glm::vec3& position, StringAlign align)
 {
-    DrawString(string, position, sData.CurrentFontStyle.Color, align);
+    DrawString(string, position, sData.FontColor, align);
 }
 
 void DrawString(const std::string& string, const glm::vec2& position, const glm::vec4& color, StringAlign align)
@@ -739,9 +756,8 @@ void DrawString(const std::string& string, const glm::vec3& position, const glm:
 
     glm::mat4 transform =
         translate(glm::mat4(1.0f), { translateX, translateY, 0.0f }) *
-        scale(glm::mat4(1.0f),
-              { sData.CurrentFontStyle.FontSize,
-                sData.InvertFont ? -sData.CurrentFontStyle.FontSize : sData.CurrentFontStyle.FontSize, 1.0f });
+        scale(glm::mat4(1.0f), { sData.FontStyle.FontSize,
+                                 sData.FontStyle.Invert ? -sData.FontStyle.FontSize : sData.FontStyle.FontSize, 1.0f });
 
     _DrawString(transform, string, color, align, width);
 }
@@ -753,7 +769,7 @@ void DrawRotatedString(const std::string& string, const glm::vec2& position, flo
 
 void DrawRotatedString(const std::string& string, const glm::vec3& position, float radian, StringAlign align)
 {
-    DrawRotatedString(string, position, radian, sData.CurrentFontStyle.Color, align);
+    DrawRotatedString(string, position, radian, sData.FontColor, align);
 }
 
 void DrawRotatedString(const std::string& string, const glm::vec2& position, float radian, const glm::vec4& color,
@@ -775,16 +791,15 @@ void DrawRotatedString(const std::string& string, const glm::vec3& position, flo
         translate(glm::mat4(1.0f), { width * 0.5f, height * 0.5f - correct, 0.0f }) *
         rotate(glm::mat4(1.0f), radian, glm::vec3(0.0f, 0.0f, 1.0f)) *
         translate(glm::mat4(1.0f), { -width * 0.5f, -(height * 0.5f - correct), 0.0f }) *
-        scale(glm::mat4(1.0f),
-              { sData.CurrentFontStyle.FontSize,
-                sData.InvertFont ? -sData.CurrentFontStyle.FontSize : sData.CurrentFontStyle.FontSize, 1.0f });
+        scale(glm::mat4(1.0f), { sData.FontStyle.FontSize,
+                                 sData.FontStyle.Invert ? -sData.FontStyle.FontSize : sData.FontStyle.FontSize, 1.0f });
 
     _DrawString(transform, string, color, align, width);
 }
 
 void DrawString(const glm::mat4& transform, const std::string& string, StringAlign align)
 {
-    DrawString(transform, string, sData.CurrentFontStyle.Color, align);
+    DrawString(transform, string, sData.FontColor, align);
 }
 
 void DrawString(const glm::mat4& transform, const std::string& string, const glm::vec4& color, StringAlign align)
@@ -825,7 +840,7 @@ void _DrawString(const glm::mat4& transform, const std::string& string, const gl
             _PostAdjustTextPosition(lineBegin, sData.TextVertexBufferPtr, static_cast<float>(x), textWidth, align);
             lineBegin = sData.TextVertexBufferPtr;
             x = 0;
-            y -= fsScale * metrics.lineHeight + sData.CurrentFontStyle.LineSpacing;
+            y -= fsScale * metrics.lineHeight + sData.FontStyle.LineSpacing;
             continue;
         }
 
@@ -839,14 +854,14 @@ void _DrawString(const glm::mat4& transform, const std::string& string, const gl
                 fontGeometry.getAdvance(dAdvance, character, nextCharacter);
                 advance = static_cast<float>(dAdvance);
             }
-            x += fsScale * advance + sData.CurrentFontStyle.LetterSpacing;
+            x += fsScale * advance + sData.FontStyle.LetterSpacing;
             continue;
         }
 
         if (character == '\t')
         {
             // We assume tab width is 4 spaces.
-            x += 4.0f * (fsScale * spaceGlyphAdvance + sData.CurrentFontStyle.LetterSpacing);
+            x += 4.0f * (fsScale * spaceGlyphAdvance + sData.FontStyle.LetterSpacing);
             continue;
         }
 
@@ -907,7 +922,7 @@ void _DrawString(const glm::mat4& transform, const std::string& string, const gl
         double advance = glyph->getAdvance();
         char nextCharacter = (i < string.size() - 1) ? string[i + 1] : ' ';
         fontGeometry.getAdvance(advance, character, nextCharacter);
-        x += fsScale * advance + sData.CurrentFontStyle.LetterSpacing;
+        x += fsScale * advance + sData.FontStyle.LetterSpacing;
     }
 
     if (string.back() != '\n')
@@ -956,7 +971,7 @@ void _DrawString(const std::string& string, float* width, float* height, float* 
                 *width = Math::Max(*width, static_cast<float>(x));
             }
             x = 0;
-            y -= fsScale * metrics.lineHeight + sData.CurrentFontStyle.LineSpacing;
+            y -= fsScale * metrics.lineHeight + sData.FontStyle.LineSpacing;
             continue;
         }
 
@@ -970,14 +985,14 @@ void _DrawString(const std::string& string, float* width, float* height, float* 
                 fontGeometry.getAdvance(dAdvance, character, nextCharacter);
                 advance = static_cast<float>(dAdvance);
             }
-            x += fsScale * advance + sData.CurrentFontStyle.LetterSpacing;
+            x += fsScale * advance + sData.FontStyle.LetterSpacing;
             continue;
         }
 
         if (character == '\t')
         {
             // We assume tab width is 4 spaces.
-            x += 4.0f * (fsScale * spaceGlyphAdvance + sData.CurrentFontStyle.LetterSpacing);
+            x += 4.0f * (fsScale * spaceGlyphAdvance + sData.FontStyle.LetterSpacing);
             continue;
         }
 
@@ -994,19 +1009,19 @@ void _DrawString(const std::string& string, float* width, float* height, float* 
         double advance = glyph->getAdvance();
         char nextCharacter = (i < string.size() - 1) ? string[i + 1] : ' ';
         fontGeometry.getAdvance(advance, character, nextCharacter);
-        x += fsScale * advance + sData.CurrentFontStyle.LetterSpacing;
+        x += fsScale * advance + sData.FontStyle.LetterSpacing;
     }
 
     if (width)
     {
-        *width = Math::Max(*width, static_cast<float>(x)) * sData.CurrentFontStyle.FontSize;
+        *width = Math::Max(*width, static_cast<float>(x)) * sData.FontStyle.FontSize;
     }
 
-    float heightCorrect = static_cast<float>(fsScale) * sData.CurrentFontStyle.FontSize;
+    float heightCorrect = static_cast<float>(fsScale) * sData.FontStyle.FontSize;
     if (height)
     {
-        *height = static_cast<float>(-y) * sData.CurrentFontStyle.FontSize + heightCorrect;
-        *height -= static_cast<float>(fsScale * metrics.descenderY) * sData.CurrentFontStyle.FontSize;
+        *height = static_cast<float>(-y) * sData.FontStyle.FontSize + heightCorrect;
+        *height -= static_cast<float>(fsScale * metrics.descenderY) * sData.FontStyle.FontSize;
     }
 
     if (correct)
@@ -1068,7 +1083,7 @@ void _PostAdjustTextPosition(TextVertex* begin, TextVertex* end, float lineWidth
     }
 
     float translateX;
-    lineWidth *= sData.CurrentFontStyle.FontSize;
+    lineWidth *= sData.FontStyle.FontSize;
     if (align & SA_Right)
     {
         translateX = textWidth - lineWidth;

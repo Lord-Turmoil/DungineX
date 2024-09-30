@@ -32,17 +32,44 @@ void Flush();
  * ===================================================================
  */
 
+/**
+ * @brief Draw a filled rectangle without border.
+ * @param position center of the rectangle
+ * @param size size of the rectangle
+ * @param color color of the rectangle
+ */
 void DrawFilledRect(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);
 void DrawFilledRect(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color);
 void DrawFilledRect(const glm::mat4& transform, const glm::vec4& color);
 
+/**
+ * @brief Draw a rotated filled rectangle without border.
+ * @param position position of the rectangle
+ * @param size size of the rectangle
+ * @param radian rotation in radian
+ * @param color color of the rectangle
+ */
 void DrawRotatedFilledRect(const glm::vec2& position, const glm::vec2& size, float radian, const glm::vec4& color);
 void DrawRotatedFilledRect(const glm::vec3& position, const glm::vec2& size, float radian, const glm::vec4& color);
 
+/**
+ * @brief Draw a border rectangle without filling.
+ * @param position position of the rectangle
+ * @param size size of the rectangle
+ * @param color color of the rectangle
+ * @note Use SetLineWidth to set the width of the border.
+ */
 void DrawRect(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);
 void DrawRect(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color);
 void DrawRect(const glm::mat4& transform, const glm::vec4& color);
 
+/**
+ * @brief Draw rotated border rectangle without filling.
+ * @param position ...
+ * @param size ...
+ * @param radian ...
+ * @param color ...
+ */
 void DrawRotatedRect(const glm::vec2& position, const glm::vec2& size, float radian, const glm::vec4& color);
 void DrawRotatedRect(const glm::vec3& position, const glm::vec2& size, float radian, const glm::vec4& color);
 
@@ -71,9 +98,22 @@ void DrawTexture(const glm::mat4& transform, const Ref<Texture>& texture, float 
  * ===================================================================
  */
 
+/**
+ * @brief Draw a filled circle.
+ * @param position position of the circle
+ * @param radius radius of the circle
+ * @param color color of the circle
+ */
 void DrawFilledCircle(const glm::vec2& position, float radius, const glm::vec4& color);
 void DrawFilledCircle(const glm::vec3& position, float radius, const glm::vec4& color);
 
+/**
+ * @brief Draw a border circle.
+ * @param position position of the circle;
+ * @param radius radius of the circle
+ * @param color color of the circle
+ * @note Use SetLineWidth to set the width of the border.
+ */
 void DrawCircle(const glm::vec2& position, float radius, const glm::vec4& color);
 void DrawCircle(const glm::vec3& position, float radius, const glm::vec4& color);
 
@@ -83,11 +123,39 @@ void DrawCircle(const glm::vec3& position, float radius, const glm::vec4& color)
  * ===================================================================
  */
 
+/**
+ * @brief Get the current line width.
+ * @return current line width
+ */
 float GetLineWidth();
+
+/**
+ * @brief Set the current line width.
+ * @param width line width
+ * @warning Line width will not automatically adjust by the camera perspective.
+ */
 void SetLineWidth(float width);
 
+/**
+ * @brief Draw a line segment.
+ * @param p0 starting point
+ * @param p1 ending point
+ * @param color color of the segment
+ */
 void DrawLine(const glm::vec2& p0, const glm::vec2& p1, const glm::vec4& color);
 void DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color);
+
+/**
+ * @brief Draw line strips.
+ * @note
+ * Using this set of functions to draw lines is more efficient than using DrawLine.
+ */
+void BeginLine();
+void AddPoint(const glm::vec2& point, const glm::vec4& color);
+void AddPoint(const glm::vec3& point, const glm::vec4& color);
+void AddPoint(const glm::vec2& point);
+void AddPoint(const glm::vec3& point);
+void EndLine();
 
 /*
  * ===================================================================
@@ -95,21 +163,52 @@ void DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color);
  * ===================================================================
  */
 
-struct FontStyle
+struct TextStyle
 {
-    glm::vec4 Color;
-    float FontSize;
+    float FontSize = 48.0f;
     float LetterSpacing = 0.0f;
     float LineSpacing = 0.0f;
+    bool Invert = true;
+    const char* FontFamily = nullptr;
 };
 
-void SetFontFamily(float fontSize, const Ref<Font>& font = nullptr);
-bool InvertFont();
-void InvertFont(bool invert);
+/**
+ * @brief Set the color of the text.
+ * @param color color of the text
+ * @note The default color is white.
+ * @note This will affect all following text rendering until next call.
+ */
+void SetTextColor(const glm::vec4& color);
 void GetFontColor(glm::vec4* color);
-void SetFontColor(const glm::vec4& color, glm::vec4* old);
-void GetFontStyle(FontStyle* style);
-void SetFontStyle(const FontStyle* style, FontStyle* old);
+
+/**
+ * @brief Set the font style.
+ * @param fontSize font size
+ * @param fontFace font name.
+ * @note The font name should be registered in the FontRegistry in advance.
+ */
+void SetTextStyle(float fontSize, const char* fontFace = nullptr);
+
+/**
+ * @brief Set letter spacing and line spacing.
+ * @param letterSpacing extra space between letters
+ * @param lineSpacing extra space between lines
+ * @note It adds extra space to the default spacing.
+ */
+void SetTextStyle(float letterSpacing, float lineSpacing);
+
+/**
+ * @brief Set invert.
+ * @param invert invert
+ */
+void InvertFont(bool invert);
+
+/**
+ * @brief Set all text style.
+ * @param style the style to set
+ */
+void SetTextStyle(const TextStyle& style);
+void GetTextStyle(TextStyle* style);
 
 // clang-format off
 using StringAlign = uint8_t;

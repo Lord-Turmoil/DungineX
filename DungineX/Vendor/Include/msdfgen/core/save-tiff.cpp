@@ -1,3 +1,7 @@
+/*
+ * 2024/09/30 Tony: Disable warnings.
+ */
+#pragma warning(disable : 4244)
 
 #include "save-tiff.h"
 

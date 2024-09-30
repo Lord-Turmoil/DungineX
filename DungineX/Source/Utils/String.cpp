@@ -1,5 +1,7 @@
 #include "DgeX/Utils/String.h"
 
+#include <cstring>
+
 DGEX_BEGIN
 
 namespace Utils::String
@@ -41,7 +43,17 @@ char* WCharToChar(const wchar_t* src)
 
 std::string ToString(const unsigned char* str)
 {
-    return std::string(reinterpret_cast<const char*>(str));
+    return reinterpret_cast<const char*>(str);
+}
+
+void Copy(char* dest, const char* src, size_t count)
+{
+    strncpy_s(dest, count, src, count);
+}
+
+bool Equals(const char* str1, const char* str2)
+{
+    return strcmp(str1, str2) == 0;
 }
 
 } // namespace Utils::String

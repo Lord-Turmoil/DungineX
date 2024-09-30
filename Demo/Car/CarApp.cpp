@@ -5,7 +5,7 @@ using namespace DgeX::Physics;
 
 void CarLayer::OnRender()
 {
-    RenderApi::SetFontFamily(32);
+    RenderApi::InvertFont(32.0f);
     RenderApi::DrawString("Use 'W' and 'S' to accelerate and brake.", { 10.0f, 10.0f }, Color::Black.ToVec4());
     RenderApi::DrawString("Use 'A' and 'D' to steer left and right.", { 10.0f, 40.0f }, Color::Black.ToVec4());
     RenderApi::DrawString("Press 'R' to reset the car.", { 10.0f, 70.0f }, Color::Black.ToVec4());

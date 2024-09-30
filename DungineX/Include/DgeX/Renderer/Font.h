@@ -17,8 +17,13 @@ struct MsdfData
 class Font
 {
 public:
-    Font(const std::filesystem::path& path);
+    Font(std::string name, const std::filesystem::path& path);
     ~Font();
+
+    const std::string& GetName() const
+    {
+        return _name;
+    }
 
     const MsdfData* GetMsdfData() const
     {
@@ -30,11 +35,12 @@ public:
         return _atlasTexture;
     }
 
-    static Ref<Font> Load(const std::filesystem::path& path);
+    static Ref<Font> Load(const std::string& name, const std::filesystem::path& path);
 
 private:
-    MsdfData* _data;
+    std::string _name;
     Ref<Texture> _atlasTexture;
+    MsdfData* _data;
 };
 
 /**

@@ -322,9 +322,9 @@ struct Vector3
         Z = v.Z;
     }
 
-    void Set(real_t X, real_t Y)
+    void Set(real_t x, real_t y)
     {
-        Set(X, Y, 0);
+        Set(x, y, 0);
     }
 
     bool IsZero() const
@@ -346,6 +346,8 @@ struct Vector3
 /**
  * @brief Quaternion is a 4D vector that can be used to represent orientation.
  */
+#pragma warning(disable : 4201)
+
 struct Quaternion
 {
     union

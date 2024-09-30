@@ -1,5 +1,9 @@
-
 #pragma once
+
+/*
+ * 2024/09/30 Tony: Disable warnings.
+ */
+#pragma warning(disable : 4458)
 
 #include <vector>
 #include "GlyphBox.h"

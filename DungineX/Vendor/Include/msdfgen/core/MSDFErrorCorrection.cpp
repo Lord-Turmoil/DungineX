@@ -1,3 +1,10 @@
+/*
+ * 2024/09/30 Tony: Disable warnings.
+ */
+
+#pragma warning(disable : 4100)
+#pragma warning(disable : 4458)
+#pragma warning(disable : 4505)
 
 #include "MSDFErrorCorrection.h"
 

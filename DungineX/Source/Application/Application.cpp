@@ -88,7 +88,7 @@ void Application::Close()
     }
 }
 
-bool Application::_OnWindowClose(WindowCloseEvent& e)
+bool Application::_OnWindowClose(WindowCloseEvent& event)
 {
     Close();
     return true;
@@ -161,7 +161,7 @@ bool Application::_OnInterfaceChange(InterfaceChangeEvent& e)
     return true;
 }
 
-bool Application::_OnInterfaceClose(InterfaceCloseEvent& e)
+bool Application::_OnInterfaceClose(InterfaceCloseEvent& event)
 {
     if (!_currentInterface)
     {

@@ -8,9 +8,8 @@
 DGEX_BEGIN
 
 template <typename T, typename S, int N, msdf_atlas::GeneratorFunction<S, N> GenFunc>
-static Ref<Texture> CreateAndCacheAtlas(const std::string& fontName, float fontSize,
-                                        const std::vector<msdf_atlas::GlyphGeometry>& glyphs,
-                                        const msdf_atlas::FontGeometry& fontGeometry, uint32_t width, uint32_t height)
+static Ref<Texture> CreateAndCacheAtlas(const std::vector<msdf_atlas::GlyphGeometry>& glyphs, uint32_t width,
+                                        uint32_t height)
 {
     msdf_atlas::GeneratorAttributes attributes;
     attributes.config.overlapSupport = true;
@@ -35,12 +34,12 @@ static Ref<Texture> CreateAndCacheAtlas(const std::string& fontName, float fontS
     return texture;
 }
 
-Font::Font(const std::filesystem::path& filepath) : _data(new MsdfData())
+Font::Font::Font(std::string name, const std::filesystem::path& path) : _name(std::move(name)), _data(new MsdfData())
 {
     msdfgen::FreetypeHandle* ft = msdfgen::initializeFreetype();
     DGEX_ASSERT(ft);
 
-    std::string fileString = filepath.string();
+    std::string fileString = path.string();
     msdfgen::FontHandle* font = loadFont(ft, fileString.c_str());
     if (!font)
     {
@@ -76,8 +75,7 @@ Font::Font(const std::filesystem::path& filepath) : _data(new MsdfData())
     atlasPacker.setMiterLimit(1.0);
     atlasPacker.setPadding(0);
     atlasPacker.setScale(emSize);
-    int remaining = atlasPacker.pack(_data->Glyphs.data(), static_cast<int>(_data->Glyphs.size()));
-    DGEX_ASSERT(remaining == 0);
+    atlasPacker.pack(_data->Glyphs.data(), static_cast<int>(_data->Glyphs.size()));
 
     int width, height;
     atlasPacker.getDimensions(width, height);
@@ -94,8 +92,7 @@ Font::Font(const std::filesystem::path& filepath) : _data(new MsdfData())
         glyphSeed *= LCG_MULTIPLIER;
         glyph.edgeColoring(msdfgen::edgeColoringInkTrap, DEFAULT_ANGLE_THRESHOLD, glyphSeed);
     }
-    _atlasTexture = CreateAndCacheAtlas<uint8_t, float, 3, msdf_atlas::msdfGenerator>(
-        "", static_cast<float>(emSize), _data->Glyphs, _data->FontGeometry, width, height);
+    _atlasTexture = CreateAndCacheAtlas<uint8_t, float, 3, msdf_atlas::msdfGenerator>(_data->Glyphs, width, height);
 
     destroyFont(font);
     deinitializeFreetype(ft);
@@ -108,9 +105,9 @@ Font::~Font()
     delete _data;
 }
 
-Ref<Font> Font::Load(const std::filesystem::path& path)
+Ref<Font> Font::Load(const std::string& name, const std::filesystem::path& path)
 {
-    return CreateRef<Font>(path);
+    return CreateRef<Font>(name, path);
 }
 
 std::unordered_map<std::string, Ref<Font>> FontRegistry::_sFonts;
@@ -131,7 +128,7 @@ void FontRegistry::Add(const std::string& fontName, const Ref<Font>& font)
 
 Ref<Font> FontRegistry::Load(const std::string& fontName, const std::filesystem::path& path)
 {
-    Ref<Font> font = Font::Load(path);
+    Ref<Font> font = Font::Load(fontName, path);
     _sFonts[fontName] = font;
     return font;
 }

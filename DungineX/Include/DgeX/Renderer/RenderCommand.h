@@ -64,6 +64,8 @@ void DrawCircle(const Ref<VertexArray>& vertexArray, uint32_t vertexCount = 0, u
  */
 void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount = 0);
 
+
+
 } // namespace RenderCommand
 
 DGEX_END

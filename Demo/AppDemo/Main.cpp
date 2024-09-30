@@ -59,7 +59,7 @@ void MainLayer::_RenderText() const
 
     static const std::string text = "Greetings from DgeX!";
     static const std::string block = "Greetings from DgeX!\nI mean it.";
-    SetFontFamily(48);
+    SetTextStyle(48.0f);
     SetLineWidth(1.0f);
 
     float width, height;

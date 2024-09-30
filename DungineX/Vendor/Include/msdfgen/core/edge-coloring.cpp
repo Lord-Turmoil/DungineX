@@ -2,6 +2,8 @@
  * 2024/09/29 Tony: Disable warnings.
  */
 #pragma warning(disable : 4244)
+#pragma warning(disable : 4456)
+#pragma warning(disable : 4457)
 
 #include "edge-coloring.h"
 

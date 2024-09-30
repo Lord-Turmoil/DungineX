@@ -1,3 +1,7 @@
+/*
+ * 2024/09/30 Tony: Disable warnings.
+ */
+#pragma warning(disable : 4505)
 
 #include "rectangle-packing.h"
 

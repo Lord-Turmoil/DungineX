@@ -89,12 +89,12 @@ public:
     }
 
 private:
-    bool _OnWindowClose(WindowCloseEvent& e);
+    bool _OnWindowClose(WindowCloseEvent& event);
     bool _OnWindowResize(WindowResizeEvent& e);
 
     bool _OnInterfaceTransit(InterfaceTransitEvent& e);
     bool _OnInterfaceChange(InterfaceChangeEvent& e);
-    bool _OnInterfaceClose(InterfaceCloseEvent& e);
+    bool _OnInterfaceClose(InterfaceCloseEvent& event);
 
     /**
      * @brief The run thread to prevent freezing on window events.

@@ -46,6 +46,10 @@ char* WCharToChar(const wchar_t* src);
  */
 std::string ToString(const unsigned char* str);
 
+void Copy(char* dest, const char* src, size_t count);
+
+bool Equals(const char* str1, const char* str2);
+
 } // namespace Utils::String
 
 DGEX_END
