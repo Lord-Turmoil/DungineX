@@ -47,7 +47,7 @@ Car::Car()
     _wheel = new Particle[2];
     _frame = new ParticleRod[12];
     _absorber = new ParticleAbsorber[4];
-    _absorberMinConstraint = new ParticleHalfRod[2];
+    _absorberMinConstraint = new ParticleStop[2];
     _absorberMaxConstraint = new ParticleCable[2];
 
     _Init(Vector3::Zero);
@@ -65,15 +65,15 @@ Car::~Car()
 
 void Car::Forward(real_t threshold)
 {
-    _wheelForce[0].SetForce(_wheelNormal[0] * _sGasPower * threshold);
-    _wheelForce[1].SetForce(_wheelNormal[1] * _sGasPower * threshold);
+    _wheelForce[0].Force = _wheelNormal[0] * _sGasPower * threshold;
+    _wheelForce[1].Force = _wheelNormal[1] * _sGasPower * threshold;
 
     if (!_wheelNormal[0].IsZero())
     {
         Vector3 direction = _body[5].GetPosition() - _body[4].GetPosition();
         Vector3 normal = Vector3(-direction.Y, direction.X).Normalized();
         Vector3 correctedRotation = normal * _sRotatePower * threshold * threshold * 0.2;
-        _rotateForce[1].SetForce(_rotateForce[1].GetForce() + correctedRotation);
+        _rotateForce[1].Force = _rotateForce[1].Force + correctedRotation;
     }
     else
     {
@@ -88,15 +88,15 @@ void Car::Forward(real_t threshold)
 
 void Car::Backward(real_t threshold)
 {
-    _wheelForce[0].SetForce(_wheelNormal[0] * _sGasPower * -threshold);
-    _wheelForce[1].SetForce(_wheelNormal[1] * _sGasPower * -threshold);
+    _wheelForce[0].Force = _wheelNormal[0] * _sGasPower * -threshold;
+    _wheelForce[1].Force = _wheelNormal[1] * _sGasPower * -threshold;
 
     if (!_wheelNormal[1].IsZero())
     {
         Vector3 direction = _body[4].GetPosition() - _body[5].GetPosition();
         Vector3 normal = Vector3(direction.Y, -direction.X).Normalized();
         Vector3 correctedRotation = normal * _sRotatePower * threshold * threshold * 0.2;
-        _rotateForce[0].SetForce(_rotateForce[0].GetForce() + correctedRotation);
+        _rotateForce[0].Force = _rotateForce[0].Force + correctedRotation;
     }
     else
     {
@@ -113,23 +113,23 @@ void Car::RotateLeft(real_t threshold)
 {
     Vector3 direction = _body[5].GetPosition() - _body[4].GetPosition();
     Vector3 normal = Vector3(-direction.Y, direction.X).Normalized();
-    _rotateForce[1].SetForce(normal * _sRotatePower * threshold);
+    _rotateForce[1].Force = normal * _sRotatePower * threshold;
 }
 
 void Car::RotateRight(real_t threshold)
 {
     Vector3 direction = _body[4].GetPosition() - _body[5].GetPosition();
     Vector3 normal = Vector3(direction.Y, -direction.X).Normalized();
-    _rotateForce[0].SetForce(normal * _sRotatePower * threshold);
+    _rotateForce[0].Force = normal * _sRotatePower * threshold;
 }
 
 void Car::Jump() const
 {
     for (int i = 2; i < 4; i++)
     {
-        _absorber[i].SetSpringConstant(_sSpringConstant * 1.2);
-        _absorber[i].SetRestLength(_sSpringRestLength * 1.2);
-        _absorber[i].SetDamping(0.0);
+        _absorber[i].SpringConstant = _sSpringConstant * 1.2;
+        _absorber[i].RestLength = _sSpringRestLength * 1.2;
+        _absorber[i].Damping = 0.0;
     }
 }
 
@@ -137,19 +137,19 @@ void Car::StopJump() const
 {
     for (int i = 2; i < 4; i++)
     {
-        _absorber[i].SetSpringConstant(_sSpringConstant);
-        _absorber[i].SetRestLength(_sSpringRestLength);
-        _absorber[i].SetDamping(_sSpringDamping);
+        _absorber[i].SpringConstant = _sSpringConstant;
+        _absorber[i].RestLength = _sSpringRestLength;
+        _absorber[i].Damping = _sSpringDamping;
     }
 }
 
 void Car::ResetState()
 {
-    _wheelForce[0].SetForce(Vector3::Zero);
-    _wheelForce[1].SetForce(Vector3::Zero);
+    _wheelForce[0].Force = Vector3::Zero;
+    _wheelForce[1].Force = Vector3::Zero;
 
-    _rotateForce[0].SetForce(Vector3::Zero);
-    _rotateForce[1].SetForce(Vector3::Zero);
+    _rotateForce[0].Force = Vector3::Zero;
+    _rotateForce[1].Force = Vector3::Zero;
 }
 
 void Car::Reset(const Vector3& center)
@@ -394,7 +394,7 @@ void Car::_Init(const Vector3& center)
     for (int i = 0; i < 6; i++)
     {
         _body[i].SetPosition(center + _sBodyOffset[i]);
-        _body[i].SetMass((i == 2 || i == 3) ? _sBodyMass : _sFrameMass);
+        _body[i].SetMass(i == 2 || i == 3 ? _sBodyMass : _sFrameMass);
         _body[i].SetDamping(0.9);
         _body[i].SetAcceleration(gravity);
     }
@@ -423,7 +423,7 @@ void Car::_Init(const Vector3& center)
     for (int i = 0; i < 2; i++)
     {
         _absorber[i] = ParticleAbsorber(&_body[4 + i], _sSpringConstant, _sSpringRestLength, _sSpringDamping);
-        _absorberMinConstraint[i] = ParticleHalfRod(&_body[4 + i], &_wheel[i], _sSpringRestLength * 0.5, 0.4);
+        _absorberMinConstraint[i] = ParticleStop(&_body[4 + i], &_wheel[i], _sSpringRestLength * 0.5, 0.4);
         _absorberMaxConstraint[i] = ParticleCable(&_body[4 + i], &_wheel[i], _sSpringRestLength * 1.2, 0.4);
     }
     for (int i = 0; i < 2; i++)
@@ -571,7 +571,7 @@ uint32_t Map::AddContact(ParticleContact* contact, uint32_t limit) const
     _car->_wheelNormal[0] = _car->_wheelNormal[1] = Vector3::Zero;
 
     uint32_t used = 0;
-    for (int i = 0; (i < 2) && (used < limit); i++)
+    for (int i = 0; i < 2 && used < limit; i++)
     {
         Particle* particle = &_car->_wheel[i];
         auto it = std::lower_bound(_vertices.begin(), _vertices.end(), particle->GetPosition(),
@@ -585,7 +585,7 @@ uint32_t Map::AddContact(ParticleContact* contact, uint32_t limit) const
         auto left = it - Math::Min(index, 3);
         auto right = it + Math::Min(static_cast<int>(_vertices.size()) - 1 - index, 2);
 
-        for (it = left; (it != right) && (used < limit); ++it)
+        for (it = left; it != right && used < limit; ++it)
         {
             Vector3 start = *it;
             Vector3 end = *(it + 1);

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DgeX/Physics/Common.h"
+#include "DgeX/Utils/Random.h"
 
 DPHX_BEGIN
 

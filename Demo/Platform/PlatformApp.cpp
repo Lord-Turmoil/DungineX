@@ -65,7 +65,7 @@ void PlatformInterface::OnRender()
                         { _particles[3].GetPosition().X, _particles[3].GetPosition().Y, 0 }, Color::Green.ToVec4());
 
     RenderApi::SetLineWidth(2.f);
-    RenderApi::DrawLine({ -100, _panel.GetAnchor().Y, 0 }, { 1000, _panel.GetAnchor().Y, 0 }, Color::DarkGray.ToVec4());
+    RenderApi::DrawLine({ -100, _panel.Anchor.Y, 0 }, { 1000, _panel.Anchor.Y, 0 }, Color::DarkGray.ToVec4());
 
     RenderApi::EndScene();
 }
@@ -83,23 +83,23 @@ bool PlatformInterface::_OnKeyPressed(KeyPressedEvent& event)
 
     if (event.GetKeyCode() == Key::Q)
     {
-        _bungees[1].SetRestLength(Math::Clamp(_bungees[1].GetRestLength() - 5, 10.0, 60.0));
-        DGEX_LOG_DEBUG("Left length: {}", _bungees[1].GetRestLength());
+        _bungees[1].RestLength = Math::Clamp(_bungees[1].RestLength - 5, 10.0, 60.0);
+        DGEX_LOG_DEBUG("Left length: {}", _bungees[1].RestLength);
     }
     if (event.GetKeyCode() == Key::Z)
     {
-        _bungees[1].SetRestLength(Math::Clamp(_bungees[1].GetRestLength() + 5, 10.0, 60.0));
-        DGEX_LOG_DEBUG("Left length: {}", _bungees[1].GetRestLength());
+        _bungees[1].RestLength = Math::Clamp(_bungees[1].RestLength + 5, 10.0, 60.0);
+        DGEX_LOG_DEBUG("Left length: {}", _bungees[1].RestLength);
     }
     if (event.GetKeyCode() == Key::E)
     {
-        _bungees[0].SetRestLength(Math::Clamp(_bungees[0].GetRestLength() - 5, 10.0, 60.0));
-        DGEX_LOG_DEBUG("Right length: {}", _bungees[0].GetRestLength());
+        _bungees[0].RestLength = Math::Clamp(_bungees[0].RestLength - 5, 10.0, 60.0);
+        DGEX_LOG_DEBUG("Right length: {}", _bungees[0].RestLength);
     }
     if (event.GetKeyCode() == Key::C)
     {
-        _bungees[0].SetRestLength(Math::Clamp(_bungees[0].GetRestLength() + 5, 10.0, 60.0));
-        DGEX_LOG_DEBUG("Right length: {}", _bungees[0].GetRestLength());
+        _bungees[0].RestLength = Math::Clamp(_bungees[0].RestLength + 5, 10.0, 60.0);
+        DGEX_LOG_DEBUG("Right length: {}", _bungees[0].RestLength);
     }
     if (event.GetKeyCode() == Key::S)
     {
@@ -130,36 +130,36 @@ void PlatformInterface::_Init()
 
     _rods[0].SetFirst(_particles + 0);
     _rods[0].SetSecond(_particles + 1);
-    _rods[0].SetLength(22);
+    _rods[0].Length = 22;
 
     _rods[1].SetFirst(_particles + 1);
     _rods[1].SetSecond(_particles + 2);
-    _rods[1].SetLength(28.84);
+    _rods[1].Length = 28.84;
 
     _rods[2].SetFirst(_particles + 2);
     _rods[2].SetSecond(_particles + 3);
-    _rods[2].SetLength(70);
+    _rods[2].Length = 70;
 
     _rods[3].SetFirst(_particles + 3);
     _rods[3].SetSecond(_particles + 0);
-    _rods[3].SetLength(28.84);
+    _rods[3].Length = 28.84;
 
     _rods[4].SetFirst(_particles + 0);
     _rods[4].SetSecond(_particles + 2);
-    _rods[4].SetLength(48.7);
+    _rods[4].Length = 48.7;
 
     _rods[5].SetFirst(_particles + 1);
     _rods[5].SetSecond(_particles + 3);
-    _rods[5].SetLength(48.7);
+    _rods[5].Length = 48.7;
 
     _bungeeAnchors[0] = Vector3(100, 70, 0);
-    _bungees[0].SetAnchor(&_bungeeAnchors[0]);
+    _bungees[0].Anchor = &_bungeeAnchors[0];
     _bungeeAnchors[1] = Vector3(30, 70, 0);
-    _bungees[1].SetAnchor(&_bungeeAnchors[1]);
+    _bungees[1].Anchor = &_bungeeAnchors[1];
     for (int i = 0; i < 2; i++)
     {
-        _bungees[i].SetRestLength(40.0);
-        _bungees[i].SetSpringConstant(3.0);
+        _bungees[i].RestLength = 40.0;
+        _bungees[i].SpringConstant = 3.0;
         _world.GetForceRegistry().Add(_particles + 2 + i, _bungees + i);
     }
 
@@ -169,7 +169,7 @@ void PlatformInterface::_Init()
     }
 
     _panel.SetParticles(_particles, 4);
-    _panel.SetAnchor(Vector3(0, 10, 0));
+    _panel.Anchor = Vector3(0, 10, 0);
     _world.GetContactRegistry().Add(&_panel);
 }
 

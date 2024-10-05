@@ -1,6 +1,8 @@
 #pragma once
 
 #include "DgeX/Physics/Common.h"
+#include "DgeX/Physics/Core/Base.h"
+#include "DgeX/Physics/Core/Types/Matrix.h"
 
 DPHX_BEGIN
 

@@ -80,7 +80,7 @@ private:
     DgeX::Physics::Particle* _wheel;
     DgeX::Physics::ParticleRod* _frame;
     DgeX::Physics::ParticleAbsorber* _absorber;
-    DgeX::Physics::ParticleHalfRod* _absorberMinConstraint;
+    DgeX::Physics::ParticleStop* _absorberMinConstraint;
     DgeX::Physics::ParticleCable* _absorberMaxConstraint;
 
     // The direction of the wheel contact.

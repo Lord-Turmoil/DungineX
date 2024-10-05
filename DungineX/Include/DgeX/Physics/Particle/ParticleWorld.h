@@ -1,10 +1,15 @@
 #pragma once
 
 #include "DgeX/Physics/Core/DWorld.h"
-#include "DgeX/Physics/Particle/ParticleContact.h"
-#include "DgeX/Physics/Particle/ParticleForceGenerator.h"
+#include "DgeX/Physics/Particle/Contact/ParticleContactGenerator.h"
+#include "DgeX/Physics/Particle/Contact/ParticleContactResolver.h"
+#include "DgeX/Physics/Particle/Force/ParticleForceGenerator.h"
+
+#include <vector>
 
 DPHX_BEGIN
+
+class Particle;
 
 class ParticleWorld final : public DWorld
 {

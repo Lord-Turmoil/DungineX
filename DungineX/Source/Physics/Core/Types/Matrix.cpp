@@ -1,4 +1,6 @@
-#include "DgeX/Physics/Core/Types.h"
+#include "DgeX/Physics/Core/Types/Matrix.h"
+
+#include "DgeX/Utils/Math.h"
 
 DPHX_BEGIN
 

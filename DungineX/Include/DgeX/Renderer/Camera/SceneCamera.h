@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DgeX/Physics/Core/Types.h"
+#include "DgeX/Physics/Physics.h"
 #include "DgeX/Renderer/Camera/Camera.h"
 
 #include <glm/glm.hpp>

@@ -1,4 +1,4 @@
-#include "DgeX/Physics/Particle/ParticleContact.h"
+#include "DgeX/Physics/Particle/Contact/ParticleContact.h"
 #include "DgeX/Physics/Particle/Particle.h"
 
 DPHX_BEGIN
@@ -118,111 +118,6 @@ void ParticleContact::_ResolveInterpenetration(real_t delta)
     {
         _particles[1]->Translate(_movements[1]);
     }
-}
-
-ParticleContactResolver::ParticleContactResolver(uint32_t iterations) : _iterations(iterations)
-{
-}
-
-void ParticleContactResolver::Resolve(ParticleContact* contacts, uint32_t count, real_t delta) const
-{
-    if (count == 0)
-    {
-        return;
-    }
-
-    uint32_t iterationsUsed = 0;
-    while (iterationsUsed < _iterations)
-    {
-        // Find the contact with the largest closing velocity.
-        real_t max = MAX_REAL;
-        uint32_t maxIndex = count;
-        for (uint32_t i = 0; i < count; i++)
-        {
-            real_t sepVel = contacts[i]._CalculateSeparatingVelocity();
-            if ((sepVel < max) && (sepVel < 0 || contacts[i].Penetration > 0))
-            {
-                max = sepVel;
-                maxIndex = i;
-            }
-        }
-        if (maxIndex == count)
-        {
-            break;
-        }
-
-        // Resolve this contact.
-        contacts[maxIndex]._Resolve(delta);
-
-        // Update all other contacts if they share the same particles.
-        Vector3* move = contacts[maxIndex]._movements;
-        for (uint32_t i = 0; i < count; i++)
-        {
-            if (contacts[i].GetFirst() == contacts[maxIndex].GetFirst())
-            {
-                contacts[i].Penetration -= move[0] * contacts[i].ContactNormal;
-            }
-            else if (contacts[i].GetFirst() == contacts[maxIndex].GetSecond())
-            {
-                contacts[i].Penetration -= move[1] * contacts[i].ContactNormal;
-            }
-
-            if (contacts[i].GetSecond())
-            {
-                if (contacts[i].GetSecond() == contacts[maxIndex].GetFirst())
-                {
-                    contacts[i].Penetration += move[0] * contacts[i].ContactNormal;
-                }
-                else if (contacts[i].GetSecond() == contacts[maxIndex].GetSecond())
-                {
-                    contacts[i].Penetration += move[1] * contacts[i].ContactNormal;
-                }
-            }
-        }
-
-        iterationsUsed++;
-    }
-}
-
-void ParticleContactRegistry::Add(ParticleContactGenerator* contactGenerator)
-{
-    _contactGenerators.push_back(contactGenerator);
-}
-
-void ParticleContactRegistry::Remove(ParticleContactGenerator* contactGenerator)
-{
-    for (auto it = _contactGenerators.begin(); it != _contactGenerators.end(); ++it)
-    {
-        if (*it == contactGenerator)
-        {
-            _contactGenerators.erase(it);
-            break;
-        }
-    }
-}
-
-void ParticleContactRegistry::Clear()
-{
-    _contactGenerators.clear();
-}
-
-uint32_t ParticleContactRegistry::AddContact(ParticleContact* contacts, uint32_t limit) const
-{
-    uint32_t available = limit;
-
-    for (auto generator : _contactGenerators)
-    {
-        int added = generator->AddContact(contacts, available);
-        available -= added;
-        contacts += added;
-
-        if (available <= 0)
-        {
-            break;
-        }
-    }
-
-    return limit - available;
 }
 
 DPHX_END

@@ -1,5 +1,7 @@
 #include "DgeX/Physics/Core/DWorld.h"
 
+#include "DgeX/Utils/Math.h"
+
 DPHX_BEGIN
 
 void DWorld::Step(real_t delta)

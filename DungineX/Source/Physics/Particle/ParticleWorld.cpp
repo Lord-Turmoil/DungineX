@@ -1,5 +1,8 @@
 #include "DgeX/Physics/Particle/ParticleWorld.h"
+#include "DgeX/Physics/Particle/Contact/ParticleContact.h"
 #include "DgeX/Physics/Particle/Particle.h"
+
+#include <algorithm>
 
 DPHX_BEGIN
 

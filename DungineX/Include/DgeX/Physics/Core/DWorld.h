@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DgeX/Physics/Core/Types.h"
+#include "DgeX/Physics/Core/Precision.h"
 
 DPHX_BEGIN
 

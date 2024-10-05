@@ -492,7 +492,7 @@
     <ClInclude Include="Include\DgeX\Utils\Random.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Include\DgeX\Physics\Core\Types.h">
+    <ClInclude Include="Include\DgeX\Physics\Core\Types\Vector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\DgeX\Physics\Core\Base.h">
@@ -522,13 +522,7 @@
     <ClInclude Include="Include\DgeX\Core\ObjectQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Include\DgeX\Physics\Particle\ParticleForceGenerator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\DgeX\Physics\Particle\ParticleContact.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\DgeX\Physics\Particle\ParticleLink.h">
+    <ClInclude Include="Include\DgeX\Physics\Particle\Contact\ParticleContact.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\DgeX\Physics\Particle\ParticleWorld.h">
@@ -1056,6 +1050,87 @@
     <ClInclude Include="Include\DgeX\Renderer\Font.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Core\Precision.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Core\Types\Quaternion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Core\Types\Matrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Particle\Contact\ParticleLink.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Particle\Contact\ParticleCable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Particle\Contact\ParticleRod.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Particle\Contact\ParticleStop.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Particle\Contact\ParticlePanel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Particle\Force\ParticleForceGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Particle\Force\ParticleForce.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Particle\Force\ParticleAbsorber.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Particle\Force\ParticleBungee.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Particle\Force\ParticleDrag.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Particle\Force\ParticleGravity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Particle\Force\ParticleSpring.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Particle\Force\ParticleFakeSpring.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Particle\Contact\ParticleContactGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Particle\Contact\ParticleContactResolver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Body\Contact\Contact.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Body\Contact\ContactResolver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Body\ContactGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Body\Force\BodyForceGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Body\Force\BodyForce.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Body\Force\BodyGravity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Body\Force\BodySpring.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Body\Force\BodyBungee.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Body\Force\BodyAbsorber.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Platform\OpenGL\OpenGLWindow.cpp">
@@ -1160,7 +1235,7 @@
     <ClCompile Include="Source\Utils\Random.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Physics\Core\Types.cpp">
+    <ClCompile Include="Source\Physics\Core\Types\Matrix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Physics\Particle\Particle.cpp">
@@ -1175,15 +1250,6 @@
     <ClCompile Include="Source\Application\Input\Input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Physics\Particle\ParticleForceGenerator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Physics\Particle\ParticleContact.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Physics\Particle\ParticleLink.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Physics\Particle\ParticleWorld.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1196,10 +1262,7 @@
     <ClCompile Include="Source\Physics\Body\RigidBody.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Physics\Body\Contact.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Physics\Body\ContactResolver.cpp">
+    <ClCompile Include="Source\Physics\Body\Contact\ContactResolver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Physics\Core\DWorld.cpp">
@@ -1338,6 +1401,75 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Renderer\Font.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Particle\Contact\ParticleContact.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Particle\Contact\ParticleContactResolver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Particle\Contact\ParticleContactGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Particle\Contact\ParticleLink.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Particle\Contact\ParticleCable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Particle\Contact\ParticleRod.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Particle\Contact\ParticleStop.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Particle\Contact\ParticlePanel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Particle\Force\ParticleForce.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Particle\Force\ParticleGravity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Particle\Force\ParticleDrag.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Particle\Force\ParticleAbsorber.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Particle\Force\ParticleBungee.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Particle\Force\ParticleFakeSpring.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Particle\Force\ParticleSpring.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Particle\Force\ParticleForceGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Body\Contact\Contact.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Body\Force\BodyForceGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Body\Force\BodyForce.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Body\Force\BodyGravity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Body\Force\BodySpring.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Body\Force\BodyBungee.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Body\Force\BodyAbsorber.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

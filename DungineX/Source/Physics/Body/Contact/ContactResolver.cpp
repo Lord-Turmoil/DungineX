@@ -1,4 +1,6 @@
-#include "DgeX/Physics/Body/Contact.h"
+#include "DgeX/Physics/Body/Contact/ContactResolver.h"
+#include "DgeX/Physics/Body/Contact/Contact.h"
+#include "DgeX/Physics/Core/Types/Vector.h"
 
 DPHX_BEGIN
 
@@ -31,12 +33,12 @@ void ContactResolver::_PrepareContacts(Contact* contacts, uint32_t count, real_t
 
 void ContactResolver::_AdjustVelocities(Contact* contacts, uint32_t count, real_t delta) const
 {
-    Vector3 velocityChange[2];
-    Vector3 rotationChange[2];
 
     uint32_t velocityIterationsUsed = 0;
     while (velocityIterationsUsed < _velocityIterations)
     {
+        Vector3 velocityChange[2];
+        Vector3 rotationChange[2];
         real_t max = _velocityEpsilon;
         uint32_t maxIndex = count;
 
@@ -86,13 +88,13 @@ void ContactResolver::_AdjustVelocities(Contact* contacts, uint32_t count, real_
 
 void ContactResolver::_AdjustPositions(Contact* contacts, uint32_t count, real_t delta) const
 {
-    Vector3 linearChange[2];
-    Vector3 angularChange[2];
-
     // iteratively resolve inter-penetrations in order of severity.
     uint32_t positionIterationsUsed = 0;
     while (positionIterationsUsed < _positionIterations)
     {
+        Vector3 linearChange[2];
+        Vector3 angularChange[2];
+
         // Find the biggest Penetration
         real_t max = _positionEpsilon;
         uint32_t maxIndex = count;
