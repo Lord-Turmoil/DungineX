@@ -32,6 +32,7 @@ public:
     Vector3* GetAnchor() const { return _anchor; }
 
     // clang-format on
+
 protected:
     real_t _Length() const;
 
@@ -42,7 +43,7 @@ protected:
 
 /**
  * @brief Base class for particle link.
- * @note Generate contact between two contacts.
+ * @note Generate contact between two particles.
  */
 class ParticleLink : public ParticleContactGenerator
 {

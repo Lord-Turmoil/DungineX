@@ -531,9 +531,6 @@
     <ClInclude Include="Include\DgeX\Physics\Body\RigidBody.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Include\DgeX\Physics\Body\Contact.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Include\DgeX\Physics\Core\DWorld.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1104,13 +1101,10 @@
     <ClInclude Include="Include\DgeX\Physics\Particle\Contact\ParticleContactResolver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Include\DgeX\Physics\Body\Contact\Contact.h">
+    <ClInclude Include="Include\DgeX\Physics\Body\Contact\BodyContact.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Include\DgeX\Physics\Body\Contact\ContactResolver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\DgeX\Physics\Body\ContactGenerator.h">
+    <ClInclude Include="Include\DgeX\Physics\Body\Contact\BodyContactResolver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\DgeX\Physics\Body\Force\BodyForceGenerator.h">
@@ -1129,6 +1123,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\DgeX\Physics\Body\Force\BodyAbsorber.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Body\Contact\BodyRod.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Body\Contact\BodyContactGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Body\Contact\BodyLink.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Body\Contact\BodyCable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Physics\Body\Contact\BodyStop.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1262,7 +1271,7 @@
     <ClCompile Include="Source\Physics\Body\RigidBody.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Physics\Body\Contact\ContactResolver.cpp">
+    <ClCompile Include="Source\Physics\Body\Contact\BodyContactResolver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Physics\Core\DWorld.cpp">
@@ -1451,7 +1460,7 @@
     <ClCompile Include="Source\Physics\Particle\Force\ParticleForceGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Physics\Body\Contact\Contact.cpp">
+    <ClCompile Include="Source\Physics\Body\Contact\BodyContact.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Physics\Body\Force\BodyForceGenerator.cpp">
@@ -1470,6 +1479,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Physics\Body\Force\BodyAbsorber.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Body\Contact\BodyRod.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Body\Contact\BodyCable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Physics\Body\Contact\BodyStop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

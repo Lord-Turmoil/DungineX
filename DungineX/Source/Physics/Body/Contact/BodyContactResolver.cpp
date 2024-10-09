@@ -1,16 +1,16 @@
-#include "DgeX/Physics/Body/Contact/ContactResolver.h"
-#include "DgeX/Physics/Body/Contact/Contact.h"
+#include "DgeX/Physics/Body/Contact/BodyContactResolver.h"
+#include "DgeX/Physics/Body/Contact/BodyContact.h"
 #include "DgeX/Physics/Core/Types/Vector.h"
 
 DPHX_BEGIN
 
-ContactResolver::ContactResolver(uint32_t iterations)
+BodyContactResolver::BodyContactResolver(uint32_t iterations)
 {
     SetVelocityIterations(iterations);
     SetPositionIterations(iterations);
 }
 
-void ContactResolver::Resolve(Contact* contacts, uint32_t count, real_t delta)
+void BodyContactResolver::Resolve(BodyContact* contacts, uint32_t count, real_t delta)
 {
     if (count == 0)
     {
@@ -22,16 +22,16 @@ void ContactResolver::Resolve(Contact* contacts, uint32_t count, real_t delta)
     _AdjustVelocities(contacts, count, delta);
 }
 
-void ContactResolver::_PrepareContacts(Contact* contacts, uint32_t count, real_t delta)
+void BodyContactResolver::_PrepareContacts(BodyContact* contacts, uint32_t count, real_t delta)
 {
     auto end = contacts + count;
-    for (Contact* contact = contacts; contact != end; contact++)
+    for (BodyContact* contact = contacts; contact != end; contact++)
     {
         contact->_CalculateInternals(delta);
     }
 }
 
-void ContactResolver::_AdjustVelocities(Contact* contacts, uint32_t count, real_t delta) const
+void BodyContactResolver::_AdjustVelocities(BodyContact* contacts, uint32_t count, real_t delta) const
 {
 
     uint32_t velocityIterationsUsed = 0;
@@ -86,7 +86,7 @@ void ContactResolver::_AdjustVelocities(Contact* contacts, uint32_t count, real_
     }
 }
 
-void ContactResolver::_AdjustPositions(Contact* contacts, uint32_t count, real_t delta) const
+void BodyContactResolver::_AdjustPositions(BodyContact* contacts, uint32_t count, real_t delta) const
 {
     // iteratively resolve inter-penetrations in order of severity.
     uint32_t positionIterationsUsed = 0;

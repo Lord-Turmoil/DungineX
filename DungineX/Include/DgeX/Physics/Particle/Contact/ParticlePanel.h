@@ -39,7 +39,7 @@ public:
 class ParticlesPanel : public ParticleContactGenerator
 {
 public:
-    ParticlesPanel() : _particles(nullptr), _count(0), Normal(Vector3::UnitY), Restitution(0.1f)
+    ParticlesPanel() : Normal(Vector3::UnitY), Restitution(0.1f), _particles(nullptr), _count(0)
     {
     }
 

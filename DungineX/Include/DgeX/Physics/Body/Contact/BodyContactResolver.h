@@ -5,7 +5,7 @@
 
 DPHX_BEGIN
 
-class Contact;
+class BodyContact;
 
 /**
  * @brief Responsible for resolving contacts between rigid bodies.
@@ -23,11 +23,11 @@ class Contact;
  *
  * Also, resolving contacts may cause object translate regardless of friction.
  */
-class ContactResolver
+class BodyContactResolver
 {
 public:
-    ContactResolver(uint32_t iterations);
-    virtual ~ContactResolver() = default;
+    BodyContactResolver(uint32_t iterations);
+    virtual ~BodyContactResolver() = default;
 
     // clang-format off
     void SetVelocityIterations(uint32_t iterations) { _velocityIterations = iterations; }
@@ -40,24 +40,24 @@ public:
 
     // clang-format on
 
-    void Resolve(Contact* contacts, uint32_t count, real_t delta);
+    void Resolve(BodyContact* contacts, uint32_t count, real_t delta);
 
 protected:
     /**
      * @brief
      * Prepare contacts' data and set their awake state.
      */
-    void _PrepareContacts(Contact* contacts, uint32_t count, real_t delta);
+    void _PrepareContacts(BodyContact* contacts, uint32_t count, real_t delta);
 
     /**
      * @brief Resolve velocity constraints.
      */
-    void _AdjustVelocities(Contact* contacts, uint32_t count, real_t delta) const;
+    void _AdjustVelocities(BodyContact* contacts, uint32_t count, real_t delta) const;
 
     /**
      * @brief Resolve position constraints.
      */
-    void _AdjustPositions(Contact* contacts, uint32_t count, real_t delta) const;
+    void _AdjustPositions(BodyContact* contacts, uint32_t count, real_t delta) const;
 
 protected:
     /**

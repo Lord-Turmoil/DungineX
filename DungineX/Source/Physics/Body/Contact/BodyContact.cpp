@@ -1,9 +1,9 @@
-#include "DgeX/Physics/Body/Contact/Contact.h"
+#include "DgeX/Physics/Body/Contact/BodyContact.h"
 #include "DgeX/Physics/Body/RigidBody.h"
 
 DPHX_BEGIN
 
-void Contact::_CalculateInternals(real_t delta)
+void BodyContact::_CalculateInternals(real_t delta)
 {
     if (!_bodies[0])
     {
@@ -30,13 +30,13 @@ void Contact::_CalculateInternals(real_t delta)
     _CalculateDesiredDeltaVelocity(delta);
 }
 
-void Contact::_SwapBodies()
+void BodyContact::_SwapBodies()
 {
     ContactNormal.Invert();
     std::swap(_bodies[0], _bodies[1]);
 }
 
-void Contact::_MatchAwakeState() const
+void BodyContact::_MatchAwakeState() const
 {
     if (!_bodies[1])
     {
@@ -59,7 +59,7 @@ void Contact::_MatchAwakeState() const
     }
 }
 
-void Contact::_CalculateDesiredDeltaVelocity(real_t delta)
+void BodyContact::_CalculateDesiredDeltaVelocity(real_t delta)
 {
     // A magic number to control the restitution velocity.
     static constexpr real_t sVelocityLimit = 0.25f;
@@ -86,7 +86,7 @@ void Contact::_CalculateDesiredDeltaVelocity(real_t delta)
     _desiredDeltaVelocity = -_contactVelocity.X - correctedRestitution * (_contactVelocity.X - velocityFromAcc);
 }
 
-Vector3 Contact::_CalculateLocalVelocity(int bodyIndex, real_t delta) const
+Vector3 BodyContact::_CalculateLocalVelocity(int bodyIndex, real_t delta) const
 {
     RigidBody* body = _bodies[bodyIndex];
 
@@ -110,7 +110,7 @@ Vector3 Contact::_CalculateLocalVelocity(int bodyIndex, real_t delta) const
     return contactVelocity;
 }
 
-inline void Contact::_CalculateContactBasis()
+inline void BodyContact::_CalculateContactBasis()
 {
     Vector3 contactTangent[2];
 
@@ -152,7 +152,7 @@ inline void Contact::_CalculateContactBasis()
     _transformMatrix.SetComponents(ContactNormal, contactTangent[0], contactTangent[1]);
 }
 
-void Contact::_ApplyVelocityChange(Vector3 velocityChange[2], Vector3 rotationChange[2]) const
+void BodyContact::_ApplyVelocityChange(Vector3 velocityChange[2], Vector3 rotationChange[2]) const
 {
     Matrix3 inverseInertiaTensor[2];
     inverseInertiaTensor[0] = _bodies[0]->GetInverseInertiaTensorWorld();
@@ -194,7 +194,7 @@ void Contact::_ApplyVelocityChange(Vector3 velocityChange[2], Vector3 rotationCh
 }
 
 // TODO: Copied directly from the book, need further understanding.
-void Contact::_ApplyPositionChange(Vector3 linearChange[2], Vector3 angularChange[2], real_t penetration) const
+void BodyContact::_ApplyPositionChange(Vector3 linearChange[2], Vector3 angularChange[2], real_t penetration) const
 {
     static constexpr real_t angularLimit = 0.2f;
 
@@ -313,7 +313,7 @@ void Contact::_ApplyPositionChange(Vector3 linearChange[2], Vector3 angularChang
     }
 }
 
-inline Vector3 Contact::_CalculateFrictionlessImpulse(Matrix3 inverseInertiaTensor[2]) const
+inline Vector3 BodyContact::_CalculateFrictionlessImpulse(Matrix3 inverseInertiaTensor[2]) const
 {
     Vector3 contactImpulse;
 
@@ -346,7 +346,7 @@ inline Vector3 Contact::_CalculateFrictionlessImpulse(Matrix3 inverseInertiaTens
     return contactImpulse;
 }
 
-inline Vector3 Contact::_CalculateFrictionImpulse(Matrix3 inverseInertiaTensor[2]) const
+inline Vector3 BodyContact::_CalculateFrictionImpulse(Matrix3 inverseInertiaTensor[2]) const
 {
     real_t inverseMass = _bodies[0]->GetInverseMass();
 

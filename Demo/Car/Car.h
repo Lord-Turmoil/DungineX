@@ -3,7 +3,7 @@
 #include <DgeX/DgeX.h>
 #include <deque>
 
-#include "DgeX/Physics/Body/Contact.h"
+#include "DgeX/Physics/Particle/Contact/ParticleContact.h"
 
 // The car. :)
 class Car

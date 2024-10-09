@@ -28,7 +28,6 @@ uint32_t ParticleAnchoredRod::AddContact(ParticleContact* contact, uint32_t limi
         contact->ContactNormal = -normal;
         contact->Penetration = Length - length;
     }
-
     contact->Restitution = 0.0;
 
     return 1;

@@ -9,9 +9,9 @@ DPHX_BEGIN
 
 class RigidBody;
 
-class Contact
+class BodyContact
 {
-    friend class ContactResolver;
+    friend class BodyContactResolver;
 
 public:
     // clang-format off
