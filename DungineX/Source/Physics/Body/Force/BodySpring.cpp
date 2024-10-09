@@ -1,5 +1,6 @@
 #include "DgeX/Physics/Body/Force/BodySpring.h"
 #include "DgeX/Physics/Body/RigidBody.h"
+#include "DgeX/Physics/Common.h"
 
 DPHX_BEGIN
 

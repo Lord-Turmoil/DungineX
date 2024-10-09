@@ -187,7 +187,8 @@
   <ItemGroup>
     <ClInclude Include="Include\DgeX\Application\Application.h" />
     <ClInclude Include="Include\DgeX\Application\Event\EventEmitter.h" />
-    <ClInclude Include="Include\DgeX\Core\ObjectQueue.h" />
+    <ClInclude Include="Include\DgeX\Core\Library\IntrusiveList.h" />
+    <ClInclude Include="Include\DgeX\Core\Library\ObjectQueue.h" />
     <ClInclude Include="Include\DgeX\Physics\Body\Contact\BodyCable.h" />
     <ClInclude Include="Include\DgeX\Physics\Body\Contact\BodyLink.h" />
     <ClInclude Include="Include\DgeX\Physics\Body\Contact\BodyRod.h" />
@@ -219,7 +220,7 @@
     <ClInclude Include="Include\DgeX\Physics\Particle\Force\ParticleGravity.h" />
     <ClInclude Include="Include\DgeX\Physics\Particle\Force\ParticleSpring.h" />
     <ClInclude Include="Include\DgeX\Physics\Particle\Particle.h" />
-    <ClInclude Include="Include\DgeX\Core\ObjectPool.h" />
+    <ClInclude Include="Include\DgeX\Core\Library\ObjectPool.h" />
     <ClInclude Include="Include\DgeX\Physics\Particle\Contact\ParticleContact.h" />
     <ClInclude Include="Include\DgeX\Physics\Particle\ParticleWorld.h" />
     <ClInclude Include="Include\DgeX\Physics\Body\RigidBody.h" />
@@ -227,7 +228,7 @@
     <ClInclude Include="Include\DgeX\Physics\Core\DWorld.h" />
     <ClInclude Include="Include\DgeX\Renderer\Camera\SceneCamera.h" />
     <ClInclude Include="Include\DgeX\Renderer\Font.h" />
-    <ClInclude Include="Include\DgeX\Utils\Math.h" />
+    <ClInclude Include="Include\DgeX\Core\Math.h" />
     <ClInclude Include="Include\DgeX\EntryPoint.h" />
     <ClInclude Include="Include\DgeX\Application\Event\ApplicationEvent.h" />
     <ClInclude Include="Include\DgeX\Application\Event\EventBuffer.h" />

@@ -1,6 +1,5 @@
 #include "DgeX/Physics/Core/DWorld.h"
-
-#include "DgeX/Utils/Math.h"
+#include "DgeX/Physics/Common.h"
 
 DPHX_BEGIN
 

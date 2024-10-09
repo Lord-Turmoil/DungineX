@@ -1,4 +1,5 @@
 #include "DgeX/Physics/Particle/Force/ParticleBungee.h"
+#include "DgeX/Physics/Common.h"
 #include "DgeX/Physics/Particle/Particle.h"
 
 DPHX_BEGIN

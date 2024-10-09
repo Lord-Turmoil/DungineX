@@ -20,8 +20,9 @@
 #include "DgeX/Utils/Easing.h"
 #include "DgeX/Utils/String.h"
 
-#include "DgeX/Core/ObjectPool.h"
-#include "DgeX/Core/ObjectQueue.h"
+#include "DgeX/Core/Library/IntrusiveList.h"
+#include "DgeX/Core/Library/ObjectPool.h"
+#include "DgeX/Core/Library/ObjectQueue.h"
 
 #include "DgeX/Physics/Physics.h"
 

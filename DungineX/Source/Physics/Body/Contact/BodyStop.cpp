@@ -1,6 +1,7 @@
 #include "DgeX/Physics/Body/Contact/BodyStop.h"
 #include "DgeX/Physics/Body/Contact/BodyContact.h"
 #include "DgeX/Physics/Body/RigidBody.h"
+#include "DgeX/Physics/Common.h"
 
 DPHX_BEGIN
 

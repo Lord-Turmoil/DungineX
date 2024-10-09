@@ -1,5 +1,5 @@
 #include "DgeX/Renderer/Camera/SceneCamera.h"
-#include "DgeX/Utils/Math.h"
+#include "DgeX/Core/Math.h"
 
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_transform.hpp>

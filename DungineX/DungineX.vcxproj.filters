@@ -429,7 +429,7 @@
     <ClInclude Include="Include\DgeX\Utils\Easing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Include\DgeX\Utils\Math.h">
+    <ClInclude Include="Include\DgeX\Core\Math.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\DgeX\Common\Common.h">
@@ -510,7 +510,7 @@
     <ClInclude Include="Include\DgeX\Physics\Particle\Particle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Include\DgeX\Core\ObjectPool.h">
+    <ClInclude Include="Include\DgeX\Core\Library\ObjectPool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\DgeX\Physics\Utils\Utils.h">
@@ -519,7 +519,7 @@
     <ClInclude Include="Include\DgeX\Renderer\Camera\SceneCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Include\DgeX\Core\ObjectQueue.h">
+    <ClInclude Include="Include\DgeX\Core\Library\ObjectQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\DgeX\Physics\Particle\Contact\ParticleContact.h">
@@ -1138,6 +1138,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\DgeX\Physics\Body\Contact\BodyStop.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DgeX\Core\Library\IntrusiveList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

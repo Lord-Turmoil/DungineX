@@ -1,5 +1,6 @@
 #pragma once
 
+#include "DgeX/Core/Library/IntrusiveList.h"
 #include "DgeX/Physics/Common.h"
 
 #include <vector>
@@ -12,10 +13,10 @@ class ParticleContact;
  * @brief
  * Base class for contact generators that generate contacts between particles.
  */
-class ParticleContactGenerator
+class ParticleContactGenerator : public IntrusiveListNode
 {
 public:
-    virtual ~ParticleContactGenerator() = default;
+    ~ParticleContactGenerator() override = default;
 
     /**
      * @brief
@@ -42,7 +43,7 @@ public:
     uint32_t AddContact(ParticleContact* contacts, uint32_t limit) const;
 
 private:
-    std::vector<ParticleContactGenerator*> _contactGenerators;
+    IntrusiveList<ParticleContactGenerator> _contactGenerators;
 };
 
 DPHX_END
