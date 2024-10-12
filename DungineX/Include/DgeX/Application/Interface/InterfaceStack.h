@@ -1,8 +1,6 @@
 #pragma once
 
-#include "DgeX/Common/Common.h"
-
-#include <unordered_set>
+#include "DgeX/dgexpch.h"
 
 DGEX_BEGIN
 

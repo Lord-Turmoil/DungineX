@@ -1,8 +1,6 @@
 #pragma once
 
-#include <filesystem>
-
-#include "DgeX/Common/Log.h"
+#include "DgeX/Common/Macros.h"
 
 #ifdef DGEX_ENABLE_ASSERT
 #define DGEX_DEBUG_BREAK() __debugbreak()

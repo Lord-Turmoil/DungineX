@@ -1,8 +1,8 @@
 #pragma once
 
-#include <memory>
-
 #include "DgeX/Common/Macros.h"
+
+#include <memory>
 
 DGEX_BEGIN
 

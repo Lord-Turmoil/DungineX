@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DgeX/Common/Common.h"
+#include "DgeX/dgexpch.h"
 
 DGEX_BEGIN
 

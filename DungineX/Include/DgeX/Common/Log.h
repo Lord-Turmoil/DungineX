@@ -1,10 +1,8 @@
 #pragma once
 
-#include <filesystem>
-#include <spdlog/spdlog.h>
-
 #include "DgeX/Common/Base.h"
-#include "DgeX/Common/Macros.h"
+
+#include <spdlog/spdlog.h>
 
 DGEX_BEGIN
 

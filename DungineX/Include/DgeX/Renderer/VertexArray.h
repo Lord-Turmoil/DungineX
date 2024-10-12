@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DgeX/Common/Common.h"
+#include "DgeX/dgexpch.h"
 
 #include "DgeX/Renderer/Buffer.h"
 

@@ -2,6 +2,7 @@
 #define _USE_MATH_DEFINES
 #include "import-svg.h"
 
+#include <corecrt_math_defines.h>
 #include <cstdio>
 #include <tinyxml2.h>
 #include "../core/arithmetics.hpp"

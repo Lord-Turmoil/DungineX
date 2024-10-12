@@ -1,8 +1,6 @@
 #pragma once
 
-#include "DgeX/Common/Common.h"
-
-#include <msdf-atlas-gen/msdf-atlas-gen.h>
+#include "DgeX/dgexpch.h"
 
 DGEX_BEGIN
 
