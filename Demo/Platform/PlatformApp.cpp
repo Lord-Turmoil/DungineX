@@ -160,7 +160,8 @@ void PlatformInterface::_Init()
     {
         _bungees[i].RestLength = 40.0;
         _bungees[i].SpringConstant = 3.0;
-        _world.GetForceRegistry().Add(_particles + 2 + i, _bungees + i);
+        _forceRegistrations[i] = ParticleForceRegistration(_particles + 2 + i, _bungees + i);
+        _world.GetForceRegistry().Add(_forceRegistrations + i);
     }
 
     for (int i = 0; i < 6; i++)

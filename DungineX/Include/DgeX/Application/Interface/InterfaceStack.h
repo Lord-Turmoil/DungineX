@@ -1,6 +1,9 @@
 #pragma once
 
-#include "DgeX/dgexpch.h"
+#include "DgeX/Common/Macros.h"
+
+#include <unordered_set>
+#include <vector>
 
 DGEX_BEGIN
 
@@ -20,11 +23,11 @@ public:
      *      However, it will be reset if ClearInterfaces() is called.
      *
      */
-    bool PushInterface(Interface* interface);
-    void PopInterface();
-    void ClearInterfaces();
+    bool Push(Interface* interface);
+    void Pop();
+    void Clear();
 
-    Interface* CurrentInterface() const;
+    Interface* Current() const;
 
 private:
     std::vector<Interface*> _interfaces;

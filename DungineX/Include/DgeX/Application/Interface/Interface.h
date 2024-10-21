@@ -80,10 +80,13 @@ public:
     int GetHeight() const { return _height; }
 
 private:
-    // Some wrapper functions to hide the implementation details.
+    // Wrapper functions to add some logics before and after the interface lifecycle.
     void _OnLoad();
+    void _OnMounted();
     void _OnEvent(const Ref<Event>& event);
     void _OnRender();
+    void _OnUnmounted();
+    void _OnUnload();
 
     bool _OnResize(WindowResizeEvent& event);
 

@@ -1,6 +1,9 @@
 #pragma once
 
 #include "DgeX/Application/Application.h"
+#include "DgeX/Common/Log.h"
+
+#include <Windows.h>
 
 /**
  * @brief Entry point of DungineX application.

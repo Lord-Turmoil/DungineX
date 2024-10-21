@@ -1,6 +1,5 @@
 #pragma once
 
-#include "DgeX/dgexpch.h"
 #include "DgeX/Core/DeltaTime.h"
 
 DGEX_BEGIN
@@ -38,7 +37,7 @@ private:
      * @note Remember to set to nullptr when the layer is detached.
      * @param parent parent interface
      */
-    void SetParent(Interface* parent) { _parent = parent; }
+    void _SetParent(Interface* parent) { _parent = parent; }
 
 protected:
     std::string _name;

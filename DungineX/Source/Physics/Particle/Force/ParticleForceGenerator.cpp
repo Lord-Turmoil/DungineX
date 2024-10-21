@@ -2,31 +2,24 @@
 
 DPHX_BEGIN
 
-void ParticleForceRegistry::Add(Particle* particle, ParticleForceGenerator* forceGenerator)
+void ParticleForceRegistry::Add(ParticleForceRegistration* entry)
 {
-    _registrations.emplace_back(particle, forceGenerator);
+    _registrations.PushBack(entry);
 }
 
-void ParticleForceRegistry::Remove(Particle* particle, ParticleForceGenerator* forceGenerator)
+void ParticleForceRegistry::Remove(ParticleForceRegistration* entry)
 {
-    for (auto it = _registrations.begin(); it != _registrations.end(); ++it)
-    {
-        if (it->Particle == particle && it->ForceGenerator == forceGenerator)
-        {
-            _registrations.erase(it);
-            break;
-        }
-    }
+    _registrations.Erase(entry);
 }
 
 void ParticleForceRegistry::Clear()
 {
-    _registrations.clear();
+    _registrations.Clear();
 }
 
 void ParticleForceRegistry::UpdateForce(real_t delta) const
 {
-    for (auto registration : _registrations)
+    for (const auto& registration : _registrations)
     {
         registration.UpdateForce(delta);
     }

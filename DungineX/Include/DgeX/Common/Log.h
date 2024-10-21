@@ -2,6 +2,7 @@
 
 #include "DgeX/Common/Base.h"
 
+#include <filesystem>
 #include <spdlog/spdlog.h>
 
 DGEX_BEGIN

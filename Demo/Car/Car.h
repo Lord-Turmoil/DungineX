@@ -10,6 +10,7 @@ class Car
 {
     friend class Map;
     friend class DustController;
+    friend class CarController;
 
 public:
     Car();
@@ -92,6 +93,8 @@ private:
 
     DgeX::Physics::ParticleDrag _bodyDrag;
     DgeX::Physics::ParticleDrag _wheelDrag;
+
+    DgeX::Physics::ParticleForceRegistration* _forceRegistration;
 
     // Car body and wheel offset from the center of mass
     static DgeX::Physics::Vector3 _sCenterOffset;

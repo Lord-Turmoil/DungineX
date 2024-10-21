@@ -1,8 +1,7 @@
 #pragma once
 
+#include "DgeX/Core/Library/IntrusiveList.h"
 #include "DgeX/Physics/Core/Precision.h"
-
-#include <vector>
 
 DPHX_BEGIN
 
@@ -22,35 +21,40 @@ public:
 };
 
 /**
+ * @brief Particle force registration entry.
+ */
+struct ParticleForceRegistration : public IntrusiveListNode
+{
+    Particle* Particle;
+    ParticleForceGenerator* ForceGenerator;
+
+    ParticleForceRegistration() = default;
+
+    ParticleForceRegistration(DPHX Particle* particle, ParticleForceGenerator* forceGenerator)
+        : Particle(particle), ForceGenerator(forceGenerator)
+    {
+    }
+
+    void UpdateForce(real_t delta) const
+    {
+        ForceGenerator->UpdateForce(Particle, delta);
+    }
+};
+
+/**
  * @brief Holds a list of force generators and the particles they apply to.
  */
 class ParticleForceRegistry
 {
 public:
-    void Add(Particle* particle, ParticleForceGenerator* forceGenerator);
-    void Remove(Particle* particle, ParticleForceGenerator* forceGenerator);
+    void Add(ParticleForceRegistration* entry);
+    void Remove(ParticleForceRegistration* entry);
     void Clear();
 
     void UpdateForce(real_t delta) const;
 
 protected:
-    struct ParticleForceRegistration
-    {
-        Particle* Particle;
-        ParticleForceGenerator* ForceGenerator;
-
-        ParticleForceRegistration(DPHX Particle* particle, ParticleForceGenerator* forceGenerator)
-            : Particle(particle), ForceGenerator(forceGenerator)
-        {
-        }
-
-        void UpdateForce(real_t delta) const
-        {
-            ForceGenerator->UpdateForce(Particle, delta);
-        }
-    };
-
-    std::vector<ParticleForceRegistration> _registrations;
+    IntrusiveList<ParticleForceRegistration> _registrations;
 };
 
 DPHX_END

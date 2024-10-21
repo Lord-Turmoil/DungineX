@@ -3,13 +3,13 @@
 
 DGEX_BEGIN
 
-bool InterfaceStack::PushInterface(Interface* interface)
+bool InterfaceStack::Push(Interface* interface)
 {
     _interfaces.push_back(interface);
     return _loaded.insert(interface->GetName()).second;
 }
 
-void InterfaceStack::PopInterface()
+void InterfaceStack::Pop()
 {
     DGEX_ASSERT(!_interfaces.empty(), "No interface to pop");
 
@@ -19,13 +19,13 @@ void InterfaceStack::PopInterface()
     }
 }
 
-void InterfaceStack::ClearInterfaces()
+void InterfaceStack::Clear()
 {
     _interfaces.clear();
     _loaded.clear();
 }
 
-Interface* InterfaceStack::CurrentInterface() const
+Interface* InterfaceStack::Current() const
 {
     if (!_interfaces.empty())
     {

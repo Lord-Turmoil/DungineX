@@ -1,7 +1,5 @@
 #pragma once
 
-#include "DgeX/dgexpch.h"
-
 DGEX_BEGIN
 
 // ReSharper disable once CppInconsistentNaming

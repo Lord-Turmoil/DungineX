@@ -23,7 +23,7 @@ public:
 
 private:
     bool _OnKeyPressed(DgeX::KeyPressedEvent& event);
-
+    void _OnReload();
     void _InitMap();
 
 private:

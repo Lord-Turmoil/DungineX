@@ -30,6 +30,8 @@ private:
     ParticleAnchoredBungee _bungees[2];
     Vector3 _bungeeAnchors[2];
 
+    ParticleForceRegistration _forceRegistrations[2];
+
     real_t _slide;
 
     SceneCamera _camera;

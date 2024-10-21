@@ -3,8 +3,6 @@
 #include "DgeX/Core/Library/IntrusiveList.h"
 #include "DgeX/Physics/Common.h"
 
-#include <vector>
-
 DPHX_BEGIN
 
 class ParticleContact;

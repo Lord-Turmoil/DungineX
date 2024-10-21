@@ -36,6 +36,9 @@ real_t Car::_sSpringConstant = 40000.0;
 real_t Car::_sSpringDamping  = 8000.0;
 real_t Car::_sSpringRestLength = (_sBodyOffset[4] - _sWheelOffset[0]).Magnitude() + 0.3;
 
+const real_t MAX_GAS_POWER = 50000.0;
+const real_t NORMAL_GAS_POWER = 15000.0;
+
 real_t Car::_sGasPower    = 15000.0;
 real_t Car::_sRotatePower = 12000.0;
 
@@ -49,6 +52,7 @@ Car::Car()
     _absorber = new ParticleAbsorber[4];
     _absorberMinConstraint = new ParticleStop[2];
     _absorberMaxConstraint = new ParticleCable[2];
+    _forceRegistration = new ParticleForceRegistration[16];
 
     _Init(Vector3::Zero);
 }
@@ -61,6 +65,7 @@ Car::~Car()
     delete[] _absorber;
     delete[] _absorberMinConstraint;
     delete[] _absorberMaxConstraint;
+    delete[] _forceRegistration;
 }
 
 void Car::Forward(real_t threshold)
@@ -196,22 +201,29 @@ void Car::Register(ParticleWorld& world)
     }
 
     auto& forceRegistry = world.GetForceRegistry();
-    forceRegistry.Add(&_body[2], &_wheelForce[0]);
-    forceRegistry.Add(&_body[3], &_wheelForce[1]);
-    forceRegistry.Add(&_body[4], &_rotateForce[0]);
-    forceRegistry.Add(&_body[5], &_rotateForce[1]);
+
+    _forceRegistration[0] = ParticleForceRegistration(&_body[2], &_wheelForce[0]);
+    _forceRegistration[1] = ParticleForceRegistration(&_body[3], &_wheelForce[1]);
+    _forceRegistration[2] = ParticleForceRegistration(&_body[4], &_rotateForce[0]);
+    _forceRegistration[3] = ParticleForceRegistration(&_body[5], &_rotateForce[1]);
+
     for (int i = 0; i < 6; i++)
     {
-        forceRegistry.Add(&_body[i], &_bodyDrag);
+        _forceRegistration[4 + i] = ParticleForceRegistration(&_body[i], &_bodyDrag);
     }
     for (int i = 0; i < 2; i++)
     {
-        forceRegistry.Add(&_wheel[i], &_absorber[i]);
-        forceRegistry.Add(&_wheel[i], &_wheelDrag);
+        _forceRegistration[10 + i * 2] = ParticleForceRegistration(&_wheel[i], &_absorber[i]);
+        _forceRegistration[11 + i * 2] = ParticleForceRegistration(&_wheel[i], &_wheelDrag);
     }
     for (int i = 0; i < 2; i++)
     {
-        forceRegistry.Add(&_body[4 + i], &_absorber[2 + i]);
+        _forceRegistration[14 + i] = ParticleForceRegistration(&_body[4 + i], &_absorber[2 + i]);
+    }
+
+    for (int i = 0; i < 16; i++)
+    {
+        forceRegistry.Add(&_forceRegistration[i]);
     }
 
     auto& contactRegistry = world.GetContactRegistry();
@@ -245,22 +257,9 @@ void Car::Unregister(ParticleWorld& world)
     }
 
     auto& forceRegistry = world.GetForceRegistry();
-    forceRegistry.Remove(&_body[2], &_wheelForce[0]);
-    forceRegistry.Remove(&_body[3], &_wheelForce[1]);
-    forceRegistry.Remove(&_body[4], &_rotateForce[0]);
-    forceRegistry.Remove(&_body[5], &_rotateForce[1]);
-    for (int i = 0; i < 6; i++)
+    for (int i = 0; i < 16; i++)
     {
-        forceRegistry.Remove(&_body[i], &_bodyDrag);
-    }
-    for (int i = 0; i < 2; i++)
-    {
-        forceRegistry.Remove(&_wheel[i], &_absorber[i]);
-        forceRegistry.Remove(&_wheel[i], &_wheelDrag);
-    }
-    for (int i = 0; i < 2; i++)
-    {
-        forceRegistry.Remove(&_body[4 + i], &_absorber[2 + i]);
+        forceRegistry.Remove(&_forceRegistration[i]);
     }
 
     auto& contactRegistry = world.GetContactRegistry();
@@ -685,6 +684,15 @@ real_t CarController::_sJumpTime = 0.1;
 
 void CarController::OnUpdate(DeltaTime delta)
 {
+    if (Input::IsKeyPressed(Key::LeftShift))
+    {
+        Car::_sGasPower = MAX_GAS_POWER;
+    }
+    else
+    {
+        Car::_sGasPower = NORMAL_GAS_POWER;
+    }
+
     if (Input::IsKeyPressed(Key::A))
     {
         _RotateLeft(delta);

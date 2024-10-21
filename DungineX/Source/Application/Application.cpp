@@ -1,12 +1,9 @@
-#include <cstdio>
-
 #include "DgeX/Application/Application.h"
 #include "DgeX/Application/Event/EventEmitter.h"
 #include "DgeX/Application/Interface/Interface.h"
 #include "DgeX/Renderer/RenderCommand.h"
 #include "DgeX/Renderer/Renderer.h"
 #include "DgeX/Utils/PlatformUtils.h"
-#include "GLFW/glfw3.h"
 
 DGEX_BEGIN
 
@@ -54,7 +51,7 @@ void Application::Run()
         return;
     }
     _currentInterface->_OnLoad();
-    _currentInterface->OnMounted();
+    _currentInterface->_OnMounted();
 
     _window->Detach();
 
@@ -77,14 +74,14 @@ void Application::OnEvent(const Ref<Event>& event)
 void Application::Close()
 {
     _isRunning = false;
-    Interface* interface = _interfaces.CurrentInterface();
+    Interface* interface = _interfaces.Current();
     while (interface)
     {
-        interface->OnUnmounted();
-        interface->OnUnload();
+        interface->_OnUnmounted();
+        interface->_OnUnload();
 
-        _interfaces.PopInterface();
-        interface = _interfaces.CurrentInterface();
+        _interfaces.Pop();
+        interface = _interfaces.Current();
     }
 }
 
@@ -115,12 +112,12 @@ bool Application::_OnInterfaceTransit(InterfaceTransitEvent& e)
         return false;
     }
 
-    _currentInterface->OnUnmounted();
-    if (_interfaces.PushInterface(_nextInterface))
+    _currentInterface->_OnUnmounted();
+    if (_interfaces.Push(_nextInterface))
     {
         _nextInterface->_OnLoad();
     }
-    _nextInterface->OnMounted();
+    _nextInterface->_OnMounted();
 
     _currentInterface = _nextInterface;
     _nextInterface = nullptr;
@@ -139,17 +136,17 @@ bool Application::_OnInterfaceChange(InterfaceChangeEvent& e)
         return false;
     }
 
-    Interface* interface = _interfaces.CurrentInterface();
+    Interface* interface = _interfaces.Current();
     while (interface)
     {
         interface->OnUnmounted();
         interface->OnUnload();
-        _interfaces.PopInterface();
-        interface = _interfaces.CurrentInterface();
+        _interfaces.Pop();
+        interface = _interfaces.Current();
     }
-    _interfaces.ClearInterfaces();
+    _interfaces.Clear();
 
-    if (_interfaces.PushInterface(_nextInterface))
+    if (_interfaces.Push(_nextInterface))
     {
         _nextInterface->_OnLoad();
     }
@@ -172,9 +169,9 @@ bool Application::_OnInterfaceClose(InterfaceCloseEvent& event)
     DGEX_LOG_INFO("Interface {0} closed", _currentInterface->GetName());
 
     _currentInterface->OnUnmounted();
-    _interfaces.PopInterface();
+    _interfaces.Pop();
 
-    _currentInterface = _interfaces.CurrentInterface();
+    _currentInterface = _interfaces.Current();
     if (!_currentInterface)
     {
         // No interface left...

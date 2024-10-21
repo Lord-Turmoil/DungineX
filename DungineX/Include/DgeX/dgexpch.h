@@ -1,11 +1,9 @@
 #pragma once
 
-#include "DgeX/Common/Macros.h"
-
-#include "DgeX/Common/Log.h"
-
 #include "DgeX/Common/Assert.h"
 #include "DgeX/Common/Base.h"
+#include "DgeX/Common/Log.h"
+#include "DgeX/Common/Macros.h"
 
 #ifdef INFINITE
 #undef INFINITE
@@ -24,6 +22,8 @@
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
+
+#include <GLFW/glfw3.h>
 
 #include <filesystem>
 #include <string>

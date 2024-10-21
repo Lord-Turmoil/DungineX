@@ -114,11 +114,18 @@ bool CarInterface::_OnKeyPressed(KeyPressedEvent& event)
     if (event.GetKeyCode() == Key::F && !event.IsRepeat())
     {
         // reset game
-        OnLoad();
+        _OnReload();
         return true;
     }
 
     return false;
+}
+
+void CarInterface::_OnReload()
+{
+    _car.Reset(Vector3(0, 5));
+
+    _InitMap();
 }
 
 void CarInterface::_InitMap()

@@ -20,3 +20,4 @@ BreakBeforeBraces: Custom
 BraceWrapping:
   AfterUnion: true
   BeforeWhile: false
+InsertBraces: true

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "DgeX/dgexpch.h"
-
 #include "DgeX/Renderer/Buffer.h"
 
 DGEX_BEGIN

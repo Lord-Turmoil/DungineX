@@ -1,7 +1,5 @@
 #pragma once
 
-#include "DgeX/dgexpch.h"
-
 #include <glm/glm.hpp>
 
 DGEX_BEGIN
