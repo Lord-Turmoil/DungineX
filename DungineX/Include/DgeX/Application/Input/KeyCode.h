@@ -1,6 +1,8 @@
 #pragma once
 
-#include "DgeX/dgexpch.h"
+#include "DgeX/Common/Macros.h"
+
+#include <cstdint>
 
 DGEX_BEGIN
 

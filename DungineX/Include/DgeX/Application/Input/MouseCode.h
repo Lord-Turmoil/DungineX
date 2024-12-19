@@ -6,8 +6,8 @@ using MouseCode = uint16_t;
 
 struct MousePosition
 {
-    double x;
-    double y;
+    double X;
+    double Y;
 };
 
 namespace Mouse

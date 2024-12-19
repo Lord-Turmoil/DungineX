@@ -1,6 +1,11 @@
 #pragma once
 
+#include "DgeX/Common/Base.h"
+
 #include <glm/glm.hpp>
+
+#include <string>
+#include <unordered_map>
 
 DGEX_BEGIN
 

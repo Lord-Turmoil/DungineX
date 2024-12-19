@@ -105,7 +105,7 @@ protected:
 class MouseButtonPressedEvent final : public MouseButtonEvent
 {
 public:
-    MouseButtonPressedEvent(const MouseCode code) : MouseButtonEvent(code)
+    MouseButtonPressedEvent(MouseCode code) : MouseButtonEvent(code)
     {
     }
 
@@ -118,7 +118,7 @@ public:
 
     DECL_EVENT_CLASS_TYPE(MouseButtonPressed)
 
-    static Ref<MouseButtonPressedEvent> Create(const MouseCode code)
+    static Ref<MouseButtonPressedEvent> Create(MouseCode code)
     {
         return CreateRef<MouseButtonPressedEvent>(code);
     }
@@ -127,7 +127,7 @@ public:
 class MouseButtonReleasedEvent : public MouseButtonEvent
 {
 public:
-    MouseButtonReleasedEvent(const MouseCode code) : MouseButtonEvent(code)
+    MouseButtonReleasedEvent(MouseCode code) : MouseButtonEvent(code)
     {
     }
 
@@ -140,7 +140,7 @@ public:
 
     DECL_EVENT_CLASS_TYPE(MouseButtonReleased)
 
-    static Ref<MouseButtonReleasedEvent> Create(const MouseCode code)
+    static Ref<MouseButtonReleasedEvent> Create(MouseCode code)
     {
         return CreateRef<MouseButtonReleasedEvent>(code);
     }

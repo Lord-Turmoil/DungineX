@@ -7,6 +7,9 @@
 #define DGEX_VERSION_MINOR 1
 #define DGEX_VERSION_PATCH 0
 
+#define DGEX_TO_VERSION(major, minor, patch) (major * 10000 + minor * 100 + patch)
+#define DGEX_VERSION                         DGEX_TO_VERSION(DGEX_VERSION_MAJOR, DGEX_VERSION_MINOR, DGEX_VERSION_PATCH)
+
 // Define the DungineX debug flag
 #if defined(DEBUG) || defined(_DEBUG)
 #define DGEX_DEBUG
@@ -16,11 +19,6 @@
 
 #if defined(PUBLISH) || defined(_PUBLISH)
 #define DGEX_PUBLISH
-#endif
-
-// Enable assertions only in debug and release builds
-#if defined(DGEX_DEBUG)
-#define DGEX_ENABLE_ASSERT
 #endif
 
 // Only do logging with this macro defined
@@ -44,8 +42,5 @@
 #define DGEX_END }
 
 #define DGEX ::DgeX::
-
-// Define backend platform
-#define DGEX_OPENGL
 
 #define _DGEX_CORE_

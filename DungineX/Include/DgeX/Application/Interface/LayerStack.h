@@ -1,5 +1,9 @@
 #pragma once
 
+#include "DgeX/Common/Base.h"
+
+#include <vector>
+
 DGEX_BEGIN
 
 class Layer;

@@ -1,6 +1,9 @@
 #pragma once
 
+#include "DgeX/Common/Base.h"
 #include "DgeX/Core/DeltaTime.h"
+
+#include <string>
 
 DGEX_BEGIN
 
@@ -23,9 +26,9 @@ public:
 
     virtual void OnAttach() {}
     virtual void OnDetach() {}
-    virtual void OnUpdate(DeltaTime delta) {}
+    virtual void OnUpdate(DeltaTime /*delta*/) {}
     virtual void OnRender() {}
-    virtual void OnEvent(const Ref<Event>&event) {}
+    virtual void OnEvent(const Ref<Event>& /*event*/) {}
 
     const std::string& GetName() const { return _name; }
     int GetWidth() const;

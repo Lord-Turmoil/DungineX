@@ -2,6 +2,7 @@
 
 #include "DgeX/Physics/Common.h"
 
+#include <cstdint>
 #include <limits>
 
 DPHX_BEGIN

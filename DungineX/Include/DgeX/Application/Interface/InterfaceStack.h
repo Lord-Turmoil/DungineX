@@ -2,6 +2,7 @@
 
 #include "DgeX/Common/Macros.h"
 
+#include <string>
 #include <unordered_set>
 #include <vector>
 

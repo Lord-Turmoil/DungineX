@@ -3,7 +3,11 @@
 
 #pragma once
 
+#include "DgeX/Common/Base.h"
+
 #include <glm/glm.hpp>
+
+#include <string>
 
 DGEX_BEGIN
 

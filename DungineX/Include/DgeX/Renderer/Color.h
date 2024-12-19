@@ -1,5 +1,9 @@
 #pragma once
 
+#include "DgeX/Common/Macros.h"
+
+#include <glm/glm.hpp>
+
 DGEX_BEGIN
 
 struct Color

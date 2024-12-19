@@ -1,6 +1,10 @@
 #pragma once
 
+#include "DgeX/Common/Base.h"
+
 #include <glm/glm.hpp>
+
+#include <vector>
 
 DGEX_BEGIN
 

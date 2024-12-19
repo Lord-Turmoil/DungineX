@@ -1,5 +1,9 @@
 #pragma once
 
+#include "DgeX/Common/Base.h"
+
+#include <glm/glm.hpp>
+
 DGEX_BEGIN
 
 /**

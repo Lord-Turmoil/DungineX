@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DgeX/Core/Library/IntrusiveList.h"
+#include "DgeX/Library/IntrusiveList.h"
 #include "DgeX/Physics/Core/Precision.h"
 
 DPHX_BEGIN

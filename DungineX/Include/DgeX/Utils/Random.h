@@ -1,5 +1,9 @@
 #pragma once
 
+#include "DgeX/Common/Macros.h"
+
+#include <cstdint>
+
 DGEX_BEGIN
 
 namespace Utils::Random

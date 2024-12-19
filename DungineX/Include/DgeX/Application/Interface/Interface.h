@@ -62,7 +62,7 @@ public:
      * @brief Event handler for the interface.
      * @param event event
      */
-    virtual void OnEvent(const Ref<Event>& event) {}
+    virtual void OnEvent(const Ref<Event>& /*event*/) {}
 
     /**
      * @brief Render the interface in each frame.
