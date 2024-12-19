@@ -1,8 +1,9 @@
 #pragma once
 
+#include "DgeX/Common/Macros.h"
+
 DGEX_BEGIN
 
-// ReSharper disable once CppInconsistentNaming
 class UUID
 {
 public:

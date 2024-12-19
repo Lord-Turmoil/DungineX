@@ -1,5 +1,13 @@
 #pragma once
 
+#include "DgeX/Common/Base.h"
+
+#include <msdf-atlas-gen/msdf-atlas-gen.h>
+
+#include <filesystem>
+#include <string>
+#include <vector>
+
 DGEX_BEGIN
 
 class Texture;

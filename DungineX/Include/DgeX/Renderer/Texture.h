@@ -1,5 +1,9 @@
 #pragma once
 
+#include "DgeX/Common/Base.h"
+
+#include <string>
+
 DGEX_BEGIN
 
 enum class ImageFormat : uint8_t

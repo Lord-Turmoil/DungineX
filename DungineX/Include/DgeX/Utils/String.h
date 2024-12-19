@@ -1,5 +1,7 @@
 #pragma once
 
+#include "DgeX/Common/Macros.h"
+
 #include <string>
 
 DGEX_BEGIN

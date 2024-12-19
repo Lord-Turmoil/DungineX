@@ -3,7 +3,14 @@
 #include "DgeX/Application/Application.h"
 #include "DgeX/Common/Log.h"
 
+// Bad Windows.h... :(
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 #include <Windows.h>
+#ifdef interface
+#undef interface
+#endif
 
 /**
  * @brief Entry point of DungineX application.

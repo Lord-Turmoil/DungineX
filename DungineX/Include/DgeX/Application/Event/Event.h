@@ -2,8 +2,8 @@
 
 #include "DgeX/Common/Base.h"
 
-#include <string>
 #include <functional>
+#include <string>
 
 DGEX_BEGIN
 

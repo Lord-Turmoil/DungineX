@@ -1,4 +1,5 @@
 #include <DgeX/EntryPoint.h>
+
 #include "CarApp.h"
 
 DgeX::Ref<CarInterface> interface;

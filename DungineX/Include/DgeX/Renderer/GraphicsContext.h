@@ -1,5 +1,7 @@
 #pragma once
 
+#include "DgeX/Common/Base.h"
+
 DGEX_BEGIN
 
 /**

@@ -3,6 +3,7 @@
 #include "DgeX/Application/Event/Event.h"
 
 #include <mutex>
+#include <vector>
 
 DGEX_BEGIN
 

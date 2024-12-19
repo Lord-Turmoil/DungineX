@@ -1,5 +1,11 @@
 #pragma once
 
+#include "DgeX/Common/Assert.h"
+#include "DgeX/Common/Base.h"
+
+#include <string>
+#include <vector>
+
 DGEX_BEGIN
 
 // clang-format off
