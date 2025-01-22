@@ -2,6 +2,7 @@
 
 #include "DgeX/Application/Event/EventEmitter.h"
 #include "DgeX/Application/Interface/Interface.h"
+#include "DgeX/Core/Math.h"
 #include "DgeX/Renderer/RenderCommand.h"
 #include "DgeX/Renderer/Renderer.h"
 #include "DgeX/Utils/PlatformUtils.h"
@@ -46,27 +47,18 @@ void Application::Run()
     }
     _isRunning = true;
 
-    // Initialize splash interface
-    _currentInterface = GetSplashInterface();
-    if (_currentInterface == nullptr)
-    {
-        DGEX_ASSERT(false, DGEX_MSG_NO_SPLASH_INTERFACE);
-        return;
-    }
-    _currentInterface->InvokeOnLoad();
-    _currentInterface->InvokeOnMounted();
-    _interfaces.Push(_currentInterface);
+    _Launch();
 
     _window->Detach();
-
-    std::thread thread(&Application::_Run, this);
+    std::thread thread(&Application::_MainLoop, this);
     while (_isRunning)
     {
         glfwWaitEvents();
     }
     thread.join();
-
     _window->Attach();
+
+    _Shutdown();
 }
 
 void Application::OnEvent(const Ref<Event>& event)
@@ -78,6 +70,87 @@ void Application::OnEvent(const Ref<Event>& event)
 void Application::Close()
 {
     _isRunning = false;
+}
+
+void Application::_MainLoop()
+{
+#ifdef DGEX_DEBUG
+    static timestamp_t elapsedTime;
+#endif
+
+    // We need to limit the delta time to prevent a sudden jump in the game.
+    timestamp_t maxDelta = 2.0f * 1.0f / static_cast<timestamp_t>(_window->GetRefreshRate());
+
+    _window->Attach();
+    while (_isRunning)
+    {
+        timestamp_t time = Time::GetTimestamp();
+        DeltaTime delta = Math::Min(maxDelta, time - _lastFrameTime);
+        _lastFrameTime = time;
+        _averageFrameTime = (_averageFrameTime == 0.0f) ? delta : (_averageFrameTime * 0.99f + delta * 0.01f);
+
+        _Update(delta);
+        _Render();
+
+#ifdef DGEX_DEBUG
+        elapsedTime += delta;
+        if (elapsedTime > 5.0f)
+        {
+            DGEX_CORE_DEBUG("FPS: {0}", GetFps());
+            elapsedTime = 0.0f;
+        }
+#endif
+    }
+    _window->Detach();
+}
+
+inline void Application::_Update(DeltaTime delta)
+{
+    _eventBuffer.SwapBuffer();
+
+    for (auto& event : _eventBuffer)
+    {
+        EventDispatcher dispatcher(event);
+        dispatcher.Dispatch<WindowCloseEvent>(DGEX_BIND_EVENT_FN(Application::_OnWindowClose));
+        dispatcher.Dispatch<WindowResizeEvent>(DGEX_BIND_EVENT_FN(Application::_OnWindowResize));
+        dispatcher.Dispatch<InterfaceTransitEvent>(DGEX_BIND_EVENT_FN(Application::_OnInterfaceTransit));
+        dispatcher.Dispatch<InterfaceChangeEvent>(DGEX_BIND_EVENT_FN(Application::_OnInterfaceChange));
+        dispatcher.Dispatch<InterfaceCloseEvent>(DGEX_BIND_EVENT_FN(Application::_OnInterfaceClose));
+    }
+
+    for (auto& event : _eventBuffer)
+    {
+        if (!event->Handled)
+        {
+            _currentInterface->InvokeOnEvent(event);
+        }
+    }
+
+    _currentInterface->InvokeOnUpdate(delta);
+}
+
+inline void Application::_Render() const
+{
+    RenderCommand::ClearDevice();
+    _currentInterface->InvokeOnRender();
+    _window->OnRender();
+}
+
+void Application::_Launch()
+{
+    _currentInterface = GetSplashInterface();
+    if (_currentInterface == nullptr)
+    {
+        DGEX_ASSERT(false, DGEX_MSG_NO_SPLASH_INTERFACE);
+        return;
+    }
+    _currentInterface->InvokeOnLoad();
+    _currentInterface->InvokeOnMounted();
+    _interfaces.Push(_currentInterface);
+}
+
+void Application::_Shutdown()
+{
     Interface* interface = _interfaces.Current();
     while (interface)
     {
@@ -179,92 +252,6 @@ bool Application::_OnInterfaceClose(InterfaceCloseEvent& /*event*/)
     }
 
     return true;
-}
-
-void Application::_Run()
-{
-#ifdef DGEX_DEBUG
-    static timestamp_t elapsedTime;
-#endif
-
-    // We need to limit the delta time to prevent a sudden jump in the game.
-    timestamp_t maxDelta = 2.0f * 1.0f / static_cast<timestamp_t>(_window->GetRefreshRate());
-
-    _window->Attach();
-    while (_isRunning)
-    {
-        timestamp_t time = Time::GetTimestamp();
-        DeltaTime delta = time - _lastFrameTime;
-        _lastFrameTime = time;
-
-        if (delta > maxDelta)
-        {
-            // Skip the frame update if the delta time is too large.
-            _Render();
-            continue;
-        }
-
-        if (_Update(delta))
-        {
-            break;
-        }
-        _Render();
-
-        if (_averageFrameTime == 0.0f)
-        {
-            _averageFrameTime = delta;
-        }
-        else
-        {
-            _averageFrameTime = _averageFrameTime * 0.99f + delta * 0.01f;
-        }
-
-#ifdef DGEX_DEBUG
-        elapsedTime += delta;
-        if (elapsedTime > 5.0f)
-        {
-            DGEX_CORE_DEBUG("FPS: {0}", GetFps());
-            elapsedTime = 0.0f;
-        }
-#endif
-    }
-    _window->Detach();
-}
-
-inline bool Application::_Update(DeltaTime delta)
-{
-    _eventBuffer.SwapBuffer();
-    // Dispatch window events
-    for (auto& event : _eventBuffer)
-    {
-        EventDispatcher dispatcher(event);
-        dispatcher.Dispatch<WindowCloseEvent>(DGEX_BIND_EVENT_FN(Application::_OnWindowClose));
-        dispatcher.Dispatch<WindowResizeEvent>(DGEX_BIND_EVENT_FN(Application::_OnWindowResize));
-        dispatcher.Dispatch<InterfaceTransitEvent>(DGEX_BIND_EVENT_FN(Application::_OnInterfaceTransit));
-        dispatcher.Dispatch<InterfaceChangeEvent>(DGEX_BIND_EVENT_FN(Application::_OnInterfaceChange));
-        dispatcher.Dispatch<InterfaceCloseEvent>(DGEX_BIND_EVENT_FN(Application::_OnInterfaceClose));
-    }
-    if (!_isRunning)
-    {
-        return true;
-    }
-    for (auto& event : _eventBuffer)
-    {
-        if (!event->Handled)
-        {
-            _currentInterface->InvokeOnEvent(event);
-        }
-    }
-    _currentInterface->InvokeOnUpdate(delta);
-
-    return false;
-}
-
-inline void Application::_Render() const
-{
-    RenderCommand::ClearDevice();
-    _currentInterface->InvokeOnRender();
-    _window->OnRender();
 }
 
 DGEX_END

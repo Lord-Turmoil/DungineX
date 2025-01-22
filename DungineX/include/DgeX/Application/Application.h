@@ -75,6 +75,15 @@ public:
     int GetRefreshRate() const { return _window->GetRefreshRate(); }
 
 private:
+    void _MainLoop();
+
+    void _Update(DeltaTime delta);
+    void _Render() const;
+
+    void _Launch();
+    void _Shutdown();
+
+private:
     bool _OnWindowClose(WindowCloseEvent& event);
     bool _OnWindowResize(WindowResizeEvent& event);
 
@@ -82,13 +91,6 @@ private:
     bool _OnInterfaceChange(InterfaceChangeEvent& event);
     bool _OnInterfaceClose(InterfaceCloseEvent& event);
 
-    /**
-     * @brief The run thread to prevent freezing on window events.
-     */
-    void _Run();
-
-    bool _Update(DeltaTime delta); // returns true if the application should close
-    void _Render() const;
 
 private:
     ApplicationSpecification _specification;
