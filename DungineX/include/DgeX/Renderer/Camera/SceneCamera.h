@@ -58,8 +58,8 @@ public:
      * @param zoom The zoom level of the camera.
      */
     void SetZoom(float zoom);
-    void Zoom(float zoom) { SetZoom(_scale + zoom); }
-    float GetZoom() const { return _scale; }
+    void Zoom(float zoom) { SetZoom(_zoom + zoom); }
+    float GetZoom() const { return _zoom; }
 
     void SetTranslation(float x, float y) { _translation = glm::vec2(x, y); _RecalculateViewProjection(); }
     void SetTranslation(const glm::vec2& translation) { SetTranslation(translation.x, translation.y); }
