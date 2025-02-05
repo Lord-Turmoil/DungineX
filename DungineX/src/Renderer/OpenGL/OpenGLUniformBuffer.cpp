@@ -1,4 +1,4 @@
-#include "DgeX/Platform/OpenGL/OpenGLUniformBuffer.h"
+#include "DgeX/Renderer/OpenGL/OpenGLUniformBuffer.h"
 
 #ifdef DGEX_OPENGL
 

@@ -1,4 +1,4 @@
-#include "DgeX/Platform/OpenGL/OpenGLVertexArray.h"
+#include "DgeX/Renderer/OpenGL/OpenGLVertexArray.h"
 
 #ifdef DGEX_OPENGL
 

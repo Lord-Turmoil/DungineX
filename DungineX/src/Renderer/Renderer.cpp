@@ -1,11 +1,11 @@
 #include "DgeX/Renderer/Renderer.h"
 
-#include "DgeX/Renderer/Camera/Camera.h"
-#include "DgeX/Renderer/Color.h"
+#include "DgeX/Application/Style/Color.h"
 #include "DgeX/Renderer/RenderApi.h"
 #include "DgeX/Renderer/RenderCommand.h"
 #include "DgeX/Renderer/Shader.h"
 #include "DgeX/Renderer/VertexArray.h"
+#include "DgeX/Scene/Camera/Camera.h"
 
 DGEX_BEGIN
 

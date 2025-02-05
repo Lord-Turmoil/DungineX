@@ -1,6 +1,6 @@
 #include "DgeX/Application/Window.h"
 
-#include "DgeX/Platform/OpenGL/OpenGLWindow.h"
+#include "DgeX/Renderer/OpenGL/OpenGLWindow.h"
 
 DGEX_BEGIN
 

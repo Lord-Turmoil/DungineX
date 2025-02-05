@@ -1,6 +1,6 @@
 #include "DgeX/Renderer/Buffer.h"
 
-#include "DgeX/Platform/OpenGL/OpenGLBuffer.h"
+#include "DgeX/Renderer/OpenGL/OpenGLBuffer.h"
 
 DGEX_BEGIN
 

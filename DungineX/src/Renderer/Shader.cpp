@@ -1,5 +1,5 @@
 #include "DgeX/Renderer/Shader.h"
-#include "DgeX/Platform/OpenGL/OpenGLShader.h"
+#include "DgeX/Renderer/OpenGL/OpenGLShader.h"
 
 DGEX_BEGIN
 

@@ -4,7 +4,7 @@
 #include "DgeX/Application/Interface/Layer.h"
 #include "DgeX/Core/Math.h"
 #include "DgeX/Core/UUID.h"
-#include "DgeX/Renderer/Camera/InterfaceCamera.h"
+#include "DgeX/Scene/Camera/InterfaceCamera.h"
 #include "DgeX/Renderer/RenderApi.h"
 
 DGEX_BEGIN

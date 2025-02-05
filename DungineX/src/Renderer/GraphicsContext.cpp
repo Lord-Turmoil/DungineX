@@ -1,5 +1,5 @@
 #include "DgeX/Renderer/GraphicsContext.h"
-#include "DgeX/Platform/OpenGL/OpenGLGraphicsContext.h"
+#include "DgeX/Renderer/OpenGL/OpenGLGraphicsContext.h"
 
 #include <GLFW/glfw3.h>
 

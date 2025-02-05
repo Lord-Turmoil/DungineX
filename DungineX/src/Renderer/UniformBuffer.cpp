@@ -1,6 +1,6 @@
 #include "DgeX/Renderer/UniformBuffer.h"
 
-#include "DgeX/Platform/OpenGL/OpenGLUniformBuffer.h"
+#include "DgeX/Renderer/OpenGL/OpenGLUniformBuffer.h"
 
 DGEX_BEGIN
 

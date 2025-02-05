@@ -1,7 +1,7 @@
 // Reference:
 //   - https://learnopengl.com/Getting-started/Shaders
 
-#include "DgeX/Platform/OpenGL/OpenGLShader.h"
+#include "DgeX/Renderer/OpenGL/OpenGLShader.h"
 
 #include "DgeX/Core/Assert.h"
 

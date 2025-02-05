@@ -1,4 +1,4 @@
-#include "DgeX/Platform/OpenGL/OpenGLTexture.h"
+#include "DgeX/Renderer/OpenGL/OpenGLTexture.h"
 
 #include "DgeX/Core/Assert.h"
 

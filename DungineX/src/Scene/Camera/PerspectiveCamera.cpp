@@ -1,4 +1,4 @@
-#include "DgeX/Renderer/Camera/PerspectiveCamera.h"
+#include "DgeX/Scene/Camera/PerspectiveCamera.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 

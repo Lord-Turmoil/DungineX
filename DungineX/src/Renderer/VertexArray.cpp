@@ -1,6 +1,6 @@
 #include "DgeX/Renderer/VertexArray.h"
 
-#include "DgeX/Platform/OpenGL/OpenGLVertexArray.h"
+#include "DgeX/Renderer/OpenGL/OpenGLVertexArray.h"
 
 DGEX_BEGIN
 

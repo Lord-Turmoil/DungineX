@@ -1,4 +1,4 @@
-#include "DgeX/Platform/OpenGL/OpenGLGraphicsContext.h"
+#include "DgeX/Renderer/OpenGL/OpenGLGraphicsContext.h"
 
 #ifdef DGEX_OPENGL
 

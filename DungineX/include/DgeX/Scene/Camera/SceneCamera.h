@@ -1,7 +1,7 @@
 #pragma once
 
 #include "DgeX/Physics/Physics.h"
-#include "DgeX/Renderer/Camera/Camera.h"
+#include "DgeX/Scene/Camera/Camera.h"
 
 #include <glm/glm.hpp>
 

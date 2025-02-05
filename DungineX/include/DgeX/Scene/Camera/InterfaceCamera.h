@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DgeX/Renderer/Camera/Camera.h"
+#include "DgeX/Scene/Camera/Camera.h"
 
 DGEX_BEGIN
 

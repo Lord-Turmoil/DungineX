@@ -1,5 +1,5 @@
 #include "DgeX/Renderer/Texture.h"
-#include "DgeX/Platform/OpenGL/OpenGLTexture.h"
+#include "DgeX/Renderer/OpenGL/OpenGLTexture.h"
 
 DGEX_BEGIN
 

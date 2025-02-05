@@ -1,4 +1,4 @@
-#include "DgeX/Platform/OpenGL/OpenGLWindow.h"
+#include "DgeX/Renderer/OpenGL/OpenGLWindow.h"
 
 #include "DgeX/Application/Event/ApplicationEvent.h"
 #include "DgeX/Application/Event/KeyEvent.h"

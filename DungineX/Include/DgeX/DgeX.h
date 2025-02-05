@@ -11,10 +11,10 @@
 #include "Dgex/Application/Interface/Interface.h"
 #include "Dgex/Application/Interface/Layer.h"
 
-#include "DgeX/Renderer/Camera/SceneCamera.h"
-#include "DgeX/Renderer/Color.h"
 #include "DgeX/Renderer/RenderApi.h"
 #include "DgeX/Renderer/RenderCommand.h"
+
+#include "DgeX/Scene/Camera/SceneCamera.h"
 
 #include "DgeX/Utils/Easing.h"
 #include "DgeX/Utils/String.h"

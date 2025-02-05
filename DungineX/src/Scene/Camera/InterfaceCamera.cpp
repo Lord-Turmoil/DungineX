@@ -1,4 +1,4 @@
-#include "DgeX/Renderer/Camera/InterfaceCamera.h"
+#include "DgeX/Scene/Camera/InterfaceCamera.h"
 
 #include <glm/ext/matrix_clip_space.hpp>
 
