@@ -2,7 +2,7 @@
 
 #include "DgeX/Physics/Particle/Particle.h"
 
-#include "DgeX/Core/Math.h"
+#include "DgeX/Utils/Math.h"
 
 DPHX_BEGIN
 void ParticleFakeSpring::UpdateForce(Particle* particle, real_t delta)

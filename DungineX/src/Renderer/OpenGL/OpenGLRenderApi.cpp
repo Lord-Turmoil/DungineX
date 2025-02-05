@@ -14,17 +14,17 @@
  * and rotate them to the desired size and rotation.
  */
 
-#include "DgeX/Core/Math.h"
-#include "DgeX/Renderer/OpenGL/OpenGLShaderTemplate.h"
 #include "DgeX/Renderer/Buffer.h"
-#include "DgeX/Scene/Camera/Camera.h"
 #include "DgeX/Renderer/Font.h"
+#include "DgeX/Renderer/OpenGL/OpenGLShaderTemplate.h"
 #include "DgeX/Renderer/RenderApi.h"
 #include "DgeX/Renderer/RenderCommand.h"
 #include "DgeX/Renderer/Shader.h"
 #include "DgeX/Renderer/Texture.h"
 #include "DgeX/Renderer/UniformBuffer.h"
 #include "DgeX/Renderer/VertexArray.h"
+#include "DgeX/Scene/Camera/Camera.h"
+#include "DgeX/Utils/Math.h"
 #include "DgeX/Utils/String.h"
 
 #include <glm/ext/matrix_transform.hpp>
@@ -769,7 +769,7 @@ void SetTextStyle(float fontSize, const char* fontFace)
         }
         else
         {
-            DGEX_CORE_ERROR("Font {0} not found in registry.", fontFace);
+            DGEX_LOG_ERROR("Font {0} not found in registry.", fontFace);
         }
     }
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DgeX/Core/Math.h"
+#include "DgeX/Utils/Math.h"
 
 DGEX_BEGIN
 

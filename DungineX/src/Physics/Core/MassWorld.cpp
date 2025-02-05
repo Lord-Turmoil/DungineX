@@ -1,7 +1,7 @@
 #include "DgeX/Physics/Core/MassWorld.h"
 
 #include "DgeX/Core/Log.h"
-#include "DgeX/Core/Math.h"
+#include "DgeX/Utils/Math.h"
 
 DPHX_BEGIN
 
@@ -28,8 +28,8 @@ void MassWorld::StepForward(real_t delta)
             _adaptiveFrameTime = Math::Max(_step, _adaptiveFrameTime * 0.9);
             if (_adaptiveFrameCount == 5)
             {
-                DGEX_CORE_WARN("Performance hit detected, reducing simulation iteration to {0} FPS",
-                               1.0 / (_desiredFrameTime * _desiredFrameTime / _adaptiveFrameTime));
+                DGEX_LOG_WARN("Performance hit detected, reducing simulation iteration to {0} FPS",
+                              1.0 / (_desiredFrameTime * _desiredFrameTime / _adaptiveFrameTime));
             }
         }
     }

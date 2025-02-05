@@ -56,6 +56,27 @@ bool Equals(const char* str1, const char* str2)
     return strcmp(str1, str2) == 0;
 }
 
+size_t Length(const char* str)
+{
+    return strlen(str);
+}
+
+bool Contains(const char* str, char ch)
+{
+    return strchr(str, ch) != nullptr;
+}
+
+const char* Find(const char* str, char ch)
+{
+    return strchr(str, ch);
+}
+
+const char* Find(const char* begin, const char* end, char ch)
+{
+    const char* pos = std::find(begin, end, ch);
+    return pos != end ? pos : nullptr;
+}
+
 } // namespace Utils::String
 
 DGEX_END

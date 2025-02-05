@@ -16,8 +16,10 @@
 /**
  * @brief Entry point of DungineX application.
  */
-int main(int argc, char* argv[])
+inline int main(int argc, char* argv[])
 {
+    using namespace DgeX;
+
 #ifdef DGEX_ATTACH_CONSOLE
     AllocConsole();
     FILE* fp;
@@ -26,33 +28,21 @@ int main(int argc, char* argv[])
     freopen_s(&fp, "CONIN$", "r", stdin);
 #endif
 
-#ifdef DGEX_DEBUG
-#ifdef DGEX_VERBOSE_LOGGING
-    DGEX Log::Init(DGEX LogLevel::All);
-#else
-    DGEX Log::Init(DGEX LogLevel::Debug);
-#endif
-#else
-#ifdef DGEX_PUBLISH
-    DGEX Log::Init(DGEX LogLevel::Warning);
-#else
-    DGEX Log::Init(DGEX LogLevel::Info);
-#endif
-#endif
+    Log::Init("LogConfig.xml");
 
-    DGEX_CORE_ERROR("DgeX Engine {0}", DGEX_VERSION_STRING);
-    DGEX_CORE_ERROR("Copyright (C) 2024 New Desire Studios");
+    Log::GetCoreLogger()->Error("DgeX Engine {0}", DGEX_VERSION_STRING);
+    Log::GetCoreLogger()->Error("Copyright (C) 2024 New Desire Studios");
 
-    DGEX Application* app;
+    Application* app;
     DGEX_TIME_BEGIN("Initialize application");
-    app = DGEX CreateApplication({ argc, argv });
+    app = CreateApplication({ argc, argv });
     DGEX_TIME_END();
 
-    DGEX_LOG_INFO("Running application");
+    DGEX_LOG_INFO("Run application");
     app->Run();
     DGEX_LOG_INFO("Application stopped");
 
-    DGEX_TIME_BEGIN("Shutting down DgeX Engine");
+    DGEX_TIME_BEGIN("Shutting down DungineX");
     delete app;
     DGEX_TIME_END();
 

@@ -14,7 +14,8 @@ enum class EventType : unsigned char
     WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
     InterfaceTransit, InterfaceChange, InterfaceClose,
     KeyPressed, KeyReleased, KeyTyped,
-    MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
+    MouseMoved, MouseScrolled,
+    MouseButtonPressed, MouseButtonReleased, MouseButtonClicked
 };
 
 // clang-format off
@@ -75,6 +76,24 @@ public:
 };
 
 /**
+ * @brief Primitive function to dispatch an event.
+ * @tparam T Event type.
+ * @tparam F Event handler function, will be deducted by the compiler, takes a T&.
+ * @param event Event to dispatch.
+ * @param func Handler function.
+ * @return Whether the event is handled or not.
+ */
+template <typename T, typename F> bool DispatchEvent(const Ref<Event>& event, const F& func)
+{
+    if (event->GetEventType() == T::GetStaticType())
+    {
+        event->Handled |= func(static_cast<T&>(*event));
+        return true;
+    }
+    return false;
+}
+
+/**
  * @brief This is a helpful class to dispatch events with specific type.
  */
 class EventDispatcher
@@ -87,12 +106,7 @@ public:
     // F will be deduced by the compiler
     template <typename T, typename F> bool Dispatch(const F& func)
     {
-        if (_event->GetEventType() == T::GetStaticType())
-        {
-            _event->Handled |= func(static_cast<T&>(*_event));
-            return true;
-        }
-        return false;
+        return DispatchEvent<T>(_event, func);
     }
 
 private:

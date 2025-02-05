@@ -337,9 +337,9 @@ void Car::OnUpdate(real_t delta)
 
 void Car::OnRender() const
 {
-    auto wheelColor = Color::FromUInt32(0xFF57553E).ToVec4();
-    auto wheelRodColor = Color::FromUInt32(0xFF27241B).ToVec4();
-    auto frameColor = Color::FromUInt32(0xFF686D4D).ToVec4();
+    auto wheelColor = Color::FromRGBA(0xFF57553E).ToVec4();
+    auto wheelRodColor = Color::FromRGBA(0xFF27241B).ToVec4();
+    auto frameColor = Color::FromRGBA(0xFF686D4D).ToVec4();
     auto pointColor = Color::DarkGray.ToVec4();
     auto springColor = Color::LightGray.ToVec4();
 

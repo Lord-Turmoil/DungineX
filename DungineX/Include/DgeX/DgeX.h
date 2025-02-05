@@ -2,14 +2,19 @@
 
 #include "DgeX/Core/Base.h"
 
+#include "DgeX/Application/Application.h"
 #include "DgeX/Application/Event/ApplicationEvent.h"
 #include "DgeX/Application/Event/EventEmitter.h"
 #include "DgeX/Application/Event/KeyEvent.h"
 #include "DgeX/Application/Event/MouseEvent.h"
 #include "DgeX/Application/Input/Input.h"
-#include "Dgex/Application/Application.h"
-#include "Dgex/Application/Interface/Interface.h"
-#include "Dgex/Application/Interface/Layer.h"
+#include "DgeX/Application/Interface/Interface.h"
+#include "DgeX/Application/Interface/Layer.h"
+#include "DgeX/Application/Style/Property/Property.h"
+#include "DgeX/Application/Style/Property/PropertyGroup.h"
+#include "DgeX/Application/Style/Selector.h"
+#include "DgeX/Application/Style/Stylesheet.h"
+#include "DgeX/Application/Widget/DomContext.h"
 
 #include "DgeX/Renderer/RenderApi.h"
 #include "DgeX/Renderer/RenderCommand.h"

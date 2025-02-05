@@ -1,0 +1,18 @@
+<Page>
+    <Styles>
+        <Style selector=".label">
+            <Property name="color" value="#FF00FF" />
+        </Style>
+        <Style selector=".label:hover">
+            <Property name="color" value="#FFFF00" />
+        </Style>
+    </Styles>
+    <div class="wrapper">
+        <div class="header">
+            <Label id="header" class="label big" />
+        </div>
+        <div class="footer">
+            <Label id="footer" class="label small" />
+        </div>
+    </div>
+</Page>

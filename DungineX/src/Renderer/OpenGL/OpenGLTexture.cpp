@@ -49,8 +49,7 @@ OpenGLTexture::OpenGLTexture(const TextureSpecification& specification)
     glTextureParameteri(_rendererId, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTextureParameteri(_rendererId, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    DGEX_CORE_INFO("Texture created: {0}x{1}, format: {2}", _width, _height,
-                   ImageFormatToString(_specification.Format));
+    DGEX_LOG_INFO("Texture created: {0}x{1}, format: {2}", _width, _height, ImageFormatToString(_specification.Format));
 }
 
 OpenGLTexture::OpenGLTexture(const std::string& path)
@@ -99,13 +98,13 @@ OpenGLTexture::OpenGLTexture(const std::string& path)
         stbi_image_free(data);
     }
 
-    DGEX_CORE_INFO("Texture loaded: {0}", path);
+    DGEX_LOG_INFO("Texture loaded: {0}", path);
 }
 
 OpenGLTexture::~OpenGLTexture()
 {
     glDeleteTextures(1, &_rendererId);
-    DGEX_CORE_INFO("Texture deleted: {0}", _path);
+    DGEX_LOG_INFO("Texture deleted: {0}", _path);
 }
 
 void OpenGLTexture::SetData(const void* data, uint32_t size)

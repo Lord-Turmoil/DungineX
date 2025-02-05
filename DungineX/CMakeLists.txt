@@ -9,7 +9,9 @@ set(TARGET_NAME ${PROJECT_NAME})
 # --------------------------------------------------------------------
 # Source file
 # --------------------------------------------------------------------
-file(GLOB_RECURSE SRC_LIST CONFIGURE_DEPENDS
+file(GLOB_RECURSE SRC_LIST CONFIGURE_DEPENDS 
+    "${PROJECT_SOURCE_DIR}/include/*.h"
+    "${PROJECT_SOURCE_DIR}/src/*.h"
     "${PROJECT_SOURCE_DIR}/src/*.cpp")
 add_library(${TARGET_NAME} ${SRC_LIST})
 

@@ -25,15 +25,15 @@ public:
 
         DgeX::RenderApi::DrawRotatedFilledRect({ GetWidth() / 2.0f, GetHeight() / 2.0f }, { 200.0f, 200.0f },
                                                _elapsedTime * DgeX::Math::PI<float>,
-                                               DgeX::Color::FromUInt32(0xFF9900FF).ToVec4());
+                                               DgeX::Color::FromRGBA(0xFF9900FF).ToVec4());
         DgeX::RenderApi::DrawRotatedRect({ GetWidth() / 2.0f, GetHeight() / 2.0f }, { 250.0f, 250.0f },
                                          -_elapsedTime * DgeX::Math::PI<float>,
-                                         DgeX::Color::FromUInt32(0xFFFF0000).ToVec4());
+                                         DgeX::Color::FromRGBA(0xFFFF0000).ToVec4());
 
         DgeX::RenderApi::DrawCircle({ GetWidth() * 0.75f, GetHeight() * 0.75f }, 100.0f,
-                                    DgeX::Color::FromUInt32(0xFF99FF00).ToVec4());
+                                    DgeX::Color::FromRGBA(0xFF99FF00).ToVec4());
         DgeX::RenderApi::DrawFilledCircle({ GetWidth() * 0.75f, GetHeight() * 0.25f }, 100.0f,
-                                          DgeX::Color::FromUInt32(0xFFFF00FF).ToVec4());
+                                          DgeX::Color::FromRGBA(0xFFFF00FF).ToVec4());
 
         _RenderText();
     }

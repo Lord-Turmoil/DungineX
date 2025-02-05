@@ -1,6 +1,6 @@
 #include <DgeX/DgeX.h>
 
-#include "doctest.h"
+#include "doctestplus.h"
 
 struct Node : DgeX::IntrusiveListNode
 {

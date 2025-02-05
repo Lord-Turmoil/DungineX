@@ -45,7 +45,7 @@ Font::Font(std::string name, const std::filesystem::path& path) : _name(std::mov
     msdfgen::FontHandle* font = loadFont(ft, fileString.c_str());
     if (!font)
     {
-        DGEX_CORE_ERROR("Failed to load font: {}", fileString);
+        DGEX_LOG_ERROR("Failed to load font: {}", fileString);
         return;
     }
 
@@ -69,7 +69,7 @@ Font::Font(std::string name, const std::filesystem::path& path) : _name(std::mov
     double fontScale = 1.0;
     _data->FontGeometry = msdf_atlas::FontGeometry(&_data->Glyphs);
     int glyphsLoaded = _data->FontGeometry.loadCharset(font, fontScale, charset);
-    DGEX_CORE_INFO("Loaded {}/{} glyphs from font {}", glyphsLoaded, charset.size(), fileString);
+    DGEX_LOG_INFO("Loaded {}/{} glyphs from font {}", glyphsLoaded, charset.size(), fileString);
 
     double emSize = 48.0f;
     msdf_atlas::TightAtlasPacker atlasPacker;
@@ -99,7 +99,7 @@ Font::Font(std::string name, const std::filesystem::path& path) : _name(std::mov
     destroyFont(font);
     deinitializeFreetype(ft);
 
-    DGEX_CORE_INFO("Successfully loaded font: {}", fileString);
+    DGEX_LOG_INFO("Successfully loaded font: {}", fileString);
 }
 
 Font::~Font()

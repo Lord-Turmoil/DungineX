@@ -20,4 +20,8 @@ template <typename T, typename... Args> constexpr Ref<T> CreateRef(Args&&... arg
     return std::make_shared<T>(std::forward<Args>(args)...);
 }
 
+template <typename T> using WeakRef = std::weak_ptr<T>;
+
+template <typename T> using Ptr = T*;
+
 DGEX_END

@@ -198,7 +198,7 @@ void OpenGLWindow::_InitEventCallback() const
 
     glfwSetCursorPosCallback(_window, [](GLFWwindow* window, double xPos, double yPos) {
         WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-        data.EventCallback(MouseMovedEvent::Create(xPos, yPos, data.Height - yPos));
+        data.EventCallback(MouseMovedEvent::Create(xPos, yPos));
     });
 }
 

@@ -1,4 +1,13 @@
-#include "DgeX/DgeX.h"
+#include "Dgex/Application/Interface/Interface.h"
+
+#include "DgeX/Application/Application.h"
+#include "DgeX/Application/Event/EventEmitter.h"
+#include "DgeX/Application/Interface/Layer.h"
+#include "DgeX/Core/Log.h"
+#include "DgeX/Renderer/RenderApi.h"
+#include "DgeX/Utils/Easing.h"
+
+#include <glm/glm.hpp>
 
 DGEX_BEGIN
 
@@ -55,7 +64,7 @@ void SplashLayer::OnAttach()
     _splashPosition.x = 0.5f * static_cast<float>(app->GetWidth());
     _splashPosition.y = 0.5f * static_cast<float>(app->GetHeight());
 
-    DGEX_CORE_INFO("SplashLayer attached");
+    DGEX_LOG_INFO("SplashLayer attached");
 }
 
 void SplashLayer::OnUpdate(DeltaTime delta)
@@ -76,14 +85,14 @@ void SplashLayer::OnUpdate(DeltaTime delta)
 
     if (_elapsedTime > 6.28f)
     {
-        DGEX_CORE_INFO("Prepare to launch Client interface");
+        DGEX_LOG_INFO("Prepare to launch Client interface");
         EventEmitter::Emit(CreateRef<InterfaceChangeEvent>("Main"));
     }
 #else
     _alpha = 255.f;
     if (_elapsedTime > 1.f)
     {
-        DGEX_CORE_INFO("Splash screen skipped");
+        DGEX_LOG_INFO("Splash screen skipped");
         EventEmitter::Emit(CreateRef<InterfaceChangeEvent>("Main"));
     }
 #endif

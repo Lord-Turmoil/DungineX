@@ -2,9 +2,9 @@
 
 #include "DgeX/Application/Event/EventEmitter.h"
 #include "DgeX/Application/Interface/Interface.h"
-#include "DgeX/Core/Math.h"
 #include "DgeX/Renderer/RenderCommand.h"
 #include "DgeX/Renderer/Renderer.h"
+#include "DgeX/Utils/Math.h"
 #include "DgeX/Utils/PlatformUtils.h"
 
 #include <GLFW/glfw3.h>
@@ -63,7 +63,7 @@ void Application::Run()
 
 void Application::OnEvent(const Ref<Event>& event)
 {
-    DGEX_CORE_TRACE("{0}", event->ToString());
+    DGEX_LOG_TRACE("{0}", event->ToString());
     _eventBuffer.PushEvent(event);
 }
 
@@ -96,7 +96,7 @@ void Application::_MainLoop()
         elapsedTime += delta;
         if (elapsedTime > 5.0f)
         {
-            DGEX_CORE_DEBUG("FPS: {0}", GetFps());
+            DGEX_LOG_DEBUG("FPS: {0}", GetFps());
             elapsedTime = 0.0f;
         }
 #endif

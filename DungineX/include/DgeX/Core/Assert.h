@@ -12,11 +12,7 @@
 
 #ifdef DGEX_ENABLE_ASSERT
 
-#ifdef _DGEX_CORE_
-#define _DGEX_ASSERT_LOGGER DGEX_EXPAND_MACRO(DGEX_CORE_CRITICAL)
-#else
 #define _DGEX_ASSERT_LOGGER DGEX_EXPAND_MACRO(DGEX_LOG_CRITICAL)
-#endif
 
 #define _DGEX_ASSERT_IMPL(expression, msg, ...)                                                                        \
     do                                                                                                                 \

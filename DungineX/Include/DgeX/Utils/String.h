@@ -48,9 +48,53 @@ char* WCharToChar(const wchar_t* src);
  */
 std::string ToString(const unsigned char* str);
 
+/**
+ * @brief Copy characters from source to destination.
+ * @param dest Destination buffer.
+ * @param src Source buffer.
+ * @param count Number of characters to copy.
+ */
 void Copy(char* dest, const char* src, size_t count);
 
+/**
+ * @brief Check if two strings are equal.
+ * @param str1 String.
+ * @param str2 String.
+ * @return Whether two strings are equal or not.
+ */
 bool Equals(const char* str1, const char* str2);
+
+/**
+ * @brief Get the length of a string.
+ * @param str String.
+ * @return Length of the string.
+ */
+size_t Length(const char* str);
+
+/**
+ * @brief Check if the string contains the character.
+ * @param str String.
+ * @param ch Character to find.
+ * @return Whether the string contains the character or not.
+ */
+bool Contains(const char* str, char ch);
+
+/**
+ * @brief Find the character in the given string.
+ * @param str String.
+ * @param ch Character to find.
+ * @return First occurrence of the character. nullptr if not found.
+ */
+const char* Find(const char* str, char ch);
+
+/**
+ * @brief Find the character in the given string interval.
+ * @param begin Begin of the string.
+ * @param end End of the string.
+ * @param ch Character to find.
+ * @return First occurence of the character.
+ */
+const char* Find(const char* begin, const char* end, char ch);
 
 } // namespace Utils::String
 

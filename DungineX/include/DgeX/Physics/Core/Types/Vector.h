@@ -6,7 +6,7 @@
 
 #include "DgeX/Physics/Core/Precision.h"
 
-#include "DgeX/Core/Math.h"
+#include "DgeX/Utils/Math.h"
 
 #include <glm/glm.hpp>
 

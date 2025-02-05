@@ -1,7 +1,7 @@
 #include "DgeX/Physics/Core/Types/Matrix.h"
 
 #include "DgeX/Core/Assert.h"
-#include "DgeX/Core/Math.h"
+#include "DgeX/Utils/Math.h"
 
 DPHX_BEGIN
 

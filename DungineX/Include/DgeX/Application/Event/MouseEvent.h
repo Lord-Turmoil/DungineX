@@ -3,49 +3,49 @@
 #include "DgeX/Application/Event/Event.h"
 #include "DgeX/Application/Input/MouseCode.h"
 
+#include <sstream>
+
 DGEX_BEGIN
 
 class MouseMovedEvent final : public Event
 {
 public:
-    MouseMovedEvent(const double x, const double y, const double inverseY) : _x(x), _y(y), _inverseY(inverseY)
+    MouseMovedEvent(const double x, const double y) : _position({ x, y })
     {
     }
 
     double GetX() const
     {
-        return _x;
+        return _position.X;
     }
 
     double GetY() const
     {
-        return _y;
+        return _position.Y;
     }
 
-    double GetInverseY() const
+    const MousePosition& GetMousePosition() const
     {
-        return _inverseY;
+        return _position;
     }
 
     std::string ToString() const override
     {
         std::stringstream ss;
-        ss << GetName() << " Event: " << _x << ", " << _y << ", " << _inverseY;
+        ss << GetName() << " Event: " << _position.X << ", " << _position.Y;
         return ss.str();
     }
 
     DECL_EVENT_CLASS_TYPE(MouseMoved)
     DECL_EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
 
-    static Ref<MouseMovedEvent> Create(const double x, const double y, const double inverseY)
+    static Ref<MouseMovedEvent> Create(const double x, const double y)
     {
-        return CreateRef<MouseMovedEvent>(x, y, inverseY);
+        return CreateRef<MouseMovedEvent>(x, y);
     }
 
 private:
-    double _x;
-    double _y;
-    double _inverseY;
+    MousePosition _position;
 };
 
 class MouseScrolledEvent final : public Event
@@ -143,6 +143,31 @@ public:
     static Ref<MouseButtonReleasedEvent> Create(MouseCode code)
     {
         return CreateRef<MouseButtonReleasedEvent>(code);
+    }
+};
+
+/**
+ * @brief This is a pseudo-event , as OpenGL does not support mouse click events.
+ */
+class MouseButtonClickedEvent : public MouseButtonEvent
+{
+public:
+    MouseButtonClickedEvent(MouseCode code) : MouseButtonEvent(code)
+    {
+    }
+
+    std::string ToString() const override
+    {
+        std::stringstream ss;
+        ss << GetName() << " Event: " << _mouseCode;
+        return ss.str();
+    }
+
+    DECL_EVENT_CLASS_TYPE(MouseButtonClicked)
+
+    static Ref<MouseButtonClickedEvent> Create(MouseCode code)
+    {
+        return CreateRef<MouseButtonClickedEvent>(code);
     }
 };
 

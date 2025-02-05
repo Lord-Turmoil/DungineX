@@ -65,7 +65,7 @@ OpenGLShader::OpenGLShader(const std::string& filepath)
     std::string name = _ParseShaderFile(filepath, vertexSource, fragmentSource);
     if (name.empty())
     {
-        DGEX_CORE_ERROR(DGEX_MSG_SHADER_LOAD_ERROR, filepath);
+        DGEX_LOG_ERROR(DGEX_MSG_SHADER_LOAD_ERROR, filepath);
         return;
     }
     _Init(name, vertexSource.c_str(), fragmentSource.c_str());
@@ -82,7 +82,7 @@ OpenGLShader::~OpenGLShader()
     {
         glDeleteShader(_programId);
     }
-    DGEX_CORE_INFO("Shader {0} unloaded", _name);
+    DGEX_LOG_INFO("Shader {0} unloaded", _name);
 }
 
 void OpenGLShader::Bind() const
@@ -163,13 +163,13 @@ void OpenGLShader::_Init(const std::string& name, const char* vertexShaderSource
 
     if (!vertexShaderSource)
     {
-        DGEX_CORE_WARN("No vertex shader source provided, using default vertex shader");
+        DGEX_LOG_WARN("No vertex shader source provided, using default vertex shader");
         vertexShaderSource = ShaderTemplate::DEFAULT_VERTEX_SHADER;
     }
 
     if (!fragmentShaderSource)
     {
-        DGEX_CORE_WARN("No fragment shader source provided, using default fragment shader");
+        DGEX_LOG_WARN("No fragment shader source provided, using default fragment shader");
         fragmentShaderSource = ShaderTemplate::DEFAULT_FRAGMENT_SHADER;
     }
 
@@ -215,7 +215,7 @@ void OpenGLShader::_Init(const std::string& name, const char* vertexShaderSource
     glDeleteShader(vertex);
     glDeleteShader(fragment);
 
-    DGEX_CORE_INFO("Shader {0} loaded", _name);
+    DGEX_LOG_INFO("Shader {0} loaded", _name);
 }
 
 /**
@@ -238,7 +238,7 @@ std::string OpenGLShader::_ParseShaderFile(const std::string& filepath, std::str
     std::ifstream in(filepath, std::ios::in | std::ios::binary);
     if (!in)
     {
-        DGEX_CORE_ERROR(DGEX_MSG_CANNOT_OPEN_FILE, filepath);
+        DGEX_LOG_ERROR(DGEX_MSG_CANNOT_OPEN_FILE, filepath);
         return "";
     }
 
@@ -269,7 +269,7 @@ std::string OpenGLShader::_ParseShaderFile(const std::string& filepath, std::str
             type = ParseShaderTypeFromString(line);
             if (type == 0)
             {
-                DGEX_CORE_ERROR(DGEX_MSG_SHADER_SYNTAX_ERROR, line);
+                DGEX_LOG_ERROR(DGEX_MSG_SHADER_SYNTAX_ERROR, line);
                 return "";
             }
             source.clear();
@@ -310,7 +310,7 @@ bool OpenGLShader::_CheckCompileErrors(uint32_t shader, const std::string& type)
         if (!success)
         {
             glGetShaderInfoLog(shader, 1024, nullptr, infoLog);
-            DGEX_CORE_ERROR("Shader compilation error of type: {0}\n{1}", type, infoLog);
+            DGEX_LOG_ERROR("Shader compilation error of type: {0}\n{1}", type, infoLog);
             return false;
         }
     }
@@ -320,7 +320,7 @@ bool OpenGLShader::_CheckCompileErrors(uint32_t shader, const std::string& type)
         if (!success)
         {
             glGetProgramInfoLog(shader, 1024, nullptr, infoLog);
-            DGEX_CORE_ERROR("Shader linking error of type: {0}\n{1}", type, infoLog);
+            DGEX_LOG_ERROR("Shader linking error of type: {0}\n{1}", type, infoLog);
             return false;
         }
     }

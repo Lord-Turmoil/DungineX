@@ -2,10 +2,10 @@
 
 #include "DgeX/Application/Application.h"
 #include "DgeX/Application/Interface/Layer.h"
-#include "DgeX/Core/Math.h"
 #include "DgeX/Core/UUID.h"
-#include "DgeX/Scene/Camera/InterfaceCamera.h"
 #include "DgeX/Renderer/RenderApi.h"
+#include "DgeX/Scene/Camera/InterfaceCamera.h"
+#include "DgeX/Utils/Math.h"
 
 DGEX_BEGIN
 
@@ -76,7 +76,7 @@ void Interface::InvokeOnLoad()
         return;
     }
 
-    DGEX_CORE_INFO("Prepare to load interface: {0}", _name);
+    DGEX_LOG_INFO("Prepare to load interface: {0}", _name);
 
     _width = Application::GetInstance()->GetWidth();
     _height = Application::GetInstance()->GetHeight();

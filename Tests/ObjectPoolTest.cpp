@@ -1,6 +1,6 @@
 #include <DgeX/DgeX.h>
 
-#include "doctest.h"
+#include "doctestplus.h"
 
 struct Object : DgeX::PooledObject<Object>
 {
@@ -14,7 +14,7 @@ TEST_CASE("ObjectPool Test")
     DgeX::ObjectPool<Object> pool(POOL_SIZE);
     DgeX::ObjectQueue<Object> queue;
 
-    CHECK_EQ(pool.IsFull(), false);
+    CHECK_FALSE(pool.IsFull());
 
     for (int i = 0; i < POOL_SIZE; i++)
     {
@@ -22,18 +22,17 @@ TEST_CASE("ObjectPool Test")
     }
     CHECK_EQ(queue.Size(), POOL_SIZE);
 
-    CHECK_EQ(pool.TryAcquire(), nullptr);
+    CHECK_NULL(pool.TryAcquire());
 
     queue.Lock();
     for (auto& it : queue)
     {
-        CHECK_EQ(it->InUse(), true);
+        CHECK(it->InUse());
         it->Dispose();
         queue.Remove(it);
     }
     queue.Unlock();
 
     CHECK_EQ(queue.Size(), 0);
-
-    CHECK_NE(pool.TryAcquire(), nullptr);
+    CHECK_NON_NULL(pool.TryAcquire());
 }
