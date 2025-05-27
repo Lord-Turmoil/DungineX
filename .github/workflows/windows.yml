@@ -1,0 +1,41 @@
+# Build and Test Workflow for DungineX
+
+name: Windows Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    # There is an issue with windows-latest to compile SDL3.
+    # See: https://github.com/libsdl-org/SDL/issues/11487#issuecomment-2854148376
+    runs-on: windows-2025
+    strategy:
+      fail-fast: true
+      matrix:
+        generator: [Visual Studio 17 2022]
+        build_type: [Debug, Release]
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: CMake ${{ matrix.build_type }}
+      run: >
+        cmake -S . -B build -G "${{ matrix.generator }}" -A x64
+        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -DDGEX_BUILD_DEMO=OFF
+
+    - name: Build
+      run: >
+        cmake --build build
+        --config ${{ matrix.build_type }}
+
+    - name: Test
+      working-directory: build
+      run: ctest --build-config ${{ matrix.build_type }}
