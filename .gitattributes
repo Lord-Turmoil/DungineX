@@ -1,0 +1,5 @@
+# set all files to CRLF
+* text=auto eol=crlf
+
+# set Git files to LF
+.git* text=auto eol=lf

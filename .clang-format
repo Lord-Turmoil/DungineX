@@ -1,0 +1,16 @@
+---
+Language: Cpp
+BasedOnStyle: Microsoft
+IndentWidth: 4
+UseTab: Never
+AccessModifierOffset: -4
+InsertNewlineAtEOF: true
+PointerAlignment: Left
+Cpp11BracedListStyle: false
+AlignConsecutiveMacros: true
+SeparateDefinitionBlocks: Always
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterUnion: true
+  BeforeWhile: false
+InsertBraces: true
