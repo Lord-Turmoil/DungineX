@@ -33,6 +33,22 @@
 #define DGEX_API
 #endif
 
+#ifdef __cplusplus
+
+#define DGEX_EXTERN_C extern "C"
+#define DGEX_EXTERN_C_BEGIN                                                                                            \
+    extern "C"                                                                                                         \
+    {
+#define DGEX_EXTERN_C_END }
+
+#else
+
+#define DGEX_EXTERN_C
+#define DGEX_EXTERN_C_BEGIN
+#define DGEX_EXTERN_C_END
+
+#endif
+
 // ============================================================================
 // Build Configuration
 // ----------------------------------------------------------------------------
@@ -53,7 +69,7 @@
 #endif
 
 // ============================================================================
-// Global Namespace     
+// Global Namespace
 // ----------------------------------------------------------------------------
 
 #define DGEX_BEGIN                                                                                                     \

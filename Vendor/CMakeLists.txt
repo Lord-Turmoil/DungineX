@@ -60,13 +60,6 @@ add_subdirectory(spdlog)
 # Creating all-in-one vendor dependency
 # --------------------------------------------------------------------
 
-# set(vendors
-#     SDL3_ttf::SDL3_ttf
-#     SDL3_image::SDL3_image
-#     SDL3::SDL3 # SDL must be the last item in the list.
-#     spdlog::spdlog
-# )
-
 # This is a convenience target that includes all the vendor.
 add_library(DgeX_Vendor INTERFACE)
 

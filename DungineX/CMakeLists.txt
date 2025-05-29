@@ -22,7 +22,7 @@ message(STATUS "Build DungineX as static: ${DGEX_BUILD_STATIC}")
 
 set(TARGET_SHARED DgeX_Shared)
 set(TARGET_STATIC DgeX_Static)
-set(BINARY_NAME DgeX)
+set(BINARY_NAME DungineX)
 
 if(DGEX_USE_SHARED)
     generate_product_version(version_info
@@ -40,7 +40,7 @@ if(DGEX_USE_SHARED)
     )
 endif()
 
-message(STATUS "Publishing DungineX: ${DGEX_PUBLISH}")
+message(STATUS "DungineX Publish: ${DGEX_PUBLISH}")
 
 # --------------------------------------------------------------------
 # Source Files
@@ -75,6 +75,10 @@ macro(configure_dgex_target target_name)
     endif()
     if(DGEX_ENABLE_ASSERT)
         target_compile_definitions(${target_name} PRIVATE DGEX_ENABLE_ASSERT)
+    endif()
+    if(NOT DGEX_CONSOLE_APP)
+        # This definition should be emitted to client code.
+        target_compile_definitions(${target_name} PUBLIC DGEX_USE_WINMAIN)
     endif()
 endmacro()
 

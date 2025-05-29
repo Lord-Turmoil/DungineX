@@ -12,9 +12,13 @@ include(cmake/utils.cmake)
 
 project(DungineX-Engine)
 
+if(NOT WIN32)
+    message(FATAL_ERROR "DungineX targets only Windows!")
+endif()
+
 # Set default build type if not specified.
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose Release or Debug" FORCE)
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "CMake build type" FORCE)
 endif()
 
 # Check if we are building the master project or a subproject.
@@ -40,17 +44,21 @@ endif()
 if(DGEX_MASTER_PROJECT)
     option(DGEX_BUILD_DEMO "Build demo projects" ON)
     option(DGEX_BUILD_TEST "Build unit tests" ON)
+
+    option(DGEX_PUBLISH "Build DungineX for publishing" OFF)
 else()
     option(DGEX_BUILD_DEMO "Build demo projects" OFF)
     option(DGEX_BUILD_TEST "Build unit tests" OFF)
+
+    option(DGEX_PUBLISH "Build DungineX for publishing" ON)
 endif()
 
 # If DungineX is the master project, then change the output directories for a more
 # friendly organization of the build artifacts.
 if(DGEX_MASTER_PROJECT)
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>/lib")
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>/lib")
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>/bin")
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/output/lib")
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/output/lib")
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/output/bin")
 endif()
 
 # --------------------------------------------------------------------
@@ -72,9 +80,14 @@ if(DGEX_MASTER_PROJECT)
 else()
     option(DGEX_STRICT_WARNINGS "Enable strict warnings" OFF)
 endif()
-option(DGEX_ENABLE_ASSERT "Enable assertions in DungineX" ON)
 
-option(DGEX_PUBLISH "Build DungineX for publishing" OFF)
+if(DGEX_PUBLISH)
+    option(DGEX_CONSOLE_APP "Build console application with DungineX" OFF)
+else()
+    option(DGEX_CONSOLE_APP "Build console application with DungineX" ON)
+endif()
+
+option(DGEX_ENABLE_ASSERT "Enable assertions in DungineX" ON)
 
 # --------------------------------------------------------------------
 # Targets

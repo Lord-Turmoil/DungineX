@@ -3,10 +3,11 @@
  */
 
 #include <DgeX/DgeX.h>
+#include <DgeX/EntryPoint.h>
 
 #include <iostream>
 
-int main()
+int main(int argc, char* argv[])
 {
     std::cout << "Hello there!" << std::endl;
     std::cout << "DungineX " << DgeX::GetDgeXVersion() << "!" << std::endl;
