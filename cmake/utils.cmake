@@ -66,3 +66,13 @@ function(dgex_get_dependencies target_name output)
     # Return the result
     set(${output} ${dependencies} PARENT_SCOPE)
 endfunction()
+
+# Get the target name from a given alias.
+function(dgex_get_target_name alias_name output)
+    get_target_property(target_name ${alias_name} ALIASED_TARGET)
+    if("${target_name}" STREQUAL "target_name-NOTFOUND")
+        set(${output} ${alias_name} PARENT_SCOPE)
+    else()
+        set(${output} ${target_name} PARENT_SCOPE)
+    endif()
+endfunction()

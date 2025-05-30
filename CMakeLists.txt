@@ -118,3 +118,11 @@ if(DGEX_BUILD_TEST)
     enable_testing()
     add_subdirectory(Tests)
 endif()
+
+# --------------------------------------------------------------------
+# Additional Configurations
+# --------------------------------------------------------------------
+
+# A more convenient target for the DungineX library.
+dgex_get_target_name(DgeX::Lib dgex_target)
+add_library(DgeX::DgeX ALIAS ${dgex_target})

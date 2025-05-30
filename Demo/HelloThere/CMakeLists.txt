@@ -14,4 +14,4 @@ else()
     add_executable(HelloThere WIN32 Main.cpp)
 endif()
 
-target_link_libraries(HelloThere PRIVATE DgeX::Lib)
+target_link_libraries(HelloThere PRIVATE DgeX::DgeX)

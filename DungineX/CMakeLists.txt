@@ -25,6 +25,7 @@ set(TARGET_STATIC DgeX_Static)
 set(BINARY_NAME DungineX)
 
 if(DGEX_USE_SHARED)
+    string(TIMESTAMP current_year "%Y")
     generate_product_version(version_info
         NAME "DungineX"
         VERSION_MAJOR     ${DGEX_VERSION_MAJOR}
@@ -32,7 +33,7 @@ if(DGEX_USE_SHARED)
         VERSION_PATCH     ${DGEX_VERSION_PATCH}
         VERSION_REVISION  ${DGEX_VERSION_REVISION}
         COMPANY_NAME      "New Desire Studios"
-        # COMPANY_COPYRIGHT
+        COMPANY_COPYRIGHT "Copyright (C) New Desire Studios ${current_year}"
         # COMMENTS
         ORIGINAL_FILENAME "${BINARY_NAME}.dll"
         # INTERNAL_NAME
@@ -87,9 +88,10 @@ if(DGEX_BUILD_SHARED)
     configure_dgex_target(${TARGET_SHARED})
 
     # Shared library need some extra properties.
+    target_compile_definitions(${TARGET_SHARED} PRIVATE DGEX_EXPORT)
+    
     set_target_properties(${TARGET_SHARED} PROPERTIES OUTPUT_NAME ${BINARY_NAME})
     set_target_properties(${TARGET_SHARED} PROPERTIES POSITION_INDEPENDENT_CODE ON)
-    target_compile_definitions(${TARGET_SHARED} PRIVATE DGEX_EXPORT)
 endif()
 
 if(DGEX_BUILD_STATIC)
