@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : May 26, 2025                              *
  *                                                                            *
- *                    Last Update : May 26, 2025                              *
+ *                    Last Update : June 1, 2025                              *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -62,6 +62,3 @@
 #include "DgeX/Utils/Log.h"
 #include "DgeX/Utils/Macros.h"
 #include "DgeX/Utils/Types.h"
-
-// Entering client code
-#undef DGEX_CORE

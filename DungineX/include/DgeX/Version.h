@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : May 25, 2025                              *
  *                                                                            *
- *                    Last Update : May 25, 2025                              *
+ *                    Last Update : June 1, 2025                              *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -42,6 +42,9 @@
     "."                                                                                                                \
     DGEX_STRINGIFY(DGEX_VERSION_PATCH)
 // clang-format on
+
+#define DGEX_YEAR        2025
+#define DGEX_YEAR_STRING DGEX_STRINGIFY(DGEX_YEAR)
 
 DGEX_BEGIN
 

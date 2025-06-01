@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : May 29, 2025                              *
  *                                                                            *
- *                    Last Update : May 29, 2025                              *
+ *                    Last Update : June 1, 2025                              *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -25,9 +25,24 @@
 
 #include "DgeX/Defines.h"
 
-DGEX_EXTERN_C_BEGIN
+/**
+ * @brief A simple wrapper for command line arguments.
+ */
+struct CommandLineArgs
+{
+    int Count = 0;
+    char** Args = nullptr;
 
-typedef int (*DgeXEntryPoint)(int argc, char* argv[]);
+    DGEX_API const char* operator[](int index) const
+    {
+        return Args[index];
+    }
+};
+
+typedef int (*OnInitEntry)(const CommandLineArgs&, void**);
+typedef int (*OnExitEntry)(void*, int);
+typedef int (*OnUpdateEntry)(void*);
+typedef int (*OnEventEntry)(void*);
 
 /**
  * @brief Main entry point for the game built with DungineX.
@@ -35,61 +50,117 @@ typedef int (*DgeXEntryPoint)(int argc, char* argv[]);
  * This entry should be defined in the client game code, and can't be
  * marked with DGEX_API. As the .dll target won't load it.
  *
- * @param argc Number of command line arguments.
- * @param argv Array of command line arguments.
+ * @param args Commandline arguments.
+ * @param context Custom application context.
+ * @return Whether initialization succeeded or not.
+ *         0 for success, others as error code.
  */
-extern int DgeXMain(int argc, char* argv[]);
-
-DGEX_API int DgeXMainImpl(int argc, char* argv[], DgeXEntryPoint entryPoint);
-
-DGEX_EXTERN_C_END
+extern int DgeXOnInit(const CommandLineArgs& args, void** context);
 
 /**
- * Only include main implementation on client side, where
- * DGEX_ENTRYPOINT_INTERNAL is (hopefully) not defined.
+ * @brief This is called when the game's main loop ends.
+ *
+ * @param context Custom application context set in DgeXInit.
+ * @param result  Return value from DgeXOnUpdate.
+ * @return Whether the cleanup succeeded or not.
+ *         0 for success, others as error code.
  */
-#ifndef DGEX_ENTRYPOINT_INTERNAL
-
-#ifdef DGEX_USE_WINMAIN
-
-#include <Windows.h>
-#include <stdlib.h> // for __argc and __argv
+extern int DgeXOnExit(void* context, int result);
 
 /**
- * @brief Windows-specific entry point for the game.
+ * @brief Default implementation of DgeXOnUpdate.
  *
- * This is used when compiling for Windows with WinMain.
- *
- * @param hInstance Handle to the current instance of the application.
- * @param hPrevInstance Handle to the previous instance of the application (always NULL).
- * @param lpCmdLine Command line arguments as a string.
- * @param nCmdShow Controls how the window is to be shown.
+ * @return Whether update succeeded or not.
+ *         0 for success, others as error code.
  */
-int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
+int DGEX_API DgeXOnUpdateDefault();
+
+/**
+ * @brief Default implementation of DgeXOnEvent.
+ *
+ * @return Whether event handling succeeded or not.
+ *         0 for success, others as error code.
+ */
+int DGEX_API DgeXOnEventDefault();
+
+#ifdef DGEX_CUSTOM_LOOP
+
+/**
+ * @brief This is called every frame of the game.
+ *
+ * @param context Custom application context set in DgeXInit.
+ * @return Whether the game should continue or not.
+ *         0 for continue, others to exit.
+ */
+extern int DgeXOnUpdate(void* context);
+
+/**
+ * @brief This is called when the game receives an event.
+ *
+ * @param context Custom application context set in DgeXInit.
+ * @return Whether the event handling succeeded or not.
+ *         0 for continue, others as error code.
+ */
+extern int DgeXOnEvent(void* context);
+
+#endif // DGEX_CUSTOM_LOOP
+
+// ============================================================================
+// Main Entry
+// ----------------------------------------------------------------------------
+
+#include <SDL3/SDL.h>
+
+// ============================================================================
+// Native Implementations
+// ----------------------------------------------------------------------------
+
+DGEX_API SDL_AppResult AppInitImpl(void** appstate, CommandLineArgs& args, OnInitEntry entry);
+
+DGEX_API SDL_AppResult AppEventImpl(void* appstate, SDL_Event* event, OnEventEntry entry);
+DGEX_API SDL_AppResult AppEventNative(void* appstate, SDL_Event* event);
+
+DGEX_API SDL_AppResult AppIterateImpl(void* appstate, OnUpdateEntry entry);
+DGEX_API SDL_AppResult AppIterateNative(void* appstate);
+
+DGEX_API void AppQuitImpl(void* appstate, SDL_AppResult result, OnExitEntry entry);
+
+// ============================================================================
+// Main Entry
+// ----------------------------------------------------------------------------
+
+#ifndef DGEX_ENTRYPOINT_IMPL
+
+#define SDL_MAIN_USE_CALLBACKS
+#include <SDL3/SDL_main.h>
+
+inline SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
 {
-    return DgeXMainImpl(__argc, __argv, DgeXMain);
+    CommandLineArgs args{ argc, argv };
+    return AppInitImpl(appstate, args, DgeXOnInit);
 }
 
+inline SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
+{
+#ifdef DGEX_CUSTOM_LOOP
+    return AppEventImpl(appstate, event, DgeXOnEvent);
 #else
-
-/**
- * @brief Standard entry point for the game.
- *
- * @param argc Number of command line arguments.
- * @param argv Array of command line arguments.
- */
-int main(int argc, char* argv[])
-{
-    return DgeXMainImpl(argc, argv, DgeXMain);
+    return AppEventNative(appstate, event);
+#endif
 }
 
-#endif // DGEX_USE_WINMAIN
+inline SDL_AppResult SDL_AppIterate(void* appstate)
+{
+#ifdef DGEX_CUSTOM_LOOP
+    return AppIterateImpl(appstate, DgeXOnUpdate);
+#else
+    return AppIterateNative(appstate);
+#endif
+}
 
-/**
- * @brief An alias for the main entry point of the game.
- *
- * This should be defined in client game.
- */
-#define main DgeXMain
+inline void SDL_AppQuit(void* appstate, SDL_AppResult result)
+{
+    AppQuitImpl(appstate, result, DgeXOnExit);
+}
 
-#endif // DGEX_ENTRYPOINT_INTERNAL
+#endif // DGEX_ENTRYPOINT_IMPL
