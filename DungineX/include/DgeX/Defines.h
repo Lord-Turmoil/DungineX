@@ -61,6 +61,8 @@
 
 #if 0 // Should be set with CMake options.
 
+// Mark that we're in the engine, not client.
+#define DGEX_ENGINE
 // Adding extra features to kindly remind users of this project.
 #define DGEX_PUBLISH
 // Enable assertions.
@@ -69,7 +71,7 @@
 #endif
 
 // ============================================================================
-// Global Namespace
+// Global Namespace & Macros
 // ----------------------------------------------------------------------------
 
 #define DGEX_BEGIN                                                                                                     \
@@ -78,3 +80,6 @@
 #define DGEX_END }
 
 #define DGEX ::DgeX::
+
+#define DUNGINEX       "DungineX"
+#define DUNGINEX_SHORT "DgeX"

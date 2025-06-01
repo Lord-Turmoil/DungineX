@@ -40,7 +40,7 @@ typedef int (*DgeXEntryPoint)(int argc, char* argv[]);
  */
 extern int DgeXMain(int argc, char* argv[]);
 
-extern DGEX_API int DgeXMainImpl(int argc, char* argv[], DgeXEntryPoint entryPoint);
+DGEX_API int DgeXMainImpl(int argc, char* argv[], DgeXEntryPoint entryPoint);
 
 DGEX_EXTERN_C_END
 

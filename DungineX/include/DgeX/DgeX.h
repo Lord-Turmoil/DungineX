@@ -57,3 +57,11 @@
 
 #include "DgeX/Defines.h"
 #include "DgeX/Version.h"
+
+#include "DgeX/Utils/Assert.h"
+#include "DgeX/Utils/Log.h"
+#include "DgeX/Utils/Macros.h"
+#include "DgeX/Utils/Types.h"
+
+// Entering client code
+#undef DGEX_CORE

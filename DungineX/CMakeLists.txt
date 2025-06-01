@@ -71,11 +71,13 @@ macro(configure_dgex_target target_name)
         dgex_enable_strict_warnings(${target_name})
     endif()
 
+    target_compile_definitions(${target_name} PRIVATE DGEX_ENGINE)
+
     if(DGEX_PUBLISH)
         target_compile_definitions(${target_name} PRIVATE DGEX_PUBLISH)
     endif()
     if(DGEX_ENABLE_ASSERT)
-        target_compile_definitions(${target_name} PRIVATE DGEX_ENABLE_ASSERT)
+        target_compile_definitions(${target_name} PUBLIC DGEX_ENABLE_ASSERT)
     endif()
     if(NOT DGEX_CONSOLE_APP)
         # This definition should be emitted to client code.

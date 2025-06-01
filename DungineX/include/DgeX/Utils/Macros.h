@@ -17,6 +17,8 @@
  * Utility macro definitions.                                                 *
  ******************************************************************************/
 
+#pragma once
+
 // All macros are prefixed with DGEX_ to avoid name collisions.
 
 #define DGEX_EXPAND_MACRO(x)    x

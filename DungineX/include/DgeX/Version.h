@@ -50,7 +50,7 @@ DGEX_BEGIN
  *
  * @return std::string The version string in the format "major.minor.patch".
  */
-std::string DGEX_API GetDgeXVersion();
+DGEX_API std::string GetDgeXVersion();
 
 /**
  * @brief Get the DungineX versions as individual numbers.
@@ -62,6 +62,6 @@ std::string DGEX_API GetDgeXVersion();
  * @param minor Returns the minor version number.
  * @param patch Returns the patch version number.
  */
-void DGEX_API GetDgeXVersion(int* major, int* minor, int* patch);
+DGEX_API void GetDgeXVersion(int* major, int* minor, int* patch);
 
 DGEX_END

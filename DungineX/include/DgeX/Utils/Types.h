@@ -3,33 +3,51 @@
  ******************************************************************************
  *                   Project Name : DungineX                                  *
  *                                                                            *
- *                      File Name : EntryPoint.cpp                            *
+ *                      File Name : Types.h                                   *
  *                                                                            *
  *                     Programmer : Tony S.                                   *
  *                                                                            *
- *                     Start Date : May 29, 2025                              *
+ *                     Start Date : June 1, 2025                              *
  *                                                                            *
- *                    Last Update : May 29, 2025                              *
+ *                    Last Update : June 1, 2025                              *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
  *                                                                            *
- * Entry point implementation.                                                *
+ * Common type declarations.                                                  *
  ******************************************************************************/
 
-// Prevent inclusion of `main` function.
-#define DGEX_ENTRYPOINT_INTERNAL
-#include "DgeX/EntryPoint.h"
+#pragma once
 
-#include "DgeX/Utils/Log.h"
+#include "DgeX/Defines.h"
 
-DGEX_EXTERN_C int DgeXMainImpl(int argc, char* argv[], DgeXEntryPoint entryPoint)
+#include <memory>
+
+DGEX_BEGIN
+
+/**
+ * We use Scope for std::unique_ptr.
+ */
+template <typename T> using Scope = std::unique_ptr<T>;
+
+template <typename T, typename... Args> constexpr Scope<T> CreateScope(Args&&... args)
 {
-    DGEX Log::Init();
-
-    DGEX_CORE_WARN("DungineX stated");
-    int ret = entryPoint(argc, argv);
-    DGEX_CORE_WARN("DungineX finished with return code: {0}", ret);
-
-    return ret;
+    return std::make_unique<T>(std::forward<Args>(args)...);
 }
+
+/**
+ * We use Ref for std::shared_ptr.
+ */
+template <typename T> using Ref = std::shared_ptr<T>;
+
+template <typename T, typename... Args> constexpr Ref<T> CreateRef(Args&&... args)
+{
+    return std::make_shared<T>(std::forward<Args>(args)...);
+}
+
+/**
+ * Just an alias for raw pointers.
+ */
+template <typename T> using Ptr = T*;
+
+DGEX_END
