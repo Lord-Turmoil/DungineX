@@ -39,10 +39,14 @@ struct CommandLineArgs
     }
 };
 
-typedef int (*OnInitEntry)(const CommandLineArgs&, void**);
-typedef int (*OnExitEntry)(void*, int);
-typedef int (*OnUpdateEntry)(void*);
-typedef int (*OnEventEntry)(void*);
+typedef int (*DgeXMainEntry)(const CommandLineArgs&);
+
+typedef int (*DgeXOnInitEntry)(const CommandLineArgs&, void**);
+typedef int (*DgeXOnUpdateEntry)(void*);
+typedef int (*DgeXOnEventEntry)(void*);
+typedef int (*DgeXOnExitEntry)(void*);
+
+#ifdef DGEX_USE_CALLBACKS
 
 /**
  * @brief Main entry point for the game built with DungineX.
@@ -56,34 +60,6 @@ typedef int (*OnEventEntry)(void*);
  *         0 for success, others as error code.
  */
 extern int DgeXOnInit(const CommandLineArgs& args, void** context);
-
-/**
- * @brief This is called when the game's main loop ends.
- *
- * @param context Custom application context set in DgeXInit.
- * @param result  Return value from DgeXOnUpdate.
- * @return Whether the cleanup succeeded or not.
- *         0 for success, others as error code.
- */
-extern int DgeXOnExit(void* context, int result);
-
-/**
- * @brief Default implementation of DgeXOnUpdate.
- *
- * @return Whether update succeeded or not.
- *         0 for success, others as error code.
- */
-int DGEX_API DgeXOnUpdateDefault();
-
-/**
- * @brief Default implementation of DgeXOnEvent.
- *
- * @return Whether event handling succeeded or not.
- *         0 for success, others as error code.
- */
-int DGEX_API DgeXOnEventDefault();
-
-#ifdef DGEX_CUSTOM_LOOP
 
 /**
  * @brief This is called every frame of the game.
@@ -103,27 +79,29 @@ extern int DgeXOnUpdate(void* context);
  */
 extern int DgeXOnEvent(void* context);
 
-#endif // DGEX_CUSTOM_LOOP
+/**
+ * @brief This is called when the game's main loop ends.
+ *
+ * @param context Custom application context set in DgeXInit.
+ * @param result  Return value from DgeXOnUpdate.
+ * @return Whether the cleanup succeeded or not.
+ *         0 for success, others as error code.
+ */
+extern int DgeXOnExit(void* context);
+
+#else
+
+extern int DgeXMain(const CommandLineArgs& args);
+
+#endif // DGEX_USE_CALLBACKS
 
 // ============================================================================
 // Main Entry
 // ----------------------------------------------------------------------------
 
-#include <SDL3/SDL.h>
-
-// ============================================================================
-// Native Implementations
-// ----------------------------------------------------------------------------
-
-DGEX_API SDL_AppResult AppInitImpl(void** appstate, CommandLineArgs& args, OnInitEntry entry);
-
-DGEX_API SDL_AppResult AppEventImpl(void* appstate, SDL_Event* event, OnEventEntry entry);
-DGEX_API SDL_AppResult AppEventNative(void* appstate, SDL_Event* event);
-
-DGEX_API SDL_AppResult AppIterateImpl(void* appstate, OnUpdateEntry entry);
-DGEX_API SDL_AppResult AppIterateNative(void* appstate);
-
-DGEX_API void AppQuitImpl(void* appstate, SDL_AppResult result, OnExitEntry entry);
+DGEX_API int DgeXMainImpl(CommandLineArgs args, DgeXMainEntry entry);
+DGEX_API int DgeXMainImplWithCallbacks(CommandLineArgs args, DgeXOnInitEntry onInit, DgeXOnUpdateEntry onUpdate,
+                                       DgeXOnEventEntry onEvent, DgeXOnExitEntry onExit);
 
 // ============================================================================
 // Main Entry
@@ -131,36 +109,17 @@ DGEX_API void AppQuitImpl(void* appstate, SDL_AppResult result, OnExitEntry entr
 
 #ifndef DGEX_ENTRYPOINT_IMPL
 
-#define SDL_MAIN_USE_CALLBACKS
-#include <SDL3/SDL_main.h>
-
-inline SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
+int main(int argc, char* argv[])
 {
-    CommandLineArgs args{ argc, argv };
-    return AppInitImpl(appstate, args, DgeXOnInit);
-}
-
-inline SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
-{
-#ifdef DGEX_CUSTOM_LOOP
-    return AppEventImpl(appstate, event, DgeXOnEvent);
+#ifdef DGEX_USE_CALLBACKS
+    return DgeXMainImplWithCallbacks({ argc, argv }, DgeXOnInit, DgeXOnUpdate, DgeXOnEvent, DgeXOnExit);
 #else
-    return AppEventNative(appstate, event);
+    return DgeXMainImpl({ argc, argv }, DgeXMain);
 #endif
 }
 
-inline SDL_AppResult SDL_AppIterate(void* appstate)
-{
-#ifdef DGEX_CUSTOM_LOOP
-    return AppIterateImpl(appstate, DgeXOnUpdate);
-#else
-    return AppIterateNative(appstate);
+#ifndef DGEX_USE_CALLBACKS
+#define main DgeXMain
 #endif
-}
-
-inline void SDL_AppQuit(void* appstate, SDL_AppResult result)
-{
-    AppQuitImpl(appstate, result, DgeXOnExit);
-}
 
 #endif // DGEX_ENTRYPOINT_IMPL

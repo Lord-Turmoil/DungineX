@@ -83,11 +83,3 @@
 
 #define DUNGINEX       "DungineX"
 #define DUNGINEX_SHORT "DgeX"
-
-// ============================================================================
-// Error Codes
-// ----------------------------------------------------------------------------
-
-#define ERROR_GRAPHICS(NO) (100 + (NO))
-#define ERROR_AUDIO(NO)    (200 + (NO))
-#define ERROR_RESOURCE(NO) (400 + (NO))

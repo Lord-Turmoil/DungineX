@@ -21,76 +21,94 @@
 #define DGEX_ENTRYPOINT_IMPL
 #include "DgeX/EntryPoint.h"
 
+#include "DgeX/Device/Graphics/Window.h"
+#include "DgeX/Error.h"
+#include "DgeX/Impl/MainLoop.h"
 #include "DgeX/Utils/Log.h"
 #include "DgeX/Version.h"
 
 using namespace DgeX;
 
-SDL_AppResult AppInitImpl(void** appstate, CommandLineArgs& args, OnInitEntry entry)
+static void* sAppContext = nullptr; // client app context
+
+static DgeXOnEventEntry sOnEvent;
+static DgeXOnUpdateEntry sOnUpdate;
+
+static void Preamble()
 {
     Log::Init();
 
     DGEX_CORE_CRITICAL("Made with DungineX " DGEX_VERSION_STRING);
     DGEX_CORE_CRITICAL("Copyright (C) New Desire Studios " DGEX_YEAR_STRING);
+}
+
+int DgeXMainImpl(CommandLineArgs args, DgeXMainEntry entry)
+{
+    Preamble();
+
+    return entry(args);
+}
+
+static bool OnUpdate()
+{
+    if (int r = sOnUpdate(sAppContext); r != 0)
+    {
+        DGEX_CORE_WARN("DgeXOnUpdate: {0}", r);
+        return true;
+    }
+    return false;
+}
+
+static void OnEvent()
+{
+    sOnEvent(sAppContext);
+}
+
+int DgeXMainImplWithCallbacks(CommandLineArgs args, DgeXOnInitEntry onInit, DgeXOnUpdateEntry onUpdate,
+                              DgeXOnEventEntry onEvent, DgeXOnExitEntry onExit)
+{
+    Preamble();
+
+    // ==============================================================
+    // Initialization
+    // --------------------------------------------------------------
 
     if (!SDL_Init(SDL_INIT_VIDEO))
     {
-        DGEX_CORE_CRITICAL("Failed to initialize SDL3: {0}", ERROR_GRAPHICS(1));
-        return SDL_APP_FAILURE;
+        DGEX_CORE_ERROR(SDL_GetError());
+        DGEX_CORE_CRITICAL("Failed to initialize SDL3: {0}", ERROR_SDL_INIT);
+        return ERROR_SDL_INIT;
     }
 
-    if (int r = entry(args, appstate); r != 0)
+    if (int r = onInit(args, &sAppContext); r != 0)
     {
         DGEX_CORE_ERROR("DgeXOnInit error: {0}", r);
-        return SDL_APP_FAILURE;
+        return ERROR_CUSTOM_INIT;
     }
 
-    return SDL_APP_CONTINUE;
-}
-
-SDL_AppResult AppEventImpl(void* appstate, SDL_Event* event, OnEventEntry entry)
-{
-    // TODO:
-    // Implement internal event handling.
-
-    if (int r = entry(appstate); r != 0)
+    Scope<Window> window = CreateWindow();
+    if (!window)
     {
-        DGEX_CORE_ERROR("DgeXOnEvent error: {0}", r);
+        DGEX_CORE_CRITICAL("Failed to initialize window");
+        return ERROR_WINDOW_INIT;
     }
 
-    return SDL_APP_CONTINUE;
-}
+    // ==============================================================
+    // Main Loop
+    // --------------------------------------------------------------
+    sOnUpdate = onUpdate;
+    sOnEvent = onEvent;
+    MainLoop(OnUpdate, OnEvent);
 
-SDL_AppResult AppEventNative(void* appstate, SDL_Event* event)
-{
-    // TODO:
-    // Implement event dispatching.
-
-    return SDL_APP_CONTINUE;
-}
-
-SDL_AppResult AppIterateImpl(void* appstate, OnUpdateEntry entry)
-{
-    if (int r = entry(appstate); r != 0)
-    {
-        DGEX_CORE_WARN("DgeXOnUpdate: {0}", r);
-        return SDL_APP_SUCCESS;
-    }
-    return SDL_APP_CONTINUE;
-}
-
-SDL_AppResult AppIterateNative(void* appstate)
-{
-    // TODO:
-    // Implement game loop.
-
-    return SDL_APP_CONTINUE;
-}
-
-void AppQuitImpl(void* appstate, SDL_AppResult result, OnExitEntry entry)
-{
-    if (int r = entry(appstate, result); r != 0)
+    // ==============================================================
+    // Clean Up
+    // --------------------------------------------------------------
+    if (int r = onExit(sAppContext); r != 0)
     {
         DGEX_CORE_ERROR("DgeXOnExit failed: {0}", r);
     }
+
+    SDL_Quit();
+
+    return 0;
 }
