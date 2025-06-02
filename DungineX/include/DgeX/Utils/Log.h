@@ -31,7 +31,7 @@
 DGEX_BEGIN
 
 /**
- * Log levels are corresponding to that of spdlog.
+ * @brief Log levels are corresponding to that of spdlog.
  */
 enum class LogLevel : unsigned char
 {
@@ -46,7 +46,7 @@ enum class LogLevel : unsigned char
 };
 
 /**
- * Sink configuration for a logger.
+ * @brief Sink configuration for a logger.
  *
  * Different sinks of a logger can have different log levels and paths.
  */
@@ -82,7 +82,7 @@ struct LoggerSinkSpecification
 };
 
 /**
- * Specification for a logger, with name and sinks.
+ * @brief Specification for a logger, with name and sinks.
  */
 struct LoggerSpecification
 {
@@ -107,7 +107,7 @@ struct LoggerSpecification
 };
 
 /**
- * The logger.
+ * @brief The logger.
  *
  * I prefer PascalCase for methods, so I wraps the original functions from spdlog.
  */
@@ -192,6 +192,9 @@ private:
     Ref<spdlog::logger> _impl;
 };
 
+/**
+ * @brief Log utility.
+ */
 class Log
 {
 public:
@@ -204,7 +207,7 @@ public:
      * @param name Name of the logger.
      * @return A logger with the specified name.
      */
-    static DGEX_API Ref<Logger> GetLogger(const std::string& name);
+    DGEX_API static Ref<Logger> GetLogger(const std::string& name);
 
     /**
      * @brief Register a configured logger.
@@ -213,7 +216,7 @@ public:
      * @param specification Logger specification.
      * @return A registered logger.
      */
-    static DGEX_API Ref<Logger> RegisterLogger(const LoggerSpecification& specification);
+    DGEX_API static Ref<Logger> RegisterLogger(const LoggerSpecification& specification);
 
     /**
      * @brief Initialize built-in loggers.

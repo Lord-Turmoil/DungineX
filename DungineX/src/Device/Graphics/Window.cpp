@@ -109,7 +109,7 @@ Window::Window(const WindowProperties& properties, dgex_error_t* result) : _wind
                                           GetSdlWindowFlags(properties.Flags));
     if (!window)
     {
-        *result = ERROR_WINDOW_INIT;
+        *result = DGEX_ERROR_WINDOW_INIT;
         DGEX_CORE_ERROR(SDL_GetError());
         return;
     }
@@ -118,7 +118,7 @@ Window::Window(const WindowProperties& properties, dgex_error_t* result) : _wind
     SDL_Renderer* renderer = SDL_CreateRenderer(_window, nullptr);
     if (!renderer)
     {
-        *result = ERROR_RENDERER_INIT;
+        *result = DGEX_ERROR_RENDERER_INIT;
         DGEX_CORE_ERROR(SDL_GetError());
         return;
     }
@@ -126,7 +126,7 @@ Window::Window(const WindowProperties& properties, dgex_error_t* result) : _wind
 
     if (!SDL_ShowWindow(_window))
     {
-        *result = ERROR_WINDOW_INIT;
+        *result = DGEX_ERROR_WINDOW_INIT;
         DGEX_CORE_ERROR("Unable to show window: {0}", SDL_GetError());
         return;
     }

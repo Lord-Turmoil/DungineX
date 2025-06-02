@@ -76,21 +76,21 @@ int DgeXMainImplWithCallbacks(CommandLineArgs args, DgeXOnInitEntry onInit, DgeX
     if (!SDL_Init(SDL_INIT_VIDEO))
     {
         DGEX_CORE_ERROR(SDL_GetError());
-        DGEX_CORE_CRITICAL("Failed to initialize SDL3: {0}", ERROR_SDL_INIT);
-        return ERROR_SDL_INIT;
+        DGEX_CORE_CRITICAL("Failed to initialize SDL3: {0}", DGEX_ERROR_SDL_INIT);
+        return DGEX_ERROR_SDL_INIT;
     }
 
     if (int r = onInit(args, &sAppContext); r != 0)
     {
         DGEX_CORE_ERROR("DgeXOnInit error: {0}", r);
-        return ERROR_CUSTOM_INIT;
+        return DGEX_ERROR_CUSTOM_INIT;
     }
 
-    Scope<Window> window = CreateWindow();
+    Ref<Window> window = CreateWindow();
     if (!window)
     {
         DGEX_CORE_CRITICAL("Failed to initialize window");
-        return ERROR_WINDOW_INIT;
+        return DGEX_ERROR_WINDOW_INIT;
     }
 
     // ==============================================================

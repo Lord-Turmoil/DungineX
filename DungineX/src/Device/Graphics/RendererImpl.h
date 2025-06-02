@@ -3,7 +3,7 @@
  ******************************************************************************
  *                   Project Name : DungineX                                  *
  *                                                                            *
- *                      File Name : Error.h                                   *
+ *                      File Name : RendererImpl.h                            *
  *                                                                            *
  *                     Programmer : Tony S.                                   *
  *                                                                            *
@@ -14,20 +14,44 @@
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
  *                                                                            *
- * Error code definitions.                                                    *
+ * Concrete renderer declaration, hidden from the client.                     *
  ******************************************************************************/
 
 #pragma once
 
-typedef int dgex_error_t;
+#include "DgeX/Device/Graphics/Renderer.h"
 
-#define DGEX_SUCCESS 0
+#include <vector>
 
-#define DGEX_ERROR_GRAPHICS(NO) (100 + (NO))
-#define DGEX_ERROR_AUDIO(NO)    (200 + (NO))
-#define DGEX_ERROR_RESOURCE(NO) (400 + (NO))
+DGEX_BEGIN
 
-#define DGEX_ERROR_SDL_INIT      (DGEX_ERROR_GRAPHICS(1))
-#define DGEX_ERROR_WINDOW_INIT   (DGEX_ERROR_GRAPHICS(2))
-#define DGEX_ERROR_RENDERER_INIT (DGEX_ERROR_GRAPHICS(3))
-#define DGEX_ERROR_CUSTOM_INIT   (DGEX_ERROR_GRAPHICS(4))
+/**
+ * @brief Execute render commands in the issue order.
+ */
+class DirectRenderer : public Renderer
+{
+public:
+    DirectRenderer(SDL_Renderer* renderer);
+    ~DirectRenderer() override = default;
+
+    void Submit(const Ref<RenderCommand>& command) override;
+    void Render() override;
+};
+
+/**
+ * @brief Execute render commands by their z index.
+ */
+class OrderedRenderer : public Renderer
+{
+public:
+    OrderedRenderer(SDL_Renderer* renderer);
+    ~OrderedRenderer() override = default;
+
+    void Submit(const Ref<RenderCommand>& command) override;
+    void Render() override;
+
+private:
+    std::vector<Ref<RenderCommand>> _commands;
+};
+
+DGEX_END

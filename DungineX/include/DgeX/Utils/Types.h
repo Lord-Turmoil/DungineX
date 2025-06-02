@@ -54,12 +54,6 @@ template <typename T, typename... Args> constexpr Ref<T> CreateRef(Args&&... arg
  */
 template <typename T> using Ptr = T*;
 
-// ============================================================================
-// Error Code Type
-// ----------------------------------------------------------------------------
-
-typedef int dgex_error_t;
-
 DGEX_END
 
 // ============================================================================

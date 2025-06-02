@@ -3,7 +3,7 @@
  ******************************************************************************
  *                   Project Name : DungineX                                  *
  *                                                                            *
- *                      File Name : Error.h                                   *
+ *                      File Name : Canvas.cpp                                *
  *                                                                            *
  *                     Programmer : Tony S.                                   *
  *                                                                            *
@@ -14,20 +14,6 @@
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
  *                                                                            *
- * Error code definitions.                                                    *
+ * Canvas is the render target.                                               *
  ******************************************************************************/
-
-#pragma once
-
-typedef int dgex_error_t;
-
-#define DGEX_SUCCESS 0
-
-#define DGEX_ERROR_GRAPHICS(NO) (100 + (NO))
-#define DGEX_ERROR_AUDIO(NO)    (200 + (NO))
-#define DGEX_ERROR_RESOURCE(NO) (400 + (NO))
-
-#define DGEX_ERROR_SDL_INIT      (DGEX_ERROR_GRAPHICS(1))
-#define DGEX_ERROR_WINDOW_INIT   (DGEX_ERROR_GRAPHICS(2))
-#define DGEX_ERROR_RENDERER_INIT (DGEX_ERROR_GRAPHICS(3))
-#define DGEX_ERROR_CUSTOM_INIT   (DGEX_ERROR_GRAPHICS(4))
+#include "DgeX/Renderer/Canvas.h"
