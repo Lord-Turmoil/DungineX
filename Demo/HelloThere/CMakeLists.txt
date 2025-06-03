@@ -15,3 +15,14 @@ else()
 endif()
 
 target_link_libraries(HelloThere PRIVATE DgeX::DgeX)
+
+macro(copy_asset filename)
+    set(outname "${CMAKE_BINARY_DIR}/output/bin/${filename}")
+    add_custom_command(POST_BUILD
+        TARGET HelloThere
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_LIST_DIR}/${filename}" "${outname}"
+		DEPENDS "${filename}"
+	)
+endmacro()
+
+copy_asset("gs_tiger.svg")

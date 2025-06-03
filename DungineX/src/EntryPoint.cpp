@@ -21,11 +21,13 @@
 #define DGEX_ENTRYPOINT_IMPL
 #include "DgeX/EntryPoint.h"
 
+#include "DgeX/Device/Graphics/Graphics.h"
+#include "DgeX/Device/Graphics/Renderer.h"
 #include "DgeX/Device/Graphics/Window.h"
 #include "DgeX/Error.h"
-#include "DgeX/Impl/MainLoop.h"
 #include "DgeX/Utils/Log.h"
 #include "DgeX/Version.h"
+#include "Impl/MainLoop.h"
 
 using namespace DgeX;
 
@@ -49,6 +51,7 @@ int DgeXMainImpl(CommandLineArgs args, DgeXMainEntry entry)
     return entry(args);
 }
 
+// OnUpdate implementation.
 static bool OnUpdate()
 {
     if (int r = sOnUpdate(sAppContext); r != 0)
@@ -59,13 +62,14 @@ static bool OnUpdate()
     return false;
 }
 
+// OnEvent implementation.
 static void OnEvent()
 {
     sOnEvent(sAppContext);
 }
 
-int DgeXMainImplWithCallbacks(CommandLineArgs args, DgeXOnInitEntry onInit, DgeXOnUpdateEntry onUpdate,
-                              DgeXOnEventEntry onEvent, DgeXOnExitEntry onExit)
+int DgeXMainImplWithCallbacks(CommandLineArgs args, DgeXOnInitEntry onInit, DgeXOnStartEntry onStart,
+                              DgeXOnUpdateEntry onUpdate, DgeXOnEventEntry onEvent, DgeXOnExitEntry onExit)
 {
     Preamble();
 
@@ -73,24 +77,21 @@ int DgeXMainImplWithCallbacks(CommandLineArgs args, DgeXOnInitEntry onInit, DgeX
     // Initialization
     // --------------------------------------------------------------
 
-    if (!SDL_Init(SDL_INIT_VIDEO))
-    {
-        DGEX_CORE_ERROR(SDL_GetError());
-        DGEX_CORE_CRITICAL("Failed to initialize SDL3: {0}", DGEX_ERROR_SDL_INIT);
-        return DGEX_ERROR_SDL_INIT;
-    }
-
     if (int r = onInit(args, &sAppContext); r != 0)
     {
-        DGEX_CORE_ERROR("DgeXOnInit error: {0}", r);
+        DGEX_CORE_ERROR("OnInit error: {0}", r);
         return DGEX_ERROR_CUSTOM_INIT;
     }
 
-    Ref<Window> window = CreateWindow();
-    if (!window)
+    if (dgex_error_t r = InitGraphics(); r != DGEX_SUCCESS)
     {
-        DGEX_CORE_CRITICAL("Failed to initialize window");
-        return DGEX_ERROR_WINDOW_INIT;
+        DGEX_CORE_CRITICAL("Failed to initialize graphics device: {0}", r);
+    }
+
+    if (int r = onStart(sAppContext); r != 0)
+    {
+        DGEX_CORE_ERROR("OnStart error: {0}", r);
+        return DGEX_ERROR_CUSTOM_START;
     }
 
     // ==============================================================
@@ -108,7 +109,7 @@ int DgeXMainImplWithCallbacks(CommandLineArgs args, DgeXOnInitEntry onInit, DgeX
         DGEX_CORE_ERROR("DgeXOnExit failed: {0}", r);
     }
 
-    SDL_Quit();
+    DestroyGraphics();
 
     return 0;
 }

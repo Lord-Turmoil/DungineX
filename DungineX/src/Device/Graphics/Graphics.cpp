@@ -3,47 +3,60 @@
  ******************************************************************************
  *                   Project Name : DungineX                                  *
  *                                                                            *
- *                      File Name : MainLoop.h                                *
+ *                      File Name : Graphics.h                                *
  *                                                                            *
  *                     Programmer : Tony S.                                   *
  *                                                                            *
- *                     Start Date : June 2, 2025                              *
+ *                     Start Date : June 3, 2025                              *
  *                                                                            *
- *                    Last Update : June 2, 2025                              *
+ *                    Last Update : June 3, 2025                              *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
  *                                                                            *
- * Main loop of the game.                                                     *
+ * Graphics device.                                                           *
  ******************************************************************************/
 
-#include "DgeX/Impl/MainLoop.h"
+#include "DgeX/Device/Graphics/Graphics.h"
 
+#include "DgeX/Device/Graphics/Renderer.h"
+#include "DgeX/Device/Graphics/Window.h"
+#include "DgeX/Error.h"
 #include "DgeX/Utils/Log.h"
-#include "SDL3/SDL_events.h"
+
+#include <SDL3/SDL.h>
 
 DGEX_BEGIN
 
-void MainLoop(OnUpdateCallback onUpdate, OnEventCallback onEvent)
+dgex_error_t InitGraphics()
 {
-    DGEX_CORE_INFO("Main loop started");
-
-    bool isRunning = true;
-    while (isRunning)
+    if (!SDL_Init(SDL_INIT_VIDEO))
     {
-        SDL_Event event;
-        while (SDL_PollEvent(&event))
-        {
-            onEvent();
-        }
-
-        if (onUpdate())
-        {
-            isRunning = false;
-        }
+        DGEX_CORE_CRITICAL("Failed to initialize SDL: {0}", SDL_GetError());
+        return DGEX_ERROR_GRAPHICS_INIT;
     }
 
-    DGEX_CORE_INFO("Main loop ended");
+    if (dgex_error_t r = InitWindow(); r != DGEX_SUCCESS)
+    {
+        DGEX_CORE_CRITICAL("Failed to initialize window: {0}", r);
+        return r;
+    }
+
+    if (dgex_error_t r = InitRenderer(); r != DGEX_SUCCESS)
+    {
+        DGEX_CORE_CRITICAL("Failed to initialize renderer: {0}", r);
+        return r;
+    }
+
+    return DGEX_SUCCESS;
+}
+
+void DestroyGraphics()
+{
+    DestroyRenderer();
+    DestroyWindow();
+
+    SDL_Quit();
 }
 
 DGEX_END

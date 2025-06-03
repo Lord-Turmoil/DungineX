@@ -22,7 +22,6 @@
 #include "DgeX/Defines.h"
 #include "DgeX/Error.h"
 #include "DgeX/Utils/Macros.h"
-#include "DgeX/Utils/Types.h"
 
 #include <SDL3/SDL.h>
 
@@ -35,12 +34,11 @@ using WindowFlags = unsigned char;
 // clang-format off
 enum : unsigned char
 {
-    DGEX_Window_AlwaysOnTop        = DGEX_BIT(0),    // always on top
-    DGEX_Window_Borderless         = DGEX_BIT(1),    // launch as borderless window
-    DGEX_Window_FullScreen         = DGEX_BIT(2),    // launch in fullscreen
-    DGEX_Window_Resizable          = DGEX_BIT(3),    // allow window to resize
-    DGEX_Window_VSync              = DGEX_BIT(4),    // enable vertical synchronization
-    DGEX_Window_Default            = DGEX_Window_VSync
+    DgexWindowAlwaysOnTop        = DGEX_BIT(0),    // always on top
+    DgexWindowBorderless         = DGEX_BIT(1),    // launch as borderless window
+    DgexWindowFullScreen         = DGEX_BIT(2),    // launch in fullscreen
+    DgexWindowResizable          = DGEX_BIT(3),    // allow window to resize
+    DgexWindowDefault            = 0
 };
 
 // clang-format on
@@ -65,51 +63,6 @@ struct WindowProperties
     DGEX_API WindowProperties(std::string title, int width, int height, WindowFlags flags);
 };
 
-/**
- * Window class uses RAII to hold window resource.
- *
- * This is not intended to expose to users.
- */
-class Window
-{
-public:
-    DGEX_API ~Window();
-
-    /**
-     * @brief Render the window on the screen.
-     *
-     * SDL use back buffer, so all render commands will
-     * be displayed only when explicitly rendered.
-     */
-    DGEX_API void Render() const;
-
-    /**
-     * @brief Get the native window.
-     */
-    DGEX_API SDL_Window* GetNativeWindow() const;
-
-    /**
-     * @brief Get the native renderer.
-     */
-    DGEX_API SDL_Renderer* GetNativeRenderer() const;
-
-public:
-    /**
-     * @brief Create a window instance.
-     *
-     * User should call CreateWindow instead of this function.
-     *
-     * @param properties Window properties.
-     */
-    static Expected<Ptr<Window>, dgex_error_t> Create(const WindowProperties& properties);
-
-private:
-    Window(const WindowProperties& properties, dgex_error_t* result);
-
-    SDL_Window* _window;
-    SDL_Renderer* _renderer;
-};
-
 // ============================================================================
 // API
 // ----------------------------------------------------------------------------
@@ -125,8 +78,24 @@ private:
 DGEX_API void SetWindowPropertiesHint(const WindowProperties& properties);
 
 /**
- * @brief Create a window with properties hint.
+ * @brief Initialize window with properties hint.
+ *
+ * @return 0 on success, otherwise failure.
  */
-DGEX_API Scope<Window> CreateWindow();
+dgex_error_t InitWindow();
+
+/**
+ * @brief Destroy window.
+ *
+ * @return 0 on success, otherwise failure.
+ */
+void DestroyWindow();
+
+/**
+ * @brief Get native window.
+ *
+ * @return Native SDL window.
+ */
+SDL_Window* GetNativeWindow();
 
 DGEX_END

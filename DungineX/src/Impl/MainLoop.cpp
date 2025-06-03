@@ -3,7 +3,7 @@
  ******************************************************************************
  *                   Project Name : DungineX                                  *
  *                                                                            *
- *                      File Name : Canvas.cpp                                *
+ *                      File Name : MainLoop.h                                *
  *                                                                            *
  *                     Programmer : Tony S.                                   *
  *                                                                            *
@@ -14,6 +14,40 @@
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
  *                                                                            *
- * Canvas is the render target.                                               *
+ * Main loop of the game.                                                     *
  ******************************************************************************/
-#include "DgeX/Renderer/Canvas.h"
+
+#include "Impl/MainLoop.h"
+
+#include "DgeX/Utils/Log.h"
+#include "SDL3/SDL_events.h"
+
+DGEX_BEGIN
+
+void MainLoop(OnUpdateCallback onUpdate, OnEventCallback onEvent)
+{
+    DGEX_CORE_INFO("Main loop started");
+
+    bool isRunning = true;
+    while (isRunning)
+    {
+        SDL_Event event;
+        while (SDL_PollEvent(&event))
+        {
+            onEvent();
+            if (event.type == SDL_EVENT_QUIT)
+            {
+                isRunning = false;
+            }
+        }
+
+        if (onUpdate())
+        {
+            isRunning = false;
+        }
+    }
+
+    DGEX_CORE_INFO("Main loop ended");
+}
+
+DGEX_END

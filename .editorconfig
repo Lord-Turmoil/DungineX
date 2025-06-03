@@ -1,0 +1,14 @@
+root = true
+
+[*.{c,cpp,h,hpp}]
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+trim_trailing_whitespace = true
+end_of_line = crlf
+
+[{CMakeLists.txt,cmake/*.cmake}]
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+trim_trailing_whitespace = true

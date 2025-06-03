@@ -42,17 +42,28 @@ struct CommandLineArgs
 typedef int (*DgeXMainEntry)(const CommandLineArgs&);
 
 typedef int (*DgeXOnInitEntry)(const CommandLineArgs&, void**);
+typedef int (*DgeXOnStartEntry)(void*);
 typedef int (*DgeXOnUpdateEntry)(void*);
 typedef int (*DgeXOnEventEntry)(void*);
 typedef int (*DgeXOnExitEntry)(void*);
 
+/**
+ * There are 5 callbacks to be defined.
+ *
+ * - OnInit
+ * - OnStart
+ * - OnUpdate
+ * - OnEvent
+ * - OnExit
+ */
 #ifdef DGEX_USE_CALLBACKS
 
 /**
- * @brief Main entry point for the game built with DungineX.
+ * @brief Callback before the engine initialization.
  *
- * This entry should be defined in the client game code, and can't be
- * marked with DGEX_API. As the .dll target won't load it.
+ * This is called before the engine initializes, when nothing is ready.
+ * You can do some preparations to set hint for the initialization of
+ * the engine.
  *
  * @param args Commandline arguments.
  * @param context Custom application context.
@@ -60,6 +71,18 @@ typedef int (*DgeXOnExitEntry)(void*);
  *         0 for success, others as error code.
  */
 extern int DgeXOnInit(const CommandLineArgs& args, void** context);
+
+/**
+ * @brief Callback after the engine initialization, before the main loop.
+ *
+ * All devices are initialized before invoking this callback, so you can
+ * prepare device-dependent resources.
+ *
+ * @param context Custom application context.
+ * @return Whether initialization succeeded or not.
+ *         0 for success, others as error code.
+ */
+extern int DgeXOnStart(void* context);
 
 /**
  * @brief This is called every frame of the game.
@@ -100,8 +123,8 @@ extern int DgeXMain(const CommandLineArgs& args);
 // ----------------------------------------------------------------------------
 
 DGEX_API int DgeXMainImpl(CommandLineArgs args, DgeXMainEntry entry);
-DGEX_API int DgeXMainImplWithCallbacks(CommandLineArgs args, DgeXOnInitEntry onInit, DgeXOnUpdateEntry onUpdate,
-                                       DgeXOnEventEntry onEvent, DgeXOnExitEntry onExit);
+DGEX_API int DgeXMainImplWithCallbacks(CommandLineArgs args, DgeXOnInitEntry onInit, DgeXOnStartEntry onStart,
+                                       DgeXOnUpdateEntry onUpdate, DgeXOnEventEntry onEvent, DgeXOnExitEntry onExit);
 
 // ============================================================================
 // Main Entry
@@ -112,14 +135,25 @@ DGEX_API int DgeXMainImplWithCallbacks(CommandLineArgs args, DgeXOnInitEntry onI
 int main(int argc, char* argv[])
 {
 #ifdef DGEX_USE_CALLBACKS
-    return DgeXMainImplWithCallbacks({ argc, argv }, DgeXOnInit, DgeXOnUpdate, DgeXOnEvent, DgeXOnExit);
+    return DgeXMainImplWithCallbacks({ argc, argv }, DgeXOnInit, DgeXOnStart, DgeXOnUpdate, DgeXOnEvent, DgeXOnExit);
 #else
     return DgeXMainImpl({ argc, argv }, DgeXMain);
 #endif
 }
 
-#ifndef DGEX_USE_CALLBACKS
+#ifdef DGEX_USE_CALLBACKS
+
+#define OnInit   DgeXOnInit
+#define OnStart  DgeXOnStart
+#define OnUpdate DgeXOnUpdate
+#define OnEvent  DgeXOnEvent
+#define OnQuit   DgeXOnQuit
+#define OnExit   DgeXOnExit
+
+#else
+
 #define main DgeXMain
+
 #endif
 
 #endif // DGEX_ENTRYPOINT_IMPL

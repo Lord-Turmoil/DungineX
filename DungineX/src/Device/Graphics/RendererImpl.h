@@ -3,18 +3,18 @@
  ******************************************************************************
  *                   Project Name : DungineX                                  *
  *                                                                            *
- *                      File Name : RendererImpl.h                            *
+ *                      File Name : Renderer.h                                *
  *                                                                            *
  *                     Programmer : Tony S.                                   *
  *                                                                            *
  *                     Start Date : June 2, 2025                              *
  *                                                                            *
- *                    Last Update : June 2, 2025                              *
+ *                    Last Update : June 3, 2025                              *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
  *                                                                            *
- * Concrete renderer declaration, hidden from the client.                     *
+ * Detailed renderer implementation.                                          *
  ******************************************************************************/
 
 #pragma once
@@ -28,26 +28,30 @@ DGEX_BEGIN
 /**
  * @brief Execute render commands in the issue order.
  */
-class DirectRenderer : public Renderer
+class DirectRenderer final : public Renderer
 {
 public:
-    DirectRenderer(SDL_Renderer* renderer);
+    explicit DirectRenderer(SDL_Renderer* renderer);
     ~DirectRenderer() override = default;
 
     void Submit(const Ref<RenderCommand>& command) override;
+    void SubmitImmediate(const Ref<RenderCommand>& command) override;
+
     void Render() override;
 };
 
 /**
  * @brief Execute render commands by their z index.
  */
-class OrderedRenderer : public Renderer
+class OrderedRenderer final : public Renderer
 {
 public:
-    OrderedRenderer(SDL_Renderer* renderer);
+    explicit OrderedRenderer(SDL_Renderer* renderer);
     ~OrderedRenderer() override = default;
 
     void Submit(const Ref<RenderCommand>& command) override;
+    void SubmitImmediate(const Ref<RenderCommand>& command) override;
+
     void Render() override;
 
 private:

@@ -28,9 +28,21 @@
 #endif
 
 #ifdef DGEX_EXPORT
-#define DGEX_API __declspec(dllexport)
+
+#define DGEX_API  __declspec(dllexport)
+#define DGEX_DATA __declspec(dllexport)
+
 #else
+
 #define DGEX_API
+
+#ifdef DGEX_ENGINE
+#define DGEX_DATA
+#else
+// Use dllimport only in client code
+#define DGEX_DATA __declspec(dllimport)
+#endif // DGEX_ENGINE
+
 #endif
 
 #ifdef __cplusplus

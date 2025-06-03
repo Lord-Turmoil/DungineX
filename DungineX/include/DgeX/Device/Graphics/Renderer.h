@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : June 2, 2025                              *
  *                                                                            *
- *                    Last Update : June 2, 2025                              *
+ *                    Last Update : June 3, 2025                              *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -27,12 +27,11 @@
 
 DGEX_BEGIN
 
-class Window;
 class RenderCommand;
 
 struct RendererProperties
 {
-    bool EnableZIndex;
+    bool Ordered;
 };
 
 /**
@@ -55,8 +54,26 @@ public:
 
     SDL_Renderer* GetNativeRenderer() const;
 
+    /**
+     * @brief Submit a queued render command.
+     *
+     * @param command Render command.
+     */
     virtual void Submit(const Ref<RenderCommand>& command) = 0;
-    virtual void Render() = 0;
+
+    /**
+     * @brief Submit a render command to be executed immediately.
+     *
+     * This command won't be saved in the queue.
+     *
+     * @param command Render command.
+     */
+    virtual void SubmitImmediate(const Ref<RenderCommand>& command) = 0;
+
+    /**
+     * @brief Render all commands on the target.
+     */
+    DGEX_API virtual void Render() = 0;
 
 private:
     // Native renderer is owned by Window, so we don't need to release it here.
@@ -70,13 +87,30 @@ private:
 /**
  * @brief Initialize renderer context.
  *
- * @param renderer The native renderer.
  * @return 0 on success, failure otherwise.
  */
-DGEX_API dgex_error_t InitRenderer(SDL_Renderer* renderer);
+dgex_error_t InitRenderer();
 
 /**
- * @brief Initialize the renderer.
+ * @brief Destroy renderer context.
+ *
+ * @return 0 on success, failure otherwise.
+ */
+void DestroyRenderer();
+
+/**
+ * @brief Get the native renderer.
+ *
+ * @return The native renderer.
+ */
+SDL_Renderer* GetNativeRenderer();
+
+/**
+ * @brief Create a renderer.
+ *
+ * You can have multiple renderers at the sametime. Even though they
+ * may use the same native renderer, you can have different render
+ * behaviors and targets.
  *
  * @param properties Renderer properties.
  * @return Created renderer with the given properties.
