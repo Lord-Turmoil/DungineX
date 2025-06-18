@@ -10,3 +10,6 @@
 [submodule "Vendor/spdlog"]
 	path = Vendor/spdlog
 	url = https://github.com/gabime/spdlog.git
+[submodule "Vendor/SDL_FontCache"]
+	path = Vendor/SDL_FontCache
+	url = https://github.com/Lord-Turmoil/SDL_FontCache.git

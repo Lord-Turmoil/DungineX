@@ -91,6 +91,8 @@ dgex_error_t InitWindow()
 
     SDL_ShowWindow(sNativeWindow);
 
+    DGEX_CORE_DEBUG("Window initialized");
+
     return DGEX_SUCCESS;
 }
 
@@ -99,6 +101,8 @@ void DestroyWindow()
     DGEX_ASSERT(sNativeWindow, "Window not initialized");
 
     SDL_DestroyWindow(sNativeWindow);
+
+    DGEX_CORE_DEBUG("Window destroyed");
 }
 
 SDL_Window* GetNativeWindow()

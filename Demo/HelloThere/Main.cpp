@@ -38,6 +38,10 @@ int OnStart(void* context)
     state->OrderedRenderer = CreateRenderer({ true });
     state->Image = LoadTexture("gs_tiger.svg");
 
+    SetFont(LoadFont("Arial"));
+    SetFontSize(36.0f);
+    SetFontColor(Color::LightMagenta);
+
     DGEX_LOG_INFO(NAME, "Image size: {0}x{0}", state->Image->GetWidth(), state->Image->GetHeight());
 
     return 0;
@@ -51,15 +55,15 @@ int OnUpdate(void* context)
 
     DrawTexture(state->Image, 20, 20);
 
-    auto texture = Texture::Create(300, 300);
+    auto texture = CreateTexture(300, 300);
     {
         UseRenderer(state->DirectRenderer);
         UseRenderTarget(texture);
 
-        {
-            UseClearColor(Color::White);
-            ClearDevice();
-        }
+        Color oldClearColor = GetClearColor();
+        SetClearColor(Color::White);
+        ClearDevice();
+        SetClearColor(oldClearColor);
 
         SetFillColor(Color::Yellow);
         DrawFilledRect(0, 0, 200, 100);
@@ -80,6 +84,8 @@ int OnUpdate(void* context)
 
     SetLineColor(Color::Blue);
     DrawLine(0, 0, 640, 480);
+
+    DrawText("Hello there!", 600, 10, DGEX_TextAlignRight);
 
     FlushDevice();
 

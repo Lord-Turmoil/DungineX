@@ -3,54 +3,64 @@
  ******************************************************************************
  *                   Project Name : DungineX                                  *
  *                                                                            *
- *                      File Name : MainLoop.h                                *
+ *                      File Name : Strings.cpp                               *
  *                                                                            *
  *                     Programmer : Tony S.                                   *
  *                                                                            *
- *                     Start Date : June 2, 2025                              *
+ *                     Start Date : June 8, 2025                              *
  *                                                                            *
- *                    Last Update : June 2, 2025                              *
+ *                    Last Update : June 8, 2025                              *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
  *                                                                            *
- * Main loop of the game.                                                     *
+ * String utility functions.                                                  *
  ******************************************************************************/
 
-#include "Impl/MainLoop.h"
-
-#include "DgeX/Device/Graphics/Renderer.h"
-#include "DgeX/Utils/Log.h"
-
-#include <SDL3/SDL.h>
-#include <SDL_FontCache/SDL_FontCache.h>
+#include "DgeX/Utils/Strings.h"
 
 DGEX_BEGIN
 
-void MainLoop(OnUpdateCallback onUpdate, OnEventCallback onEvent)
+bool Strings::StartsWith(const std::string& source, const std::string& pattern)
 {
-    DGEX_CORE_INFO("Main loop started");
+    size_t sourceLength = source.length();
+    size_t patternLen = pattern.length();
 
-    bool isRunning = true;
-    while (isRunning)
+    if (patternLen > sourceLength)
     {
-        SDL_Event event;
-        while (SDL_PollEvent(&event))
-        {
-            onEvent();
-            if (event.type == SDL_EVENT_QUIT)
-            {
-                isRunning = false;
-            }
-        }
+        return false;
+    }
 
-        if (onUpdate())
+    for (size_t i = 0; i < patternLen; i++)
+    {
+        if (source[i] != pattern[i])
         {
-            isRunning = false;
+            return false;
         }
     }
 
-    DGEX_CORE_INFO("Main loop ended");
+    return true;
+}
+
+bool Strings::EndsWith(const std::string& source, const std::string& pattern)
+{
+    size_t sourceLength = source.length();
+    size_t patternLen = pattern.length();
+
+    if (sourceLength < patternLen)
+    {
+        return false;
+    }
+
+    for (size_t i = 0; i < patternLen; i++)
+    {
+        if (source[sourceLength - i] != pattern[patternLen - i])
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 DGEX_END

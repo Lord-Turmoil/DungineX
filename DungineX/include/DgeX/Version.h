@@ -26,7 +26,7 @@
 
 #define DGEX_VERSION_MAJOR 0
 #define DGEX_VERSION_MINOR 1
-#define DGEX_VERSION_PATCH 0
+#define DGEX_VERSION_PATCH 1
 
 // Revision is only used for file property.
 #define DGEX_VERSION_REVISION 0

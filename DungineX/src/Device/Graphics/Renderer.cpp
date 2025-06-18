@@ -109,6 +109,8 @@ dgex_error_t InitRenderer()
 
     sNativeRenderer = renderer;
 
+    DGEX_CORE_DEBUG("Renderer initialized");
+
     return DGEX_SUCCESS;
 }
 
@@ -117,6 +119,8 @@ void DestroyRenderer()
     DGEX_ASSERT(sNativeRenderer, "Renderer not initialized");
 
     SDL_DestroyRenderer(sNativeRenderer);
+
+    DGEX_CORE_DEBUG("Renderer destroyed");
 }
 
 SDL_Renderer* GetNativeRenderer()

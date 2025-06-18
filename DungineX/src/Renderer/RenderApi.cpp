@@ -22,24 +22,58 @@
 #include "Device/Graphics/RenderCommandImpl.h"
 
 #include "DgeX/Device/Graphics/Renderer.h"
+#include "DgeX/Renderer/Font.h"
 #include "DgeX/Renderer/Texture.h"
 #include "DgeX/Utils/Assert.h"
 
 #include <SDL3/SDL.h>
+#include <SDL_FontCache/SDL_FontCache.h>
 
 DGEX_BEGIN
 
 struct RenderApiContext
 {
-    Color ClearColor = Color::Black;
-    Color LineColor = Color::White;
-    Color FillColor = Color::White;
+    Color ClearColor;
+    Color LineColor;
+    Color FillColor;
+
+    Color FontColor;
+    Ref<Font> Font;
+    float FontSize;
 };
 
 static Ref<Renderer> sActiveRenderer = nullptr;
 static Ref<Texture> sActiveRenderTarget = nullptr;
 
 static RenderApiContext sContext;
+
+dgex_error_t InitRenderApi()
+{
+    // Initialize context.
+    sContext.ClearColor = Color::Black;
+    sContext.LineColor = Color::White;
+    sContext.FillColor = Color::White;
+    sContext.FontColor = Color::White;
+    sContext.Font = nullptr;
+    sContext.FontSize = 16.0f;
+
+    Ref<Font> font = LoadFont("C:/Windows/Fonts/Arial.ttf");
+    if (!font)
+    {
+        DGEX_CORE_ERROR("Failed to load default system font");
+        return DGEX_ERROR_RENDERER_API_INIT;
+    }
+    SetFont(font);
+
+    DGEX_CORE_DEBUG("Render API initialized");
+
+    return DGEX_SUCCESS;
+}
+
+void DestroyRenderApi()
+{
+    DGEX_CORE_DEBUG("Render API destroyed");
+}
 
 void SetCurrentRenderer(const Ref<Renderer>& renderer)
 {
@@ -115,22 +149,12 @@ Color GetClearColor()
     return sContext.ClearColor;
 }
 
-ClearColorGuard::ClearColorGuard(Color color) : _lastClearColor(GetClearColor())
-{
-    SetClearColor(color);
-}
-
-ClearColorGuard::~ClearColorGuard()
-{
-    SetClearColor(_lastClearColor);
-}
-
 void SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 {
     SetClearColor(Color(r, g, b, a));
 }
 
-void SetLineColor(const Color& color)
+void SetLineColor(Color color)
 {
     sContext.LineColor = color;
 }
@@ -155,7 +179,7 @@ LineColorGuard::~LineColorGuard()
     SetLineColor(_lastLineColor);
 }
 
-void SetFillColor(const Color& color)
+void SetFillColor(Color color)
 {
     sContext.FillColor = color;
 }
@@ -170,14 +194,44 @@ Color GetFillColor()
     return sContext.FillColor;
 }
 
-FillColorGuard::FillColorGuard(Color color) : _lastFillColor(GetFillColor())
+void SetFont(const Ref<Font>& font)
 {
-    SetFillColor(color);
+    if (!font)
+    {
+        DGEX_CORE_WARN("Cannot set empty font");
+        return;
+    }
+    sContext.Font = font;
 }
 
-FillColorGuard::~FillColorGuard()
+Ref<Font> GetFont()
 {
-    SetFillColor(_lastFillColor);
+    return sContext.Font;
+}
+
+void SetFontColor(Color color)
+{
+    sContext.FontColor = color;
+}
+
+void SetFontColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+{
+    SetFontColor(Color(r, g, b, a));
+}
+
+Color GetFontColor()
+{
+    return sContext.FontColor;
+}
+
+void SetFontSize(float pointSize)
+{
+    sContext.FontSize = pointSize;
+}
+
+float GetFontSize()
+{
+    return sContext.FontSize;
 }
 
 // ============================================================================
@@ -288,6 +342,11 @@ void DrawRect(int x, int y, int width, int height, int z)
     }
 }
 
+void DrawRect(const Rect& rect, int z)
+{
+    DrawRect(rect.X, rect.Y, rect.Width, rect.Height, z);
+}
+
 static void DrawFilledRectImpl(SDL_Renderer* renderer, int x, int y, int width, int height, Color color)
 {
     SetDrawColor(renderer, color);
@@ -313,6 +372,11 @@ void DrawFilledRect(int x, int y, int width, int height, int z)
     }
 }
 
+void DrawFilledRect(const Rect& rect, int z)
+{
+    DrawFilledRect(rect.X, rect.Y, rect.Width, rect.Height, z);
+}
+
 // ============================================================================
 // Texture Render API
 // ----------------------------------------------------------------------------
@@ -329,9 +393,28 @@ static void DrawTextureImpl(const Ref<TextureRenderCommand>& command)
     }
 }
 
+static void DrawTextureImpl(SDL_Renderer* renderer, SDL_Texture* texture, int x, int y)
+{
+    SDL_PropertiesID props = SDL_GetTextureProperties(texture);
+    float width = static_cast<float>(SDL_GetNumberProperty(props, SDL_PROP_TEXTURE_WIDTH_NUMBER, 0));
+    float height = static_cast<float>(SDL_GetNumberProperty(props, SDL_PROP_TEXTURE_HEIGHT_NUMBER, 0));
+    SDL_FRect rect{ static_cast<float>(x), static_cast<float>(y), width, height };
+    SDL_RenderTexture(renderer, texture, nullptr, &rect);
+}
+
+// Simple texture rendering can be implemented simply.
 void DrawTexture(const Ref<Texture>& texture, int x, int y, int z)
 {
-    DrawTextureImpl(TextureRenderCommandBuilder(texture->GetNativeTexture()).SetPosition(x, y, z).Create());
+    if (sActiveRenderer)
+    {
+        sActiveRenderer->Submit(NativeRenderCommand::Create(
+            [texture, x, y](SDL_Renderer* renderer) { DrawTextureImpl(renderer, texture->GetNativeTexture(), x, y); },
+            z));
+    }
+    else
+    {
+        DrawTextureImpl(GetNativeRenderer(), texture->GetNativeTexture(), x, y);
+    }
 }
 
 DrawTextureClause::DrawTextureClause(const Ref<Texture>& texture, int x, int y, int z)
@@ -372,6 +455,120 @@ void DrawTextureClause::Submit()
 DrawTextureClause DrawTextureBegin(const Ref<Texture>& texture, int x, int y, int z)
 {
     return { texture, x, y, z };
+}
+
+static void DrawTextImpl(SDL_Renderer* renderer, FC_Font* font, const char* text, int x, int y, Color color,
+                         float scale, TextFlags flags)
+{
+    FC_Effect effect;
+
+    if (flags & DGEX_TextAlignRight)
+    {
+        effect.alignment = FC_ALIGN_RIGHT;
+    }
+    else if (flags & DGEX_TextAlignCenter)
+    {
+        effect.alignment = FC_ALIGN_CENTER;
+    }
+    else
+    {
+        effect.alignment = FC_ALIGN_LEFT;
+    }
+
+    effect.scale = FC_MakeScale(scale, scale);
+    effect.color = FC_MakeColor(color.R, color.G, color.B, color.A);
+
+    FC_DrawEffect(font, renderer, static_cast<float>(x), static_cast<float>(y), effect, text);
+}
+
+static void DrawTextAreaImpl(SDL_Renderer* renderer, FC_Font* font, const char* text, FC_Rect rect, Color color,
+                             float scale, TextFlags flags)
+{
+    FC_Effect effect;
+
+    if (flags & DGEX_TextAlignRight)
+    {
+        effect.alignment = FC_ALIGN_RIGHT;
+    }
+    else if (flags & DGEX_TextAlignCenter)
+    {
+        effect.alignment = FC_ALIGN_CENTER;
+    }
+    else
+    {
+        effect.alignment = FC_ALIGN_LEFT;
+    }
+
+    effect.scale = FC_MakeScale(scale, scale);
+    effect.color = FC_MakeColor(color.R, color.G, color.B, color.A);
+
+    if (flags & DGEX_TextOverflow)
+    {
+        FC_DrawColumnEffect(font, renderer, static_cast<float>(rect.x), static_cast<float>(rect.y),
+                            static_cast<Uint16>(rect.w), effect, text);
+    }
+    else
+    {
+        FC_DrawBoxEffect(font, renderer, rect, effect, text);
+    }
+}
+
+void DrawText(const char* text, int x, int y, TextFlags flags)
+{
+    if (!sContext.Font)
+    {
+        DGEX_CORE_WARN("No font specified");
+        return;
+    }
+
+    FC_Font* font = static_cast<FC_Font*>(sContext.Font->GetImpl());
+    SDL_Renderer* renderer = sActiveRenderer ? sActiveRenderer->GetNativeRenderer() : GetNativeRenderer();
+
+    float scale = GetFontScale(sContext.FontSize);
+
+    if (sActiveRenderer)
+    {
+        Color color = sContext.FontColor;
+        sActiveRenderer->Submit(
+            NativeRenderCommand::Create([font, text, x, y, color, scale, flags](SDL_Renderer* renderer) {
+                DrawTextImpl(renderer, font, text, x, y, color, scale, flags);
+            }));
+    }
+    else
+    {
+        DrawTextImpl(renderer, font, text, x, y, sContext.FontColor, scale, flags);
+    }
+}
+
+void DrawTextArea(const char* text, int x, int y, int width, int height, TextFlags flags)
+{
+    if (!sContext.Font)
+    {
+        DGEX_CORE_WARN("No font specified");
+        return;
+    }
+
+    FC_Font* font = static_cast<FC_Font*>(sContext.Font->GetImpl());
+    float scale = GetFontScale(sContext.FontSize);
+    FC_Rect rect{ x, y, width, height };
+
+    if (sActiveRenderer)
+    {
+        Color color = sContext.FontColor;
+        sActiveRenderer->Submit(
+            NativeRenderCommand::Create([font, text, rect, color, scale, flags](SDL_Renderer* renderer) {
+                DrawTextAreaImpl(renderer, font, text, rect, color, scale, flags);
+            }));
+    }
+    else
+    {
+        DrawTextAreaImpl(GetNativeRenderer(), font, text, rect, sContext.FontColor, scale, flags);
+    }
+}
+
+void DrawTextArea(const char* text, const Rect& rect, TextFlags flags)
+{
+    DrawTextArea(text, rect.X, rect.Y, rect.Width, rect.Height, flags);
 }
 
 DGEX_END

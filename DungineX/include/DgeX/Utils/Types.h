@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : June 1, 2025                              *
  *                                                                            *
- *                    Last Update : June 1, 2025                              *
+ *                    Last Update : June 18, 2025                             *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -53,6 +53,21 @@ template <typename T, typename... Args> constexpr Ref<T> CreateRef(Args&&... arg
  * Just an alias for raw pointers.
  */
 template <typename T> using Ptr = T*;
+
+// ============================================================================
+// Shapes
+// ----------------------------------------------------------------------------
+
+template <typename T> struct TRect
+{
+    T X, Y, Width, Height;
+
+    TRect(T x = 0, T y = 0, T width = 0, T height = 0) : X(x), Y(y), Width(width), Height(height)
+    {
+    }
+};
+
+using Rect = TRect<int>;
 
 DGEX_END
 

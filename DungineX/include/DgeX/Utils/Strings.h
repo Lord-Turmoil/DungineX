@@ -3,36 +3,34 @@
  ******************************************************************************
  *                   Project Name : DungineX                                  *
  *                                                                            *
- *                      File Name : Error.h                                   *
+ *                      File Name : Strings.h                                 *
  *                                                                            *
  *                     Programmer : Tony S.                                   *
  *                                                                            *
- *                     Start Date : June 2, 2025                              *
+ *                     Start Date : June 8, 2025                              *
  *                                                                            *
- *                    Last Update : June 2, 2025                              *
+ *                    Last Update : June 8, 2025                              *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
  *                                                                            *
- * Error code definitions.                                                    *
+ * String utility functions.                                                  *
  ******************************************************************************/
 
 #pragma once
 
-typedef int dgex_error_t;
+#include "DgeX/Defines.h"
 
-#define DGEX_SUCCESS 0
+#include <string>
 
-#define DGEX_ERROR_GRAPHICS(NO) (100 + (NO))
-#define DGEX_ERROR_AUDIO(NO)    (200 + (NO))
-#define DGEX_ERROR_RESOURCE(NO) (300 + (NO))
-#define DGEX_ERROR_CUSTOM(NO)   (400 + (NO))
+DGEX_BEGIN
 
-#define DGEX_ERROR_SDL_INIT          (DGEX_ERROR_GRAPHICS(1))
-#define DGEX_ERROR_SDL_TTF_INIT      (DGEX_ERROR_GRAPHICS(2))
-#define DGEX_ERROR_WINDOW_INIT       (DGEX_ERROR_GRAPHICS(3))
-#define DGEX_ERROR_RENDERER_INIT     (DGEX_ERROR_GRAPHICS(4))
-#define DGEX_ERROR_RENDERER_API_INIT (DGEX_ERROR_GRAPHICS(4))
+namespace Strings
+{
 
-#define DGEX_ERROR_CUSTOM_INIT  (DGEX_ERROR_CUSTOM(1))
-#define DGEX_ERROR_CUSTOM_START (DGEX_ERROR_CUSTOM(2))
+bool StartsWith(const std::string& source, const std::string& pattern);
+bool EndsWith(const std::string& source, const std::string& pattern);
+
+} // namespace Strings
+
+DGEX_END

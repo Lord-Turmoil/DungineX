@@ -51,6 +51,12 @@ set(SDLIMAGE_XV   OFF)
 add_subdirectory(SDL_image EXCLUDE_FROM_ALL)
 
 # --------------------------------------------------------------------
+# Adding SDL_FontCache for font caching
+# --------------------------------------------------------------------
+
+add_subdirectory(SDL_FontCache EXCLUDE_FROM_ALL)
+
+# --------------------------------------------------------------------
 # Adding spdlog for logging
 # --------------------------------------------------------------------
 
@@ -67,6 +73,7 @@ add_library(DgeX_Vendor INTERFACE)
 target_link_libraries(DgeX_Vendor INTERFACE 
     SDL3_ttf::SDL3_ttf
     SDL3_image::SDL3_image
+    SDL3_FontCache::SDL3_FontCache
     SDL3::SDL3 # SDL must be the last item in the list.
     spdlog::spdlog
 )

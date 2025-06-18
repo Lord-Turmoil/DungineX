@@ -29,33 +29,6 @@ Texture::Texture(SDL_Texture* texture) : _texture(texture)
 {
 }
 
-Texture::Texture(Texture&& other) noexcept
-{
-    this->_texture = other._texture;
-    other._texture = nullptr;
-}
-
-Texture& Texture::operator=(Texture&& other) noexcept
-{
-    if (this != &other)
-    {
-        _DestroyTexture();
-        this->_texture = other._texture;
-        other._texture = nullptr;
-    }
-    return *this;
-}
-
-Texture::~Texture()
-{
-    _DestroyTexture();
-}
-
-SDL_Texture* Texture::GetNativeTexture() const
-{
-    return _texture;
-}
-
 int Texture::GetWidth() const
 {
     SDL_PropertiesID props = SDL_GetTextureProperties(_texture);
@@ -66,6 +39,20 @@ int Texture::GetHeight() const
 {
     SDL_PropertiesID props = SDL_GetTextureProperties(_texture);
     return static_cast<int>(SDL_GetNumberProperty(props, SDL_PROP_TEXTURE_WIDTH_NUMBER, 0));
+}
+
+SDL_Texture* Texture::GetNativeTexture() const
+{
+    return _texture;
+}
+
+void Texture::Destroy()
+{
+    if (_texture)
+    {
+        SDL_DestroyTexture(_texture);
+        _texture = nullptr;
+    }
 }
 
 Ref<Texture> Texture::Create(SDL_Texture* texture)
@@ -81,27 +68,25 @@ Ref<Texture> Texture::Create(int width, int height)
     return CreateRef<Texture>(texture);
 }
 
-void Texture::_DestroyTexture()
-{
-    if (_texture)
-    {
-        SDL_DestroyTexture(_texture);
-        _texture = nullptr;
-    }
-}
-
 Ref<Texture> LoadTexture(const std::string& path)
 {
     SDL_Surface* surface = IMG_Load(path.c_str());
     if (!surface)
     {
-        DGEX_CORE_ERROR("Failed to load image: {0}", path);
+        DGEX_CORE_ERROR("Failed to load texture: {0}, {1}", path, SDL_GetError());
         return nullptr;
     }
     SDL_Texture* texture = SDL_CreateTextureFromSurface(GetNativeRenderer(), surface);
     SDL_DestroySurface(surface);
 
+    DGEX_CORE_INFO("Loaded texture: {0}", path);
+
     return Texture::Create(texture);
+}
+
+Ref<Texture> CreateTexture(int width, int height)
+{
+    return Texture::Create(width, height);
 }
 
 DGEX_END

@@ -63,6 +63,7 @@
 #include "DgeX/Device/Graphics/Window.h"
 
 #include "DgeX/Renderer/Color.h"
+#include "DgeX/Renderer/Font.h"
 #include "DgeX/Renderer/RenderApi.h"
 #include "DgeX/Renderer/Texture.h"
 
@@ -70,4 +71,5 @@
 #include "DgeX/Utils/Log.h"
 #include "DgeX/Utils/Macros.h"
 #include "DgeX/Utils/Math.h"
+#include "DgeX/Utils/Strings.h"
 #include "DgeX/Utils/Types.h"

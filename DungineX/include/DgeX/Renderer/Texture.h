@@ -34,41 +34,19 @@ DGEX_BEGIN
 class Texture
 {
 public:
-    Texture(SDL_Texture* texture);
-    Texture(const Texture& other) = delete;
-    Texture(Texture&& other) noexcept;
-    Texture& operator=(const Texture& other) = delete;
-    Texture& operator=(Texture&& other) noexcept;
-
-    ~Texture();
-
-    SDL_Texture* GetNativeTexture() const;
+    explicit Texture(SDL_Texture* texture);
+    ~Texture() = default;
 
     DGEX_API int GetWidth() const;
     DGEX_API int GetHeight() const;
 
-    /**
-     * @brief Create a texture from native texture.
-     *
-     * Do not create multiple Texture from one native texture.
-     *
-     * @param texture Texture.
-     * @return Texture.
-     */
-    DGEX_API static Ref<Texture> Create(SDL_Texture* texture);
+    SDL_Texture* GetNativeTexture() const;
+    void Destroy();
 
-    /**
-     * @brief Create a plain texture by width and height.
-     *
-     * Currently, it will create full ARGB texture that can be used as target.
-     *
-     * @return Texture.
-     */
-    DGEX_API static Ref<Texture> Create(int width, int height);
+    static Ref<Texture> Create(SDL_Texture* texture);
+    static Ref<Texture> Create(int width, int height);
 
 private:
-    void _DestroyTexture();
-
     SDL_Texture* _texture;
 };
 
@@ -85,5 +63,14 @@ private:
  * @return Loaded texture, nullptr on failure.
  */
 DGEX_API Ref<Texture> LoadTexture(const std::string& path);
+
+/**
+ * @brief Create a plain texture by width and height.
+ *
+ * Currently, it will create full ARGB texture that can be used as target.
+ *
+ * @return Texture.
+ */
+DGEX_API Ref<Texture> CreateTexture(int width, int height);
 
 DGEX_END

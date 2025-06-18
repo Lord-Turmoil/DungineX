@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : June 2, 2025                              *
  *                                                                            *
- *                    Last Update : June 3, 2025                              *
+ *                    Last Update : June 18, 2025                             *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -20,7 +20,9 @@
 #pragma once
 
 #include "DgeX/Defines.h"
+#include "DgeX/Error.h"
 #include "DgeX/Renderer/Color.h"
+#include "DgeX/Utils/Macros.h"
 #include "DgeX/Utils/Types.h"
 
 #include <SDL3/SDL.h>
@@ -28,12 +30,18 @@
 DGEX_BEGIN
 
 class Renderer;
+class Font;
 class Texture;
 class TextureRenderCommandBuilder;
 
 // ============================================================================
 // Render & Target Settings
 // ----------------------------------------------------------------------------
+
+#pragma region Render & Target Settings
+
+dgex_error_t InitRenderApi();
+void DestroyRenderApi();
 
 /**
  * @brief Set the current renderer.
@@ -116,9 +124,13 @@ private:
  */
 #define UseRenderTarget(texture) RenderTargetGuard __dgex_render_target_guard((texture))
 
+#pragma endregion
+
 // ============================================================================
 // Render Property Settings
 // ----------------------------------------------------------------------------
+
+#pragma region Render Property Settings
 
 /**
  * @brief Set clear color.
@@ -139,29 +151,6 @@ DGEX_API void SetClearColor(Color color);
  */
 DGEX_API void SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = DGEX_COLOR_OPAQUE);
 
-class ClearColorGuard
-{
-public:
-    DGEX_API explicit ClearColorGuard(Color color);
-    DGEX_API ClearColorGuard(const ClearColorGuard& other) = delete;
-    DGEX_API ClearColorGuard(ClearColorGuard&& other) noexcept = delete;
-    DGEX_API ClearColorGuard& operator=(const ClearColorGuard& other) = delete;
-    DGEX_API ClearColorGuard& operator=(ClearColorGuard&& other) noexcept = delete;
-    DGEX_API ~ClearColorGuard();
-
-private:
-    Color _lastClearColor;
-};
-
-/**
- * @brief Use clear color in the current scope.
- *
- * Will automatically reset to the last clear color when leave the scope.
- *
- * @param color Clear color to use.
- */
-#define UseClearColor(color) ClearColorGuard __dgex_clear_color_guard((color))
-
 /**
  * @brief Get the current clear color.
  *
@@ -174,7 +163,7 @@ DGEX_API Color GetClearColor();
  *
  * @param color Line color.
  */
-DGEX_API void SetLineColor(const Color& color);
+DGEX_API void SetLineColor(Color color);
 
 /**
  * @brief Set current line color.
@@ -208,18 +197,9 @@ private:
 };
 
 /**
- * @brief Use line color in the current scope.
- *
- * Will automatically reset to the last line color when leave the scope.
- *
- * @param color Line color to use.
- */
-#define UseLineColor(color) LineColorGuard __dgex_line_color_guard((color))
-
-/**
  * @brief Set current fill color.
  */
-DGEX_API void SetFillColor(const Color& color);
+DGEX_API void SetFillColor(Color color);
 
 /**
  * @brief Set current fill color.
@@ -238,32 +218,27 @@ DGEX_API void SetFillColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = DGEX_COL
  */
 DGEX_API Color GetFillColor();
 
-class FillColorGuard
-{
-public:
-    DGEX_API explicit FillColorGuard(Color color);
-    DGEX_API FillColorGuard(const FillColorGuard& other) = delete;
-    DGEX_API FillColorGuard(FillColorGuard&& other) noexcept = delete;
-    DGEX_API FillColorGuard& operator=(const FillColorGuard& other) = delete;
-    DGEX_API FillColorGuard& operator=(FillColorGuard&& other) noexcept = delete;
-    DGEX_API ~FillColorGuard();
+DGEX_API void SetFont(const Ref<Font>& font);
 
-private:
-    Color _lastFillColor;
-};
+DGEX_API Ref<Font> GetFont();
 
-/**
- * @brief Use fill color in the current scope.
- *
- * Will automatically reset to the last fill color when leave the scope.
- *
- * @param color Fill color to use.
- */
-#define UseFillColor(color) FillColorGuard __dgex_fill_color_guard((color))
+DGEX_API void SetFontColor(Color color);
+
+DGEX_API void SetFontColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = DGEX_COLOR_OPAQUE);
+
+DGEX_API Color GetFontColor();
+
+DGEX_API void SetFontSize(float pointSize);
+
+DGEX_API float GetFontSize();
+
+#pragma endregion
 
 // ============================================================================
 // Device Render API
 // ----------------------------------------------------------------------------
+
+#pragma region Device Render API
 
 /**
  * @brief Clear current render target.
@@ -280,9 +255,13 @@ DGEX_API void ClearDevice();
  */
 DGEX_API void FlushDevice();
 
+#pragma endregion
+
 // ============================================================================
 // Primitives Render API
 // ----------------------------------------------------------------------------
+
+#pragma region Primitives Render API
 
 /**
  * @brief Draw a point.
@@ -317,6 +296,14 @@ DGEX_API void DrawLine(int x1, int y1, int x2, int y2, int z = 0);
 DGEX_API void DrawRect(int x, int y, int width, int height, int z = 0);
 
 /**
+ * @brief Draw a rectangle outline without filling.
+ *
+ * @param rect The rectangle to draw.
+ * @param z The z index for sorting.
+ */
+DGEX_API void DrawRect(const Rect& rect, int z = 0);
+
+/**
  * @brief Draw a filled rectangle without outline.
  *
  * @param x The x coordinate of the top-left corner of the rectangle.
@@ -327,9 +314,21 @@ DGEX_API void DrawRect(int x, int y, int width, int height, int z = 0);
  */
 DGEX_API void DrawFilledRect(int x, int y, int width, int height, int z = 0);
 
+/**
+ * @brief Draw a filled rectangle without outline.
+ *
+ * @param rect The rectangle to draw.
+ * @param z The z index for sorting.
+ */
+DGEX_API void DrawFilledRect(const Rect& rect, int z = 0);
+
+#pragma endregion
+
 // ============================================================================
 // Texture Render API
 // ----------------------------------------------------------------------------
+
+#pragma region Texture Render API
 
 /**
  * @brief Draw a texture.
@@ -402,5 +401,58 @@ private:
  * @return Fluent-API style actions.
  */
 DGEX_API DrawTextureClause DrawTextureBegin(const Ref<Texture>& texture, int x, int y, int z = 0);
+
+#pragma endregion
+
+// ============================================================================
+// Text Render API
+// ----------------------------------------------------------------------------
+
+#pragma region Text Render API
+
+using TextFlags = unsigned char;
+
+// clang-format off
+enum : unsigned char
+{
+    DGEX_TextAlignLeft   = DGEX_BIT(0),
+    DGEX_TextAlignRight  = DGEX_BIT(1),
+    DGEX_TextAlignCenter = DGEX_BIT(2),
+    DGEX_TextOverflow    = DGEX_BIT(3)
+};
+
+// clang-format on
+
+/**
+ * @brief Render text according to a point.
+ *
+ * @param text Text to render.
+ * @param x The x coordinate to render the text.
+ * @param y The y coordinate to render the text.
+ * @param flags Controls how to render the text.
+ */
+DGEX_API void DrawText(const char* text, int x, int y, TextFlags flags);
+
+/**
+ * @brief Render text in a rectangle area.
+ *
+ * @param text Text to render.
+ * @param x The x coordinate of the top-left corner of the area.
+ * @param y The y coordinate of the top-left corner of the area.
+ * @param width The width of the area.
+ * @param height The height of the area.
+ * @param flags Controls how to render the text.
+ */
+DGEX_API void DrawTextArea(const char* text, int x, int y, int width, int height, TextFlags flags);
+
+/**
+ * @brief Render text in a rectangle area.
+ * @param text Text to render.
+ * @param rect The text area.
+ * @param flags Controls how to render the text.
+ */
+DGEX_API void DrawTextArea(const char* text, const Rect& rect, TextFlags flags);
+
+#pragma endregion
 
 DGEX_END
