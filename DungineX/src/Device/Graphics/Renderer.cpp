@@ -34,14 +34,9 @@ static SDL_Renderer* sNativeRenderer = nullptr;
 // Concrete Renderers
 // ----------------------------------------------------------------------------
 
-void Renderer::SubmitImmediate(const Ref<RenderCommand>& command) const
-{
-    command->Apply(GetNativeRenderer());
-}
-
 void DirectRenderer::Submit(const Ref<RenderCommand>& command)
 {
-    SubmitImmediate(command);
+    command->Apply(GetNativeRenderer());
 }
 
 void DirectRenderer::Render()

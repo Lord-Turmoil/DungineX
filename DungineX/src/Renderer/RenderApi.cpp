@@ -19,7 +19,7 @@
 
 #include "DgeX/Renderer/RenderApi.h"
 
-#include "Device/Graphics/RenderCommandImpl.h"
+#include "Renderer/RenderCommandImpl.h"
 
 #include "DgeX/Device/Graphics/Renderer.h"
 #include "DgeX/Renderer/Font.h"
@@ -28,6 +28,8 @@
 
 #include <SDL3/SDL.h>
 #include <SDL_FontCache/SDL_FontCache.h>
+
+#include <climits>
 
 DGEX_BEGIN
 
@@ -251,8 +253,8 @@ void ClearDevice()
     if (sActiveRenderer)
     {
         Color color = sContext.ClearColor;
-        sActiveRenderer->SubmitImmediate(
-            NativeRenderCommand::Create([color](SDL_Renderer* renderer) { ClearDeviceImpl(renderer, color); }));
+        sActiveRenderer->Submit(NativeRenderCommand::Create(
+            [color](SDL_Renderer* renderer) { ClearDeviceImpl(renderer, color); }, INT_MIN));
     }
     else
     {
