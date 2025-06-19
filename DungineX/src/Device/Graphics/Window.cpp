@@ -83,11 +83,9 @@ dgex_error_t InitWindow()
 
     sNativeWindow = window;
 
-    int width, height, bufferWidth, bufferHeight;
+    int width, height;
     SDL_GetWindowSize(window, &width, &height);
-    SDL_GetWindowSizeInPixels(window, &bufferWidth, &bufferHeight);
     DGEX_CORE_DEBUG("Window size: {0}x{1}", width, height);
-    DGEX_CORE_DEBUG("Back buffer size: {0}x{1}", bufferWidth, bufferHeight);
 
     SDL_ShowWindow(sNativeWindow);
 

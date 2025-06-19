@@ -100,11 +100,9 @@ void SetCurrentRenderTarget(const Ref<Texture>& texture)
 {
     sActiveRenderTarget = texture;
 
-    // Fun fact, these two renderers are actually the same.
-    SDL_Renderer* renderer = sActiveRenderer ? sActiveRenderer->GetNativeRenderer() : GetNativeRenderer();
     SDL_Texture* target = sActiveRenderTarget ? sActiveRenderTarget->GetNativeTexture() : nullptr;
 
-    SDL_SetRenderTarget(renderer, target);
+    SDL_SetRenderTarget(GetNativeRenderer(), target);
 }
 
 Ref<Texture> GetCurrentRenderTarget()
@@ -522,8 +520,6 @@ void DrawText(const char* text, int x, int y, TextFlags flags)
     }
 
     FC_Font* font = static_cast<FC_Font*>(sContext.Font->GetImpl());
-    SDL_Renderer* renderer = sActiveRenderer ? sActiveRenderer->GetNativeRenderer() : GetNativeRenderer();
-
     float scale = GetFontScale(sContext.FontSize);
 
     if (sActiveRenderer)
@@ -536,7 +532,7 @@ void DrawText(const char* text, int x, int y, TextFlags flags)
     }
     else
     {
-        DrawTextImpl(renderer, font, text, x, y, sContext.FontColor, scale, flags);
+        DrawTextImpl(GetNativeRenderer(), font, text, x, y, sContext.FontColor, scale, flags);
     }
 }
 

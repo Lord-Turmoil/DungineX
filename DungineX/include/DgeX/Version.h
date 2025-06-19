@@ -31,7 +31,7 @@
 // Revision is only used for file property.
 #define DGEX_VERSION_REVISION 0
 
-#define DGEX_TO_VERSION(major, minor, patch) (major * 10000 + minor * 100 + patch)
+#define DGEX_TO_VERSION(major, minor, patch) ((major) * 10000 + (minor) * 100 + (patch))
 #define DGEX_VERSION                         DGEX_TO_VERSION(DGEX_VERSION_MAJOR, DGEX_VERSION_MINOR, DGEX_VERSION_PATCH)
 
 // clang-format off

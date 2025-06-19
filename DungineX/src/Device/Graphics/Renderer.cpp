@@ -30,31 +30,18 @@ DGEX_BEGIN
 
 static SDL_Renderer* sNativeRenderer = nullptr;
 
-Renderer::Renderer(SDL_Renderer* renderer) : _renderer(renderer)
-{
-}
-
 // ============================================================================
 // Concrete Renderers
 // ----------------------------------------------------------------------------
 
-SDL_Renderer* Renderer::GetNativeRenderer() const
-{
-    return _renderer;
-}
-
-DirectRenderer::DirectRenderer(SDL_Renderer* renderer) : Renderer(renderer)
-{
-}
-
-void DirectRenderer::Submit(const Ref<RenderCommand>& command)
+void Renderer::SubmitImmediate(const Ref<RenderCommand>& command) const
 {
     command->Apply(GetNativeRenderer());
 }
 
-void DirectRenderer::SubmitImmediate(const Ref<RenderCommand>& command)
+void DirectRenderer::Submit(const Ref<RenderCommand>& command)
 {
-    Submit(command);
+    SubmitImmediate(command);
 }
 
 void DirectRenderer::Render()
@@ -62,18 +49,9 @@ void DirectRenderer::Render()
     // Nothing.
 }
 
-OrderedRenderer::OrderedRenderer(SDL_Renderer* renderer) : Renderer(renderer)
-{
-}
-
 void OrderedRenderer::Submit(const Ref<RenderCommand>& command)
 {
     _commands.emplace_back(command);
-}
-
-void OrderedRenderer::SubmitImmediate(const Ref<RenderCommand>& command)
-{
-    command->Apply(GetNativeRenderer());
 }
 
 void OrderedRenderer::Render()
@@ -95,12 +73,24 @@ void OrderedRenderer::Render()
 
 dgex_error_t InitRenderer()
 {
+    int count = SDL_GetNumRenderDrivers();
+    DGEX_CORE_DEBUG("Available render drivers: {0}", count);
+    for (int i = 0; i < count; i++)
+    {
+        const char* name = SDL_GetRenderDriver(i);
+        DGEX_CORE_DEBUG("    Render driver {0}: {1}", i, name);
+    }
+
     SDL_Renderer* renderer = SDL_CreateRenderer(GetNativeWindow(), nullptr);
     if (!renderer)
     {
         DGEX_CORE_ERROR("Failed to initialize renderer: {0}", SDL_GetError());
         return DGEX_ERROR_RENDERER_INIT;
     }
+
+    SDL_PropertiesID props = SDL_GetRendererProperties(renderer);
+    const char* name = SDL_GetStringProperty(props, SDL_PROP_RENDERER_NAME_STRING, nullptr);
+    DGEX_CORE_DEBUG("Using renderer: {0}", name ? name : "Unknown");
 
     if (!SDL_SetRenderVSync(renderer, -1))
     {
@@ -136,9 +126,9 @@ Ref<Renderer> CreateRenderer(const RendererProperties& properties)
 
     if (properties.Ordered)
     {
-        return CreateRef<OrderedRenderer>(sNativeRenderer);
+        return CreateRef<OrderedRenderer>();
     }
-    return CreateRef<DirectRenderer>(sNativeRenderer);
+    return CreateRef<DirectRenderer>();
 }
 
 DGEX_END

@@ -21,13 +21,14 @@
 #define DGEX_ENTRYPOINT_IMPL
 #include "DgeX/EntryPoint.h"
 
+#include "Impl/MainLoop.h"
+
 #include "DgeX/Device/Graphics/Graphics.h"
 #include "DgeX/Device/Graphics/Renderer.h"
 #include "DgeX/Device/Graphics/Window.h"
 #include "DgeX/Error.h"
 #include "DgeX/Utils/Log.h"
 #include "DgeX/Version.h"
-#include "Impl/MainLoop.h"
 
 using namespace DgeX;
 

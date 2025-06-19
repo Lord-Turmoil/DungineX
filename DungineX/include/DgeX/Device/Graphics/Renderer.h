@@ -44,7 +44,7 @@ struct RendererProperties
 class Renderer
 {
 public:
-    explicit Renderer(SDL_Renderer* renderer);
+    Renderer() = default;
     Renderer(const Renderer& other) = delete;
     Renderer(Renderer&& other) noexcept = delete;
     Renderer& operator=(const Renderer& other) = delete;
@@ -52,7 +52,14 @@ public:
 
     virtual ~Renderer() = default;
 
-    SDL_Renderer* GetNativeRenderer() const;
+    /**
+     * @brief Submit a render command to be executed immediately.
+     *
+     * This command won't be queued.
+     *
+     * @param command Render command.
+     */
+    void SubmitImmediate(const Ref<RenderCommand>& command) const;
 
     /**
      * @brief Submit a queued render command.
@@ -62,22 +69,9 @@ public:
     virtual void Submit(const Ref<RenderCommand>& command) = 0;
 
     /**
-     * @brief Submit a render command to be executed immediately.
-     *
-     * This command won't be saved in the queue.
-     *
-     * @param command Render command.
-     */
-    virtual void SubmitImmediate(const Ref<RenderCommand>& command) = 0;
-
-    /**
      * @brief Render all commands on the target.
      */
     DGEX_API virtual void Render() = 0;
-
-private:
-    // Native renderer is owned by Window, so we don't need to release it here.
-    SDL_Renderer* _renderer;
 };
 
 // ============================================================================

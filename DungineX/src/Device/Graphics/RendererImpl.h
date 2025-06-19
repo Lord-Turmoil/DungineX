@@ -31,11 +31,10 @@ DGEX_BEGIN
 class DirectRenderer final : public Renderer
 {
 public:
-    explicit DirectRenderer(SDL_Renderer* renderer);
+    DirectRenderer() = default;
     ~DirectRenderer() override = default;
 
     void Submit(const Ref<RenderCommand>& command) override;
-    void SubmitImmediate(const Ref<RenderCommand>& command) override;
 
     void Render() override;
 };
@@ -46,11 +45,10 @@ public:
 class OrderedRenderer final : public Renderer
 {
 public:
-    explicit OrderedRenderer(SDL_Renderer* renderer);
+    OrderedRenderer() = default;
     ~OrderedRenderer() override = default;
 
     void Submit(const Ref<RenderCommand>& command) override;
-    void SubmitImmediate(const Ref<RenderCommand>& command) override;
 
     void Render() override;
 
