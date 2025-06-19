@@ -435,6 +435,8 @@ enum : unsigned char
 /**
  * @brief Render text according to a point.
  *
+ * @warning The text should be valid until the next rendering.
+ *
  * @param text Text to render.
  * @param x The x coordinate to render the text.
  * @param y The y coordinate to render the text.
@@ -444,6 +446,8 @@ DGEX_API void DrawText(const char* text, int x, int y, TextFlags flags);
 
 /**
  * @brief Render text in a rectangle area.
+ *
+ * @warning The text should be valid until the next rendering.
  *
  * @param text Text to render.
  * @param x The x coordinate of the top-left corner of the area.
@@ -456,6 +460,9 @@ DGEX_API void DrawTextArea(const char* text, int x, int y, int width, int height
 
 /**
  * @brief Render text in a rectangle area.
+ *
+ * @warning The text should be valid until the next rendering.
+ *
  * @param text Text to render.
  * @param rect The text area.
  * @param flags Controls how to render the text.

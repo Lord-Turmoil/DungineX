@@ -65,6 +65,8 @@ void OrderedRenderer::Render()
     {
         command->Apply(renderer);
     }
+
+    _commands.clear();
 }
 
 // ============================================================================

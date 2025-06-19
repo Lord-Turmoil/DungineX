@@ -16,6 +16,7 @@ struct State
     Ref<Renderer> DirectRenderer;
     Ref<Renderer> OrderedRenderer;
     Ref<Texture> Image;
+    Ref<Texture> Canvas;
     int Count = 0;
 };
 
@@ -37,6 +38,7 @@ int OnStart(void* context)
     state->DirectRenderer = CreateRenderer({ false });
     state->OrderedRenderer = CreateRenderer({ true });
     state->Image = LoadTexture("gs_tiger.svg");
+    state->Canvas = CreateTexture(300, 300);
 
     SetFont(LoadFont("Arial"));
     SetFontSize(36.0f);
@@ -55,10 +57,9 @@ int OnUpdate(void* context)
 
     DrawTexture(state->Image, 20, 20);
 
-    auto texture = CreateTexture(300, 300);
     {
         USE_RENDERER(state->DirectRenderer);
-        USE_RENDER_TARGET(texture);
+        USE_RENDER_TARGET(state->Canvas);
 
         Color oldClearColor = GetClearColor();
         SetClearColor(Color::White);
@@ -71,8 +72,8 @@ int OnUpdate(void* context)
         DrawFilledRect(40, 40, 200, 100); // on top of yellow
         state->DirectRenderer->Render();
     }
-    DrawTextureBegin(texture, 10, 10).Alpha(220).Scale(0.9f).Submit();
-    DrawTextureBegin(texture, 10, 10).Alpha(220).Rotate(30).Scale(0.9f).Anchor(0, 0).Submit();
+    DrawTextureBegin(state->Canvas, 10, 10).Alpha(220).Scale(0.9f).Submit();
+    DrawTextureBegin(state->Canvas, 10, 10).Alpha(220).Rotate(30).Scale(0.9f).Anchor(0, 0).Submit();
 
     {
         USE_RENDERER(state->OrderedRenderer);
