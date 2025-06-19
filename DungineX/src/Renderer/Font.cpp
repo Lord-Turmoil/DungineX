@@ -38,17 +38,6 @@ Font::Font(TTF_Font* font) : _font(font), _impl(FC_CreateFont())
     DGEX_CORE_DEBUG("Created font: {0}", GetName());
 }
 
-void Font::Destroy()
-{
-    if (_impl)
-    {
-        DGEX_CORE_DEBUG("Destroyed font: {0}", GetName());
-        FC_FreeFont(static_cast<FC_Font*>(_impl));
-        _impl = nullptr;
-        _font = nullptr;
-    }
-}
-
 const char* Font::GetName() const
 {
     return TTF_GetFontFamilyName(_font);
@@ -64,9 +53,15 @@ void* Font::GetImpl() const
     return _impl;
 }
 
-Ref<Font> Font::Create(TTF_Font* font)
+void Font::Destroy()
 {
-    return CreateRef<Font>(font);
+    if (_impl)
+    {
+        DGEX_CORE_DEBUG("Destroyed font: {0}", GetName());
+        FC_FreeFont(static_cast<FC_Font*>(_impl));
+        _impl = nullptr;
+        _font = nullptr;
+    }
 }
 
 static Ref<Font> LoadFontImpl(const std::string& path)
@@ -81,7 +76,7 @@ static Ref<Font> LoadFontImpl(const std::string& path)
     TTF_Font* font = TTF_OpenFont(fontPath.string().c_str(), DEFAULT_POINT_SIZE);
     if (font)
     {
-        return Font::Create(font);
+        return CreateRef<Font>(font);
     }
     if (fontPath.is_absolute())
     {
@@ -94,7 +89,7 @@ static Ref<Font> LoadFontImpl(const std::string& path)
     font = TTF_OpenFont(fontPath.string().c_str(), DEFAULT_POINT_SIZE);
     if (font)
     {
-        return Font::Create(font);
+        return CreateRef<Font>(font);
     }
     DGEX_CORE_WARN("Failed to load font: {0}, {1}", fontPath.string(), SDL_GetError());
 
@@ -113,7 +108,7 @@ Ref<Font> LoadFont(const std::string& path)
     if (Ref<Font> oldFont = sLoadedFonts[name])
     {
         DGEX_CORE_WARN("Font {0} loaded multiple times, using existing one", name);
-        font->Destroy();
+        font->Destroy(); // unload the new font immediately
         return oldFont;
     }
 

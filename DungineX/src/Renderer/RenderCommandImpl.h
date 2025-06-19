@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "Dgex/Device/Graphics/RenderCommand.h"
+#include "Device/Graphics/RenderCommand.h"
 
 #include "DgeX/Utils/Types.h"
 
@@ -110,11 +110,12 @@ class TextureRenderCommandBuilder
 public:
     TextureRenderCommandBuilder(SDL_Texture* texture);
 
+    TextureRenderCommandBuilder& SetAlpha(uint8_t alpha);
     TextureRenderCommandBuilder& SetAnchor(int x, int y);
     TextureRenderCommandBuilder& SetPosition(int x, int y, int z = 0);
-    TextureRenderCommandBuilder& SetScale(float scale);
     TextureRenderCommandBuilder& SetRotation(float degree);
-    TextureRenderCommandBuilder& SetAlpha(uint8_t alpha);
+    TextureRenderCommandBuilder& SetScale(float scale);
+
     TextureRenderCommandBuilder& FlipX();
     TextureRenderCommandBuilder& FlipY();
 

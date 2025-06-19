@@ -98,6 +98,7 @@ int DgeXMainImplWithCallbacks(CommandLineArgs args, DgeXOnInitEntry onInit, DgeX
     // ==============================================================
     // Main Loop
     // --------------------------------------------------------------
+
     sOnUpdate = onUpdate;
     sOnEvent = onEvent;
     MainLoop(OnUpdate, OnEvent);
@@ -105,6 +106,7 @@ int DgeXMainImplWithCallbacks(CommandLineArgs args, DgeXOnInitEntry onInit, DgeX
     // ==============================================================
     // Clean Up
     // --------------------------------------------------------------
+    
     if (int r = onExit(sAppContext); r != 0)
     {
         DGEX_CORE_ERROR("DgeXOnExit failed: {0}", r);

@@ -53,15 +53,6 @@ public:
     virtual ~Renderer() = default;
 
     /**
-     * @brief Submit a render command to be executed immediately.
-     *
-     * This command won't be queued.
-     *
-     * @param command Render command.
-     */
-    void SubmitImmediate(const Ref<RenderCommand>& command) const;
-
-    /**
      * @brief Submit a queued render command.
      *
      * @param command Render command.

@@ -19,7 +19,7 @@
 
 #include "DgeX/Renderer/RenderApi.h"
 
-#include "Device/Graphics/RenderCommandImpl.h"
+#include "Renderer/RenderCommandImpl.h"
 
 #include "DgeX/Device/Graphics/Renderer.h"
 #include "DgeX/Renderer/Font.h"
@@ -28,6 +28,8 @@
 
 #include <SDL3/SDL.h>
 #include <SDL_FontCache/SDL_FontCache.h>
+
+#include <climits>
 
 DGEX_BEGIN
 
@@ -251,8 +253,8 @@ void ClearDevice()
     if (sActiveRenderer)
     {
         Color color = sContext.ClearColor;
-        sActiveRenderer->SubmitImmediate(
-            NativeRenderCommand::Create([color](SDL_Renderer* renderer) { ClearDeviceImpl(renderer, color); }));
+        sActiveRenderer->Submit(NativeRenderCommand::Create(
+            [color](SDL_Renderer* renderer) { ClearDeviceImpl(renderer, color); }, INT_MIN));
     }
     else
     {
@@ -421,15 +423,9 @@ DrawTextureClause::DrawTextureClause(const Ref<Texture>& texture, int x, int y, 
     _builder->SetPosition(x, y, z);
 }
 
-DrawTextureClause DrawTextureClause::Scale(float scale)
+DrawTextureClause DrawTextureClause::Alpha(uint8_t alpha)
 {
-    _builder->SetScale(scale);
-    return *this;
-}
-
-DrawTextureClause DrawTextureClause::Rotate(float degree)
-{
-    _builder->SetRotation(degree);
+    _builder->SetAlpha(alpha);
     return *this;
 }
 
@@ -439,9 +435,27 @@ DrawTextureClause DrawTextureClause::Anchor(int x, int y)
     return *this;
 }
 
-DrawTextureClause DrawTextureClause::Alpha(uint8_t alpha)
+DrawTextureClause DrawTextureClause::FlipX()
 {
-    _builder->SetAlpha(alpha);
+    _builder->FlipX();
+    return *this;
+}
+
+DrawTextureClause DrawTextureClause::FlipY()
+{
+    _builder->FlipY();
+    return *this;
+}
+
+DrawTextureClause DrawTextureClause::Rotate(float degree)
+{
+    _builder->SetRotation(degree);
+    return *this;
+}
+
+DrawTextureClause DrawTextureClause::Scale(float scale)
+{
+    _builder->SetScale(scale);
     return *this;
 }
 

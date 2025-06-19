@@ -32,6 +32,11 @@ class Font
 {
 public:
     explicit Font(TTF_Font* font);
+    Font(const Font& other) = delete;
+    Font(Font&& other) noexcept = delete;
+    Font& operator=(const Font& other) = delete;
+    Font& operator=(Font&& other) noexcept = delete;
+
     ~Font() = default;
 
     DGEX_API const char* GetName() const;
@@ -39,8 +44,6 @@ public:
     TTF_Font* GetNativeFont() const;
     void* GetImpl() const;
     void Destroy();
-
-    static Ref<Font> Create(TTF_Font* font);
 
 private:
     TTF_Font* _font;

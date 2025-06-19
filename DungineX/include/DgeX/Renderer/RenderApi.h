@@ -118,6 +118,7 @@ public:
     DGEX_API RenderTargetGuard(RenderTargetGuard&& other) noexcept = delete;
     DGEX_API RenderTargetGuard& operator=(const RenderTargetGuard& other) = delete;
     DGEX_API RenderTargetGuard& operator=(RenderTargetGuard&& other) noexcept = delete;
+
     DGEX_API ~RenderTargetGuard();
 
 private:
@@ -355,22 +356,12 @@ public:
     DrawTextureClause(const Ref<Texture>& texture, int x, int y, int z);
 
     /**
-     * @brief Set the scale of the texture.
+     * @brief Set extra opacity of the texture.
      *
-     * @param scale Scale of the texture.
+     * @param alpha The alpha of the texture.
      * @return Itself.
      */
-    DGEX_API DrawTextureClause Scale(float scale);
-
-    /**
-     * @brief Set the rotation of the texture.
-     *
-     * Rotation is around the center.
-     *
-     * @param degree Rotation in degree.
-     * @return Itself.
-     */
-    DGEX_API DrawTextureClause Rotate(float degree);
+    DGEX_API DrawTextureClause Alpha(uint8_t alpha);
 
     /**
      * @brief Set the anchor of the texture.
@@ -384,12 +375,34 @@ public:
     DGEX_API DrawTextureClause Anchor(int x, int y);
 
     /**
-     * @brief Set extra opacity of the texture.
-     *
-     * @param alpha The alpha of the texture.
+     * Flip the texture horizontally.
      * @return Itself.
      */
-    DGEX_API DrawTextureClause Alpha(uint8_t alpha);
+    DGEX_API DrawTextureClause FlipX();
+
+    /**
+     * Flip the texture vertically.
+     * @return Itself.
+     */
+    DGEX_API DrawTextureClause FlipY();
+
+    /**
+     * @brief Set the rotation of the texture.
+     *
+     * Rotation is around the center.
+     *
+     * @param degree Rotation in degree.
+     * @return Itself.
+     */
+    DGEX_API DrawTextureClause Rotate(float degree);
+
+    /**
+     * @brief Set the scale of the texture.
+     *
+     * @param scale Scale of the texture.
+     * @return Itself.
+     */
+    DGEX_API DrawTextureClause Scale(float scale);
 
     /**
      * @brief Submit draw texture command.

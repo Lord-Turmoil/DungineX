@@ -18,9 +18,10 @@
  ******************************************************************************/
 
 #include "DgeX/Device/Graphics/Renderer.h"
+
+#include "Device/Graphics/RenderCommand.h"
 #include "Device/Graphics/RendererImpl.h"
 
-#include "DgeX/Device/Graphics/RenderCommand.h"
 #include "DgeX/Device/Graphics/Window.h"
 #include "DgeX/Utils/Assert.h"
 
@@ -34,14 +35,9 @@ static SDL_Renderer* sNativeRenderer = nullptr;
 // Concrete Renderers
 // ----------------------------------------------------------------------------
 
-void Renderer::SubmitImmediate(const Ref<RenderCommand>& command) const
-{
-    command->Apply(GetNativeRenderer());
-}
-
 void DirectRenderer::Submit(const Ref<RenderCommand>& command)
 {
-    SubmitImmediate(command);
+    command->Apply(GetNativeRenderer());
 }
 
 void DirectRenderer::Render()
