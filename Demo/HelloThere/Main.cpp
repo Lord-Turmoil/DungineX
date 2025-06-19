@@ -71,7 +71,8 @@ int OnUpdate(void* context)
         DrawFilledRect(40, 40, 200, 100); // on top of yellow
         state->DirectRenderer->Render();
     }
-    DrawTextureBegin(texture, 10, 10).Alpha(220).Rotate(30).Scale(0.9f).Submit();
+    DrawTextureBegin(texture, 10, 10).Alpha(220).Scale(0.9f).Submit();
+    DrawTextureBegin(texture, 10, 10).Alpha(220).Rotate(30).Scale(0.9f).Anchor(0, 0).Submit();
 
     {
         UseRenderer(state->OrderedRenderer);

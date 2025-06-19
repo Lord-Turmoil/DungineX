@@ -90,7 +90,7 @@ if(DGEX_BUILD_SHARED)
     configure_dgex_target(${TARGET_SHARED})
 
     # Shared library need some extra properties.
-    target_compile_definitions(${TARGET_SHARED} PRIVATE DGEX_EXPORT)
+    target_compile_definitions(${TARGET_SHARED} PUBLIC DGEX_EXPORT)
     
     set_target_properties(${TARGET_SHARED} PROPERTIES OUTPUT_NAME ${BINARY_NAME})
     set_target_properties(${TARGET_SHARED} PROPERTIES POSITION_INDEPENDENT_CODE ON)

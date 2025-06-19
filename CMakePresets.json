@@ -19,9 +19,9 @@
             }
         },
         {
-            "name": "x64-Debug",
-            "displayName": "Debug",
-            "description": "Target Windows (64-bit) with the Visual Studio development environment. (Debug)",
+            "name": "Debug-Shared",
+            "displayName": "Debug (Shared)",
+            "description": "Debug build for Windows with shared libraries.",
             "inherits": "windows-base",
             "architecture": {
                 "value": "x64",
@@ -32,63 +32,55 @@
             }
         },
         {
-            "name": "x64-RelWithDebInfo",
-            "displayName": "RelWithDebInfo",
-            "description": "Target Windows (64-bit) with the Visual Studio development environment. (RelWithDebInfo)",
-            "inherits": "x64-Debug",
+            "name": "Debug-Static",
+            "displayName": "Debug (Static)",
+            "description": "Debug build for Windows with static libraries.",
+            "inherits": "Debug-Shared",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "DGEX_USE_SHARED": "OFF"
+            }
+        },
+        {
+            "name": "Release-Shared",
+            "displayName": "Release (Shared)",
+            "description": "RelWithDebInfo build for Windows with shared libraries.",
+            "inherits": "Debug-Shared",
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "RelWithDebInfo"
             }
         },
         {
-            "name": "x64-Release",
-            "displayName": "Release",
-            "description": "Target Windows (64-bit) with the Visual Studio development environment. (Release)",
-            "inherits": "x64-Debug",
+            "name": "Release-Static",
+            "displayName": "Release (Static)",
+            "description": "RelWithDebInfo build for Windows with static libraries.",
+            "inherits": "Release-Shared",
+            "cacheVariables": {
+                "DGEX_USE_SHARED": "OFF"
+            }
+        },
+        {
+            "name": "Publish-Shared",
+            "displayName": "Publish (Shared)",
+            "description": "Release build for Windows with shared libraries.",
+            "inherits": "Debug-Shared",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
                 "DGEX_PUBLISH": "ON"
             }
-        }
-    ],
-    "buildPresets": [
-        {
-            "name": "x64-Debug",
-            "description": "Debug build for Windows (64-bit).",
-            "displayName": "Debug Build",
-            "configurePreset": "x64-Debug"
         },
         {
-            "name": "x64-RelWithDebInfo",
-            "description": "RelWithDebInfo build for Windows (64-bit).",
-            "displayName": "RelWithDebInfo Build",
-            "configurePreset": "x64-RelWithDebInfo"
-        },
-        {
-            "name": "x64-Release",
-            "description": "Release build for Windows (64-bit).",
-            "displayName": "Release Build",
-            "configurePreset": "x64-Release"
-        }
-    ],
-    "testPresets": [
-        {
-            "name": "Test Debug",
-            "description": "Test build for Windows (64-bit).",
-            "displayName": "Test Build",
-            "configurePreset": "x64-Debug"
-        },
-        {
-            "name": "Test RelWithDebInfo",
-            "description": "Test build for Windows (64-bit).",
-            "displayName": "Test Build",
-            "configurePreset": "x64-RelWithDebInfo"
-        },
-        {
-            "name": "Test Release",
-            "description": "Test build for Windows (64-bit).",
-            "displayName": "Test Build",
-            "configurePreset": "x64-Release"
+            "name": "Publish-Static",
+            "displayName": "Publish (Static)",
+            "description": "Release build for Windows with static libraries.",
+            "inherits": "Publish-Shared",
+            "cacheVariables": {
+                "DGEX_USE_SHARED": "OFF"
+            }
         }
     ]
 }

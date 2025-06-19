@@ -56,6 +56,9 @@ endif()
 # If DungineX is the master project, then change the output directories for a more
 # friendly organization of the build artifacts.
 if(DGEX_MASTER_PROJECT)
+    # FIXME:
+    # If using Visual Studio as the generator, the output directories will have an
+    # additional configuration subdirectory (e.g., Debug, Release, etc.).
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/output/lib")
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/output/lib")
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/output/bin")

@@ -20,6 +20,29 @@
 #pragma once
 
 // ============================================================================
+// Build Configuration
+// ----------------------------------------------------------------------------
+
+#if defined(DEBUG) || defined(_DEBUG)
+#define DGEX_DEBUG // Debug build
+#else
+#define DGEX_RELEASE // Release build
+#endif
+
+#if 0 // Should be set with CMake options.
+
+// Exporting the DungineX library as a DLL.
+#define DGEX_EXPORT
+// Mark that we're in the engine, not client.
+#define DGEX_ENGINE
+// Adding extra features to kindly remind users of this project.
+#define DGEX_PUBLISH
+// Enable assertions.
+#define DGEX_ENABLE_ASSERT
+
+#endif
+
+// ============================================================================
 // Platform Detection
 // ----------------------------------------------------------------------------
 
@@ -29,21 +52,24 @@
 
 #ifdef DGEX_EXPORT
 
+#ifdef DGEX_ENGINE
+
 #define DGEX_API  __declspec(dllexport)
 #define DGEX_DATA __declspec(dllexport)
 
 #else
 
 #define DGEX_API
-
-#ifdef DGEX_ENGINE
-#define DGEX_DATA
-#else
-// Use dllimport only in client code
 #define DGEX_DATA __declspec(dllimport)
+
 #endif // DGEX_ENGINE
 
-#endif
+#else
+
+#define DGEX_API
+#define DGEX_DATA
+
+#endif // DGEX_EXPORT
 
 #ifdef __cplusplus
 
@@ -59,28 +85,7 @@
 #define DGEX_EXTERN_C_BEGIN
 #define DGEX_EXTERN_C_END
 
-#endif
-
-// ============================================================================
-// Build Configuration
-// ----------------------------------------------------------------------------
-
-#if defined(DEBUG) || defined(_DEBUG)
-#define DGEX_DEBUG // Debug build
-#else
-#define DGEX_RELEASE // Release build
-#endif
-
-#if 0 // Should be set with CMake options.
-
-// Mark that we're in the engine, not client.
-#define DGEX_ENGINE
-// Adding extra features to kindly remind users of this project.
-#define DGEX_PUBLISH
-// Enable assertions.
-#define DGEX_ENABLE_ASSERT
-
-#endif
+#endif // __cplusplus
 
 // ============================================================================
 // Global Namespace & Macros
