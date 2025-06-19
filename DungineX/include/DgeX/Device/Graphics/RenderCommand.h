@@ -31,7 +31,12 @@ DGEX_BEGIN
 class RenderCommand
 {
 public:
-    explicit RenderCommand(int order);
+    RenderCommand(int order);
+    RenderCommand(const RenderCommand& other) = delete;
+    RenderCommand(RenderCommand&& other) noexcept = delete;
+    RenderCommand& operator=(const RenderCommand& other) = delete;
+    RenderCommand& operator=(RenderCommand&& other) noexcept = delete;
+
     virtual ~RenderCommand() = default;
 
     int GetOrder() const;

@@ -29,6 +29,12 @@ Texture::Texture(SDL_Texture* texture) : _texture(texture)
 {
 }
 
+Texture::Texture(Texture&& other) noexcept
+{
+    _texture = other._texture;
+    other._texture = nullptr;
+}
+
 int Texture::GetWidth() const
 {
     SDL_PropertiesID props = SDL_GetTextureProperties(_texture);

@@ -34,11 +34,11 @@ using WindowFlags = unsigned char;
 // clang-format off
 enum : unsigned char
 {
+    DgexWindowDefault            = 0,
     DgexWindowAlwaysOnTop        = DGEX_BIT(0),    // always on top
     DgexWindowBorderless         = DGEX_BIT(1),    // launch as borderless window
     DgexWindowFullScreen         = DGEX_BIT(2),    // launch in fullscreen
     DgexWindowResizable          = DGEX_BIT(3),    // allow window to resize
-    DgexWindowDefault            = 0
 };
 
 // clang-format on

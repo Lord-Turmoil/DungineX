@@ -60,9 +60,12 @@ template <typename T> using Ptr = T*;
 
 template <typename T> struct TRect
 {
-    T X, Y, Width, Height;
+    T X;
+    T Y;
+    T Width;
+    T Height;
 
-    TRect(T x = 0, T y = 0, T width = 0, T height = 0) : X(x), Y(y), Width(width), Height(height)
+    explicit TRect(T x = 0, T y = 0, T width = 0, T height = 0) : X(x), Y(y), Width(width), Height(height)
     {
     }
 };

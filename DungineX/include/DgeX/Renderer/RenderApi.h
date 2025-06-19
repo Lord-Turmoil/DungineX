@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : June 2, 2025                              *
  *                                                                            *
- *                    Last Update : June 18, 2025                             *
+ *                    Last Update : June 19, 2025                             *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -29,8 +29,8 @@
 
 DGEX_BEGIN
 
-class Renderer;
 class Font;
+class Renderer;
 class Texture;
 class TextureRenderCommandBuilder;
 
@@ -40,7 +40,16 @@ class TextureRenderCommandBuilder;
 
 #pragma region Render & Target Settings
 
+/**
+ * @brief Initialize render API.
+ *
+ * @return 0 on success, otherwise failure.
+ */
 dgex_error_t InitRenderApi();
+
+/**
+ * @brief Destroy render API.
+ */
 void DestroyRenderApi();
 
 /**
@@ -81,7 +90,7 @@ private:
  *
  * @param renderer The renderer to use.
  */
-#define UseRenderer(renderer) RendererGuard __dgex_renderer_guard((renderer))
+#define USE_RENDERER(renderer) RendererGuard __dgex_renderer_guard((renderer))
 
 /**
  * @brief Set the current render target for the current renderer.
@@ -122,7 +131,7 @@ private:
  *
  * @param texture The texture to use as the render target.
  */
-#define UseRenderTarget(texture) RenderTargetGuard __dgex_render_target_guard((texture))
+#define USE_RENDER_TARGET(texture) RenderTargetGuard __dgex_render_target_guard((texture))
 
 #pragma endregion
 

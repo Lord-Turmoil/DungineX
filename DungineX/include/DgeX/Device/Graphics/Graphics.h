@@ -27,7 +27,12 @@ DGEX_BEGIN
 /**
  * @brief Initialize graphics device.
  *
- * This includes window and renderer initialization.
+ * This performs complete initialization of the graphics device, including:
+ *
+ * - SDL video and TTF initialization.
+ * - Window creation.
+ * - Renderer creation.
+ * - Render API initialization.
  *
  * @return 0 on success, otherwise failure.
  */
@@ -35,8 +40,6 @@ DGEX_API dgex_error_t InitGraphics();
 
 /**
  * @brief Destroy graphics device.
- *
- * This will destroy window and renderer.
  *
  * @return 0 on success, otherwise failure.
  */

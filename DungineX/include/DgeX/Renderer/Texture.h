@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : June 2, 2025                              *
  *                                                                            *
- *                    Last Update : June 2, 2025                              *
+ *                    Last Update : June 19, 2025                             *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -30,11 +30,19 @@ DGEX_BEGIN
 
 /**
  * @brief A wrapper for SDL_Texture.
+ *
+ * We do not allow copying textures, which will lead to uncontrolled
+ * texture duplication, making it hard to recycle textures.
  */
 class Texture
 {
 public:
     explicit Texture(SDL_Texture* texture);
+    Texture(const Texture& other) = delete;
+    Texture(Texture&& other) noexcept;
+    Texture& operator=(const Texture& other) = delete;
+    Texture& operator=(Texture&& other) noexcept = delete;
+
     ~Texture() = default;
 
     DGEX_API int GetWidth() const;

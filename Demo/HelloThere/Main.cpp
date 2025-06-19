@@ -57,8 +57,8 @@ int OnUpdate(void* context)
 
     auto texture = CreateTexture(300, 300);
     {
-        UseRenderer(state->DirectRenderer);
-        UseRenderTarget(texture);
+        USE_RENDERER(state->DirectRenderer);
+        USE_RENDER_TARGET(texture);
 
         Color oldClearColor = GetClearColor();
         SetClearColor(Color::White);
@@ -75,7 +75,7 @@ int OnUpdate(void* context)
     DrawTextureBegin(texture, 10, 10).Alpha(220).Rotate(30).Scale(0.9f).Anchor(0, 0).Submit();
 
     {
-        UseRenderer(state->OrderedRenderer);
+        USE_RENDERER(state->OrderedRenderer);
         SetFillColor(Color::Yellow);
         DrawFilledRect(310, 10, 200, 100, 10); // on top of red
         SetFillColor(Color::Red);

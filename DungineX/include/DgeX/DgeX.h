@@ -22,7 +22,7 @@
  * programming language, which apparently, is C++. This engine might not be   *
  * that powerful or performant, but it strives for the best practice.         *
  *                                                                            *
- * You may wonder, why "DungineX"? Initially, I made a rouge-like game called *
+ * You may wonder why "DungineX"? Initially, I made a rouge-like game called  *
  * Dungeon, in which I implemented a simple game engine. By then, I found the *
  * combination of "Dungeon" and "Engine" quite natural, so I eventually named *
  * the underlying engine Dungine, i.e. "DUNgeon enGINE". And now, with more   *

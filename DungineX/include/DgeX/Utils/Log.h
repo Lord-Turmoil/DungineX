@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : June 1, 2025                              *
  *                                                                            *
- *                    Last Update : June 1, 2025                              *
+ *                    Last Update : June 19, 2025                             *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -114,14 +114,14 @@ struct LoggerSpecification
 class Logger
 {
 public:
-    DGEX_API Logger(const LoggerSpecification& specification);
+    explicit Logger(const LoggerSpecification& specification);
 
-    DGEX_API Logger(const Logger& other) = delete;
-    DGEX_API Logger(Logger&& other) noexcept = delete;
-    DGEX_API Logger& operator=(const Logger& other) = delete;
-    DGEX_API Logger& operator=(Logger&& other) noexcept = delete;
+    Logger(const Logger& other) = delete;
+    Logger(Logger&& other) noexcept = delete;
+    Logger& operator=(const Logger& other) = delete;
+    Logger& operator=(Logger&& other) noexcept = delete;
 
-    DGEX_API ~Logger();
+    ~Logger();
 
 public:
     DGEX_API const std::string& GetName() const;
