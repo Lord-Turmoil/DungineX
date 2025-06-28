@@ -39,7 +39,7 @@ class Texture
 public:
     explicit Texture(SDL_Texture* texture);
     Texture(const Texture& other) = delete;
-    Texture(Texture&& other) noexcept;
+    Texture(Texture&& other) noexcept = delete;
     Texture& operator=(const Texture& other) = delete;
     Texture& operator=(Texture&& other) noexcept = delete;
 
@@ -50,9 +50,6 @@ public:
 
     SDL_Texture* GetNativeTexture() const;
     void Destroy();
-
-    static Ref<Texture> Create(SDL_Texture* texture);
-    static Ref<Texture> Create(int width, int height);
 
 private:
     SDL_Texture* _texture;

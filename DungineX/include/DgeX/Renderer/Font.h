@@ -40,8 +40,6 @@ public:
     void* GetImpl() const;
     void Destroy();
 
-    static Ref<Font> Create(TTF_Font* font);
-
 private:
     TTF_Font* _font;
 

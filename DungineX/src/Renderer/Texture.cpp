@@ -21,18 +21,13 @@
 
 #include "DgeX/Device/Graphics/Renderer.h"
 #include "DgeX/Utils/Log.h"
-#include "SDL3_image/SDL_image.h"
+
+#include <SDL3_image/SDL_image.h>
 
 DGEX_BEGIN
 
 Texture::Texture(SDL_Texture* texture) : _texture(texture)
 {
-}
-
-Texture::Texture(Texture&& other) noexcept
-{
-    _texture = other._texture;
-    other._texture = nullptr;
 }
 
 int Texture::GetWidth() const
@@ -61,19 +56,6 @@ void Texture::Destroy()
     }
 }
 
-Ref<Texture> Texture::Create(SDL_Texture* texture)
-{
-    return CreateRef<Texture>(texture);
-}
-
-// Reference: https://wiki.libsdl.org/SDL3/SDL_CreateTexture
-Ref<Texture> Texture::Create(int width, int height)
-{
-    SDL_Texture* texture =
-        SDL_CreateTexture(GetNativeRenderer(), SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_TARGET, width, height);
-    return CreateRef<Texture>(texture);
-}
-
 Ref<Texture> LoadTexture(const std::string& path)
 {
     SDL_Surface* surface = IMG_Load(path.c_str());
@@ -87,12 +69,15 @@ Ref<Texture> LoadTexture(const std::string& path)
 
     DGEX_CORE_INFO("Loaded texture: {0}", path);
 
-    return Texture::Create(texture);
+    return CreateRef<Texture>(texture);
 }
 
+// Reference: https://wiki.libsdl.org/SDL3/SDL_CreateTexture
 Ref<Texture> CreateTexture(int width, int height)
 {
-    return Texture::Create(width, height);
+    SDL_Texture* texture =
+        SDL_CreateTexture(GetNativeRenderer(), SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_TARGET, width, height);
+    return CreateRef<Texture>(texture);
 }
 
 DGEX_END
