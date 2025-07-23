@@ -72,8 +72,20 @@ int OnUpdate(void* context)
         DrawFilledRect(40, 40, 200, 100); // on top of yellow
         state->DirectRenderer->Render();
     }
-    DrawTextureBegin(state->Canvas, 10, 10).Alpha(220).Scale(0.9f).Submit();
-    DrawTextureBegin(state->Canvas, 10, 10).Alpha(220).Rotate(30).Scale(0.9f).Anchor(0, 0).Submit();
+
+    TextureStyle styleA;
+    styleA.Alpha = 220;
+    styleA.Scale = 0.9f;
+
+    TextureStyle styleB;
+    styleB.Alpha = 220;
+    styleB.Degree = 30.0f;
+    styleB.Scale = 0.9f;
+
+    TextureAnchor anchor = { 0, 0 };
+
+    DrawTexture(state->Canvas, styleA, 10, 10);
+    DrawTexture(state->Canvas, styleB, anchor, 10, 10);
 
     {
         USE_RENDERER(state->OrderedRenderer);
@@ -87,7 +99,7 @@ int OnUpdate(void* context)
     SetLineColor(Color::Blue);
     DrawLine(0, 0, 640, 480);
 
-    DrawText("Hello there!", 600, 10, DGEX_TextAlignRight);
+    DrawText("Hello there!", 600, 10, L(TextFlag::AlignRight));
 
     FlushDevice();
 

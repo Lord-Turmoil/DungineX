@@ -23,8 +23,8 @@
 
 DGEX_BEGIN
 
-typedef bool (*OnUpdateCallback)(void);
-typedef void (*OnEventCallback)(void);
+using OnUpdateCallback = bool (*)(void);
+using OnEventCallback = void (*)(void);
 
 /**
  * @brief Run the main loop.

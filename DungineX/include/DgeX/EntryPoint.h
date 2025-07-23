@@ -23,6 +23,9 @@
 
 #pragma once
 
+#ifndef _DGEX_ENTRYPOINT_H_
+#define _DGEX_ENTRYPOINT_H_
+
 #include "DgeX/Defines.h"
 
 /**
@@ -39,13 +42,38 @@ struct CommandLineArgs
     }
 };
 
-typedef int (*DgeXMainEntry)(const CommandLineArgs&);
+using DgeXMainEntry = int (*)(const CommandLineArgs&);
 
-typedef int (*DgeXOnInitEntry)(const CommandLineArgs&, void**);
-typedef int (*DgeXOnStartEntry)(void*);
-typedef int (*DgeXOnUpdateEntry)(void*);
-typedef int (*DgeXOnEventEntry)(void*);
-typedef int (*DgeXOnExitEntry)(void*);
+using DgeXOnInitEntry = int (*)(const CommandLineArgs&, void**);
+using DgeXOnStartEntry = int (*)(void*);
+using DgeXOnUpdateEntry = int (*)(void*);
+using DgeXOnEventEntry = int (*)(void*);
+using DgeXOnExitEntry = int (*)(void*);
+
+/**
+ * A unified structure for all callbacks.
+ */
+struct DgeXCallbackRegistration
+{
+    DgeXOnInitEntry OnInit = nullptr;
+    DgeXOnStartEntry OnStart = nullptr;
+    DgeXOnUpdateEntry OnUpdate = nullptr;
+    DgeXOnEventEntry OnEvent = nullptr;
+    DgeXOnExitEntry OnExit = nullptr;
+
+    DGEX_API DgeXCallbackRegistration() = default;
+
+    DGEX_API DgeXCallbackRegistration(DgeXOnInitEntry onInit, DgeXOnStartEntry onStart, DgeXOnUpdateEntry onUpdate,
+                                      DgeXOnEventEntry onEvent, DgeXOnExitEntry onExit)
+        : OnInit(onInit), OnStart(onStart), OnUpdate(onUpdate), OnEvent(onEvent), OnExit(onExit)
+    {
+    }
+
+    DGEX_API DgeXCallbackRegistration(DgeXOnInitEntry onInit, DgeXOnStartEntry onStart, DgeXOnExitEntry onExit)
+        : OnInit(onInit), OnStart(onStart), OnExit(onExit)
+    {
+    }
+};
 
 /**
  * There are 5 callbacks to be defined.
@@ -123,23 +151,15 @@ extern int DgeXMain(const CommandLineArgs& args);
 // ----------------------------------------------------------------------------
 
 DGEX_API int DgeXMainImpl(CommandLineArgs args, DgeXMainEntry entry);
-DGEX_API int DgeXMainImplWithCallbacks(CommandLineArgs args, DgeXOnInitEntry onInit, DgeXOnStartEntry onStart,
-                                       DgeXOnUpdateEntry onUpdate, DgeXOnEventEntry onEvent, DgeXOnExitEntry onExit);
-
-// ============================================================================
-// Main Entry
-// ----------------------------------------------------------------------------
+DGEX_API int DgeXMainImplWithCallbacks(CommandLineArgs args, const DgeXCallbackRegistration& callbacks);
 
 #ifndef DGEX_ENTRYPOINT_IMPL
-
-int main(int argc, char* argv[])
-{
-#ifdef DGEX_USE_CALLBACKS
-    return DgeXMainImplWithCallbacks({ argc, argv }, DgeXOnInit, DgeXOnStart, DgeXOnUpdate, DgeXOnEvent, DgeXOnExit);
-#else
-    return DgeXMainImpl({ argc, argv }, DgeXMain);
+#include "DgeX/Impl/EntryPointImpl.h"
 #endif
-}
+
+// ============================================================================
+// Callback Aliases
+// ----------------------------------------------------------------------------
 
 #ifdef DGEX_USE_CALLBACKS
 
@@ -147,13 +167,12 @@ int main(int argc, char* argv[])
 #define OnStart  DgeXOnStart
 #define OnUpdate DgeXOnUpdate
 #define OnEvent  DgeXOnEvent
-#define OnQuit   DgeXOnQuit
 #define OnExit   DgeXOnExit
 
 #else
 
 #define main DgeXMain
 
-#endif
+#endif // DGEX_USE_CALLBACKS
 
-#endif // DGEX_ENTRYPOINT_IMPL
+#endif

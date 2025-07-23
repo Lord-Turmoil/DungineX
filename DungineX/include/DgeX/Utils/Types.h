@@ -20,8 +20,10 @@
 #pragma once
 
 #include "DgeX/Defines.h"
+#include "Macros.h"
 
 #include <memory>
+#include <type_traits>
 
 DGEX_BEGIN
 
@@ -49,28 +51,85 @@ template <typename T, typename... Args> constexpr Ref<T> CreateRef(Args&&... arg
     return std::make_shared<T>(std::forward<Args>(args)...);
 }
 
+// ============================================================================
+// Type Alias Helper
+// ----------------------------------------------------------------------------
+
 /**
- * Just an alias for raw pointers.
+ * @brief Cast a value, especially an enum value, to its underlying type.
+ *
+ * @tparam T Auto-deducted type.
+ * @param value Value to convert to its literal type.
+ * @return The value of its underlying type.
  */
-template <typename T> using Ptr = T*;
+template <typename T> constexpr auto L(T value) noexcept
+{
+    return static_cast<std::underlying_type_t<T>>(value);
+}
 
 // ============================================================================
 // Shapes
 // ----------------------------------------------------------------------------
 
-template <typename T> struct TRect
+template <typename T> struct RectT
 {
     T X;
     T Y;
     T Width;
     T Height;
 
-    explicit TRect(T x = 0, T y = 0, T width = 0, T height = 0) : X(x), Y(y), Width(width), Height(height)
+    explicit RectT(T x = 0, T y = 0, T width = 0, T height = 0) : X(x), Y(y), Width(width), Height(height)
     {
     }
 };
 
-using Rect = TRect<int>;
+using Rect = RectT<int>;
+using FRect = RectT<float>;
+
+template <typename T> struct PointT
+{
+    T X;
+    T Y;
+
+    explicit PointT(T x = 0, T y = 0) : X(x), Y(y)
+    {
+    }
+};
+
+using Point = PointT<int>;
+using FPoint = PointT<float>;
+
+// ============================================================================
+// Styles
+// ----------------------------------------------------------------------------
+
+struct TextureStyle
+{
+    float Scale = 1.0f;  // scale, 1.0 for no scale
+    float Degree = 0.0f; // rotation in degree
+    uint8_t Alpha = 255; // alpha value, 0 ~ 255
+    bool FlipX : 1;      // flip horizontally
+    bool FlipY : 1;      // flip vertically
+};
+
+struct TextureAnchor
+{
+    int X;
+    int Y;
+};
+
+using TextFlags = unsigned char;
+
+// clang-format off
+enum class TextFlag : unsigned char
+{
+    AlignLeft   = DGEX_BIT(0),
+    AlignRight  = DGEX_BIT(1),
+    AlignCenter = DGEX_BIT(2),
+    Overflow    = DGEX_BIT(3)
+};
+
+// clang-format on
 
 DGEX_END
 

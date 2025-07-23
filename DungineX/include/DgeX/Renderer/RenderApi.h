@@ -22,10 +22,7 @@
 #include "DgeX/Defines.h"
 #include "DgeX/Error.h"
 #include "DgeX/Renderer/Color.h"
-#include "DgeX/Utils/Macros.h"
 #include "DgeX/Utils/Types.h"
-
-#include <SDL3/SDL.h>
 
 DGEX_BEGIN
 
@@ -37,8 +34,6 @@ class TextureRenderCommandBuilder;
 // ============================================================================
 // Render & Target Settings
 // ----------------------------------------------------------------------------
-
-#pragma region Render & Target Settings
 
 /**
  * @brief Initialize render API.
@@ -134,13 +129,9 @@ private:
  */
 #define USE_RENDER_TARGET(texture) RenderTargetGuard __dgex_render_target_guard((texture))
 
-#pragma endregion
-
 // ============================================================================
 // Render Property Settings
 // ----------------------------------------------------------------------------
-
-#pragma region Render Property Settings
 
 /**
  * @brief Set clear color.
@@ -150,16 +141,6 @@ private:
  * @param color Clear color.
  */
 DGEX_API void SetClearColor(Color color);
-
-/**
- * @brief Set clear color.
- *
- * @param r Red.
- * @param g Green.
- * @param b Blue.
- * @param a Alpha, by default 255.
- */
-DGEX_API void SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = DGEX_COLOR_OPAQUE);
 
 /**
  * @brief Get the current clear color.
@@ -176,50 +157,16 @@ DGEX_API Color GetClearColor();
 DGEX_API void SetLineColor(Color color);
 
 /**
- * @brief Set current line color.
- *
- * @param r Red.
- * @param g Green.
- * @param b Blue.
- * @param a Alpha, by default 255.
- */
-DGEX_API void SetLineColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = DGEX_COLOR_OPAQUE);
-
-/**
  * @brief Get the current line color.
  *
  * @return Current line color.
  */
 DGEX_API Color GetLineColor();
 
-class LineColorGuard
-{
-public:
-    DGEX_API explicit LineColorGuard(Color color);
-    DGEX_API LineColorGuard(const LineColorGuard& other) = delete;
-    DGEX_API LineColorGuard(LineColorGuard&& other) noexcept = delete;
-    DGEX_API LineColorGuard& operator=(const LineColorGuard& other) = delete;
-    DGEX_API LineColorGuard& operator=(LineColorGuard&& other) noexcept = delete;
-    DGEX_API ~LineColorGuard();
-
-private:
-    Color _lastLineColor;
-};
-
 /**
  * @brief Set current fill color.
  */
 DGEX_API void SetFillColor(Color color);
-
-/**
- * @brief Set current fill color.
- *
- * @param r Red.
- * @param g Green.
- * @param b Blue.
- * @param a Alpha.
- */
-DGEX_API void SetFillColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = DGEX_COLOR_OPAQUE);
 
 /**
  * @brief Get the current fill color.
@@ -228,33 +175,55 @@ DGEX_API void SetFillColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = DGEX_COL
  */
 DGEX_API Color GetFillColor();
 
+/**
+ * @brief Set current font.
+ *
+ * @param font Current font.
+ */
 DGEX_API void SetFont(const Ref<Font>& font);
 
+/**
+ * @brief Get the current font.
+ *
+ * @return Current font.
+ */
 DGEX_API Ref<Font> GetFont();
 
+/**
+ * @brief Set the current font color.
+ *
+ * @param color Font color to set.
+ */
 DGEX_API void SetFontColor(Color color);
 
-DGEX_API void SetFontColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = DGEX_COLOR_OPAQUE);
-
+/**
+ * @brief Get the current font color.
+ *
+ * @return Current font color.
+ */
 DGEX_API Color GetFontColor();
 
+/**
+ * @brief Set the font size.
+ * @param pointSize Font size in points (pixels).
+ */
 DGEX_API void SetFontSize(float pointSize);
 
+/**
+ * @brief Get the current font size.
+ *
+ * @return Current font size in points (pixels).
+ */
 DGEX_API float GetFontSize();
-
-#pragma endregion
 
 // ============================================================================
 // Device Render API
 // ----------------------------------------------------------------------------
 
-#pragma region Device Render API
-
 /**
  * @brief Clear current render target.
  *
- * This will be applied before any render command, even if for an ordered
- * renderer.
+ * This will be applied before any render command if using ordered renderer.
  */
 DGEX_API void ClearDevice();
 
@@ -265,13 +234,9 @@ DGEX_API void ClearDevice();
  */
 DGEX_API void FlushDevice();
 
-#pragma endregion
-
 // ============================================================================
 // Primitives Render API
 // ----------------------------------------------------------------------------
-
-#pragma region Primitives Render API
 
 /**
  * @brief Draw a point.
@@ -332,13 +297,9 @@ DGEX_API void DrawFilledRect(int x, int y, int width, int height, int z = 0);
  */
 DGEX_API void DrawFilledRect(const Rect& rect, int z = 0);
 
-#pragma endregion
-
 // ============================================================================
 // Texture Render API
 // ----------------------------------------------------------------------------
-
-#pragma region Texture Render API
 
 /**
  * @brief Draw a texture.
@@ -350,105 +311,43 @@ DGEX_API void DrawFilledRect(const Rect& rect, int z = 0);
  */
 DGEX_API void DrawTexture(const Ref<Texture>& texture, int x, int y, int z = 0);
 
-class DrawTextureClause
-{
-public:
-    DrawTextureClause(const Ref<Texture>& texture, int x, int y, int z);
-
-    /**
-     * @brief Set extra opacity of the texture.
-     *
-     * @param alpha The alpha of the texture.
-     * @return Itself.
-     */
-    DGEX_API DrawTextureClause Alpha(uint8_t alpha);
-
-    /**
-     * @brief Set the anchor of the texture.
-     *
-     * By default, the anchor is the center of the texture.
-     *
-     * @param x The x coordinate of the center of rotation.
-     * @param y The y coordinate of the center of rotation.
-     * @return Itself.
-     */
-    DGEX_API DrawTextureClause Anchor(int x, int y);
-
-    /**
-     * Flip the texture horizontally.
-     * @return Itself.
-     */
-    DGEX_API DrawTextureClause FlipX();
-
-    /**
-     * Flip the texture vertically.
-     * @return Itself.
-     */
-    DGEX_API DrawTextureClause FlipY();
-
-    /**
-     * @brief Set the rotation of the texture.
-     *
-     * Rotation is around the center.
-     *
-     * @param degree Rotation in degree.
-     * @return Itself.
-     */
-    DGEX_API DrawTextureClause Rotate(float degree);
-
-    /**
-     * @brief Set the scale of the texture.
-     *
-     * @param scale Scale of the texture.
-     * @return Itself.
-     */
-    DGEX_API DrawTextureClause Scale(float scale);
-
-    /**
-     * @brief Submit draw texture command.
-     */
-    DGEX_API void Submit();
-
-private:
-    Ref<TextureRenderCommandBuilder> _builder;
-};
-
 /**
- * @brief Draw a texture with additional properties.
+ * @brief Draw a texture with additional styles.
+ *
+ * By default, the transformation is applied around the center of the texture.
+ * If you want to apply the transformation around a specific point, use the overloaded version
+ * with `TextureAnchor`.
+ *
  *
  * @param texture The texture to draw.
+ * @param style The style of the texture.
  * @param x The x coordinate of the top-left corner of the texture.
  * @param y The y coordinate of the top-left corner of the texture.
  * @param z The z index for sorting.
  * @return Fluent-API style actions.
  */
-DGEX_API DrawTextureClause DrawTextureBegin(const Ref<Texture>& texture, int x, int y, int z = 0);
+DGEX_API void DrawTexture(const Ref<Texture>& texture, const TextureStyle& style, int x, int y, int z = 0);
 
-#pragma endregion
+/**
+ * @brief
+ * @param texture The texture to draw.
+ * @param style The style of the texture.
+ * @param anchor The anchor to apply scale and rotation.
+ * @param x The x coordinate of the top-left corner of the texture.
+ * @param y The y coordinate of the top-left corner of the texture.
+ * @param z The z index for sorting.
+ */
+DGEX_API void DrawTexture(const Ref<Texture>& texture, const TextureStyle& style, const TextureAnchor& anchor, int x,
+                          int y, int z = 0);
 
 // ============================================================================
 // Text Render API
 // ----------------------------------------------------------------------------
 
-#pragma region Text Render API
-
-using TextFlags = unsigned char;
-
-// clang-format off
-enum : unsigned char
-{
-    DGEX_TextAlignLeft   = DGEX_BIT(0),
-    DGEX_TextAlignRight  = DGEX_BIT(1),
-    DGEX_TextAlignCenter = DGEX_BIT(2),
-    DGEX_TextOverflow    = DGEX_BIT(3)
-};
-
-// clang-format on
-
 /**
  * @brief Render text according to a point.
  *
- * @warning The text should be valid until the next rendering.
+ * @warning The text should be valid until the next rendering batch.
  *
  * @param text Text to render.
  * @param x The x coordinate to render the text.
@@ -460,28 +359,12 @@ DGEX_API void DrawText(const char* text, int x, int y, TextFlags flags);
 /**
  * @brief Render text in a rectangle area.
  *
- * @warning The text should be valid until the next rendering.
- *
- * @param text Text to render.
- * @param x The x coordinate of the top-left corner of the area.
- * @param y The y coordinate of the top-left corner of the area.
- * @param width The width of the area.
- * @param height The height of the area.
- * @param flags Controls how to render the text.
- */
-DGEX_API void DrawTextArea(const char* text, int x, int y, int width, int height, TextFlags flags);
-
-/**
- * @brief Render text in a rectangle area.
- *
- * @warning The text should be valid until the next rendering.
+ * @warning The text should be valid until the next rendering batch.
  *
  * @param text Text to render.
  * @param rect The text area.
  * @param flags Controls how to render the text.
  */
 DGEX_API void DrawTextArea(const char* text, const Rect& rect, TextFlags flags);
-
-#pragma endregion
 
 DGEX_END

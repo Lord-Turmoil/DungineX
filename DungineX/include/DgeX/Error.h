@@ -19,7 +19,7 @@
 
 #pragma once
 
-typedef int dgex_error_t;
+using dgex_error_t = int;
 
 #define DGEX_SUCCESS 0
 

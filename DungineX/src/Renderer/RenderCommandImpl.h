@@ -39,6 +39,11 @@ class NativeRenderCommand final : public RenderCommand
 
 public:
     NativeRenderCommand(const RenderAction& action, int order);
+    NativeRenderCommand(const NativeRenderCommand& other) = delete;
+    NativeRenderCommand(NativeRenderCommand&& other) noexcept = delete;
+    NativeRenderCommand& operator=(const NativeRenderCommand& other) = delete;
+    NativeRenderCommand& operator=(NativeRenderCommand&& other) noexcept = delete;
+
     ~NativeRenderCommand() override = default;
 
     void Apply(SDL_Renderer* renderer) override;
@@ -47,96 +52,6 @@ public:
 
 private:
     RenderAction _action;
-};
-
-/**
- * @brief Render a prepared texture.
- *
- * If you have a texture ready to go, use TextureRenderCommand to draw
- * it.
- */
-class TextureRenderCommand final : public RenderCommand
-{
-public:
-    // clang-format off
-    TextureRenderCommand(
-        SDL_Texture* texture,
-        float x,
-        float y,
-        int z,
-        float scale, 
-        float degree,
-        uint8_t alpha,
-        bool flipX,
-        bool flipY);
-
-    TextureRenderCommand(
-        SDL_Texture* texture,
-        float x,
-        float y,
-        int z,
-        float anchorX,
-        float anchorY,
-        float scale, 
-        float degree,
-        uint8_t alpha,
-        bool flipX,
-        bool flipY);
-    // clang-format on
-
-    ~TextureRenderCommand() override = default;
-
-    void Apply(SDL_Renderer* renderer) override;
-
-private:
-    SDL_Texture* _texture;
-    SDL_FPoint _anchor;
-
-    float _x; // x on the screen
-    float _y; // y on the screen
-
-    float _scale;  // scale, 1.0 for no scale
-    float _degree; // rotation in degree
-
-    uint8_t _alpha; // alpha value, 0 ~ 255
-
-    bool _flipX : 1;         // flip horizontally
-    bool _flipY : 1;         // flip vertically
-    bool _defaultAnchor : 1; // whether to use default anchor or not
-};
-
-class TextureRenderCommandBuilder
-{
-public:
-    TextureRenderCommandBuilder(SDL_Texture* texture);
-
-    TextureRenderCommandBuilder& SetAlpha(uint8_t alpha);
-    TextureRenderCommandBuilder& SetAnchor(int x, int y);
-    TextureRenderCommandBuilder& SetPosition(int x, int y, int z = 0);
-    TextureRenderCommandBuilder& SetRotation(float degree);
-    TextureRenderCommandBuilder& SetScale(float scale);
-
-    TextureRenderCommandBuilder& FlipX();
-    TextureRenderCommandBuilder& FlipY();
-
-    Ref<TextureRenderCommand> Create() const;
-
-private:
-    SDL_Texture* _texture;
-    SDL_FPoint _anchor;
-
-    float _x; // x on the screen
-    float _y; // y on the screen
-    int _z;
-
-    float _scale;  // scale, 1.0 for no scale
-    float _degree; // rotation in degree
-
-    uint8_t _alpha; // alpha value, 0 ~ 255
-
-    bool _flipX : 1;         // flip horizontally
-    bool _flipY : 1;         // flip vertically
-    bool _defaultAnchor : 1; // whether to use default anchor
 };
 
 DGEX_END
