@@ -3,53 +3,46 @@
  ******************************************************************************
  *                   Project Name : DungineX                                  *
  *                                                                            *
- *                      File Name : MainLoop.h                                *
+ *                      File Name : Input.cpp                                 *
  *                                                                            *
  *                     Programmer : Tony S.                                   *
  *                                                                            *
- *                     Start Date : June 2, 2025                              *
+ *                     Start Date : July 31, 2025                             *
  *                                                                            *
- *                    Last Update : June 2, 2025                              *
+ *                    Last Update : July 31, 2025                             *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
  *                                                                            *
- * Main loop of the game.                                                     *
+ * Direct input handling.                                                     *
  ******************************************************************************/
 
-#include "Impl/MainLoop.h"
+#include "DgeX/Device/Input/Input.h"
 
-#include "DgeX/Device/Graphics/Renderer.h"
-#include "DgeX/Utils/Log.h"
+#include "DgeX/Device/Graphics/Window.h"
 
 #include <SDL3/SDL.h>
 
+#include <Windows.h>
+
 DGEX_BEGIN
 
-void MainLoop(OnUpdateCallback onUpdate, OnEventCallback onEvent)
+bool IsKeyPressed(KeyCode key)
 {
-    DGEX_CORE_INFO("Main loop started");
+    return GetAsyncKeyState(static_cast<int>(L(key))) & 0x8000;
+}
 
-    bool isRunning = true;
-    while (isRunning)
-    {
-        SDL_Event event;
-        while (SDL_PollEvent(&event))
-        {
-            onEvent();
-            if (event.type == SDL_EVENT_QUIT)
-            {
-                isRunning = false;
-            }
-        }
+bool IsMousePressed(MouseCode button)
+{
+    return GetAsyncKeyState(static_cast<int>(L(button))) & 0x8000;
+}
 
-        if (onUpdate())
-        {
-            isRunning = false;
-        }
-    }
-
-    DGEX_CORE_INFO("Main loop ended");
+// Reference: https://wiki.libsdl.org/SDL3/SDL_GetMouseState
+FPoint GetMousePosition()
+{
+    float mouseX, mouseY;
+    SDL_GetMouseState(&mouseX, &mouseY);
+    return FPoint(mouseX, mouseY);
 }
 
 DGEX_END

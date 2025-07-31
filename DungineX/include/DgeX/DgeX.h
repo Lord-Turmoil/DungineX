@@ -62,6 +62,9 @@
 #include "DgeX/Device/Graphics/Renderer.h"
 #include "DgeX/Device/Graphics/Window.h"
 
+#include "DgeX/Device/Input/Input.h"
+#include "DgeX/Device/Input/KeyCode.h"
+
 #include "DgeX/Renderer/Color.h"
 #include "DgeX/Renderer/Font.h"
 #include "DgeX/Renderer/RenderApi.h"
