@@ -3,39 +3,41 @@
  ******************************************************************************
  *                   Project Name : DungineX                                  *
  *                                                                            *
- *                      File Name : MainLoop.h                                *
+ *                      File Name : Event.cpp                                 *
  *                                                                            *
  *                     Programmer : Tony S.                                   *
  *                                                                            *
- *                     Start Date : June 2, 2025                              *
+ *                     Start Date : August 3, 2025                            *
  *                                                                            *
- *                    Last Update : June 2, 2025                              *
+ *                    Last Update : August 15, 2025                           *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
  *                                                                            *
- * Main loop of the game.                                                     *
+ * Base event type.                                                           *
  ******************************************************************************/
 
-#pragma once
-
-#include "DgeX/Defines.h"
-
-#include "DgeX/Utils/Types.h"
+#include "DgeX/Application/Event/Event.h"
 
 DGEX_BEGIN
 
-class Event;
+Event::Event() : _handled(false)
+{
+}
 
-using OnUpdateCallback = bool (*)(void);
-using OnEventCallback = void (*)(Ref<Event>);
+std::string Event::ToString() const
+{
+    return GetName();
+}
 
-/**
- * @brief Run the main loop.
- *
- * @param onUpdate Called on frame update.
- * @param onEvent Called on receiving new events.
- */
-void MainLoop(OnUpdateCallback onUpdate, OnEventCallback onEvent);
+bool Event::IsHandled() const
+{
+    return _handled;
+}
+
+void Event::SetHandled(bool handled)
+{
+    _handled = handled;
+}
 
 DGEX_END

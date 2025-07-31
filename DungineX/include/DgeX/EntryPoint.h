@@ -26,7 +26,9 @@
 #ifndef _DGEX_ENTRYPOINT_H_
 #define _DGEX_ENTRYPOINT_H_
 
+#include "Application/Event/Event.h"
 #include "DgeX/Defines.h"
+#include "Utils/Types.h"
 
 /**
  * @brief A simple wrapper for command line arguments.
@@ -47,7 +49,7 @@ using DgeXMainEntry = int (*)(const CommandLineArgs&);
 using DgeXOnInitEntry = int (*)(const CommandLineArgs&, void**);
 using DgeXOnStartEntry = int (*)(void*);
 using DgeXOnUpdateEntry = int (*)(void*);
-using DgeXOnEventEntry = int (*)(void*);
+using DgeXOnEventEntry = int (*)(void*, DgeX::Ref<DgeX::Event>);
 using DgeXOnExitEntry = int (*)(void*);
 
 /**
@@ -128,7 +130,7 @@ extern int DgeXOnUpdate(void* context);
  * @return Whether the event handling succeeded or not.
  *         0 for continue, others as error code.
  */
-extern int DgeXOnEvent(void* context);
+extern int DgeXOnEvent(void* context, DgeX::Ref<DgeX::Event> event);
 
 /**
  * @brief This is called when the game's main loop ends.

@@ -3,39 +3,32 @@
  ******************************************************************************
  *                   Project Name : DungineX                                  *
  *                                                                            *
- *                      File Name : MainLoop.h                                *
+ *                      File Name : MouseEvent.h                              *
  *                                                                            *
  *                     Programmer : Tony S.                                   *
  *                                                                            *
- *                     Start Date : June 2, 2025                              *
+ *                     Start Date : August 15, 2025                           *
  *                                                                            *
- *                    Last Update : June 2, 2025                              *
+ *                    Last Update : August 15, 2025                           *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
  *                                                                            *
- * Main loop of the game.                                                     *
+ * Mouse event types.                                                         *
  ******************************************************************************/
 
 #pragma once
 
-#include "DgeX/Defines.h"
-
-#include "DgeX/Utils/Types.h"
+#include "DgeX/Application/Event/Event.h"
 
 DGEX_BEGIN
 
-class Event;
+class WindowCloseEvent final : public Event
+{
+public:
+    WindowCloseEvent() = default;
 
-using OnUpdateCallback = bool (*)(void);
-using OnEventCallback = void (*)(Ref<Event>);
-
-/**
- * @brief Run the main loop.
- *
- * @param onUpdate Called on frame update.
- * @param onEvent Called on receiving new events.
- */
-void MainLoop(OnUpdateCallback onUpdate, OnEventCallback onEvent);
+    DECL_EVENT_CLASS_TYPE(WindowClose)
+};
 
 DGEX_END

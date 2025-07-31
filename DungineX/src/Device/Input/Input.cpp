@@ -3,39 +3,48 @@
  ******************************************************************************
  *                   Project Name : DungineX                                  *
  *                                                                            *
- *                      File Name : MainLoop.h                                *
+ *                      File Name : Input.cpp                                 *
  *                                                                            *
  *                     Programmer : Tony S.                                   *
  *                                                                            *
- *                     Start Date : June 2, 2025                              *
+ *                     Start Date : July 31, 2025                             *
  *                                                                            *
- *                    Last Update : June 2, 2025                              *
+ *                    Last Update : July 31, 2025                             *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
  *                                                                            *
- * Main loop of the game.                                                     *
+ * Direct low-level input handling.                                           *
  ******************************************************************************/
 
-#pragma once
+#include "DgeX/Device/Input/Input.h"
 
-#include "DgeX/Defines.h"
+#include "DgeX/Device/Graphics/Window.h"
 
-#include "DgeX/Utils/Types.h"
+#include <SDL3/SDL.h>
+
+#include <Windows.h>
 
 DGEX_BEGIN
 
-class Event;
+bool IsKeyPressed(KeyCode code)
+{
+    const bool* states = SDL_GetKeyboardState(nullptr);
+    return states[static_cast<int>(code)];
+}
 
-using OnUpdateCallback = bool (*)(void);
-using OnEventCallback = void (*)(Ref<Event>);
+bool IsMousePressed(MouseCode code)
+{
+    SDL_MouseButtonFlags flags = SDL_GetMouseState(nullptr, nullptr);
+    return SDL_BUTTON_MASK(code) & flags;
+}
 
-/**
- * @brief Run the main loop.
- *
- * @param onUpdate Called on frame update.
- * @param onEvent Called on receiving new events.
- */
-void MainLoop(OnUpdateCallback onUpdate, OnEventCallback onEvent);
+// Reference: https://wiki.libsdl.org/SDL3/SDL_GetMouseState
+FPoint GetMousePosition()
+{
+    float mouseX, mouseY;
+    SDL_GetMouseState(&mouseX, &mouseY);
+    return FPoint(mouseX, mouseY);
+}
 
 DGEX_END

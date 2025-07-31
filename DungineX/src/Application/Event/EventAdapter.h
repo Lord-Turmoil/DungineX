@@ -3,18 +3,18 @@
  ******************************************************************************
  *                   Project Name : DungineX                                  *
  *                                                                            *
- *                      File Name : MainLoop.h                                *
+ *                      File Name : EventAdapter.h                            *
  *                                                                            *
  *                     Programmer : Tony S.                                   *
  *                                                                            *
- *                     Start Date : June 2, 2025                              *
+ *                     Start Date : August 15, 2025                           *
  *                                                                            *
- *                    Last Update : June 2, 2025                              *
+ *                    Last Update : August 15, 2025                           *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
  *                                                                            *
- * Main loop of the game.                                                     *
+ * Convert SDL event to DungineX event.                                       *
  ******************************************************************************/
 
 #pragma once
@@ -23,19 +23,18 @@
 
 #include "DgeX/Utils/Types.h"
 
+#include <SDL3/SDL.h>
+
 DGEX_BEGIN
 
 class Event;
 
-using OnUpdateCallback = bool (*)(void);
-using OnEventCallback = void (*)(Ref<Event>);
-
 /**
- * @brief Run the main loop.
+ * @brief Convert SDL event to DungineX event.
  *
- * @param onUpdate Called on frame update.
- * @param onEvent Called on receiving new events.
+ * @param event SDL Event to convert.
+ * @return DungineX event.
  */
-void MainLoop(OnUpdateCallback onUpdate, OnEventCallback onEvent);
+Ref<Event> ConvertSdlEvent(const SDL_Event* event);
 
 DGEX_END

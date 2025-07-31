@@ -65,9 +65,9 @@ static bool OnUpdateImpl()
 }
 
 // OnEvent implementation.
-static void OnEventImpl()
+static void OnEventImpl(Ref<Event> event)
 {
-    sOnEvent(sAppContext);
+    sOnEvent(sAppContext, event);
 }
 
 int DgeXMainImplWithCallbacks(CommandLineArgs args, const DgeXCallbackRegistration& callbacks)

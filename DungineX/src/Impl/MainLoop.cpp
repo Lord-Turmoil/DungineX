@@ -19,11 +19,11 @@
 
 #include "Impl/MainLoop.h"
 
+#include "Application/Event/EventAdapter.h"
 #include "DgeX/Device/Graphics/Renderer.h"
 #include "DgeX/Utils/Log.h"
 
 #include <SDL3/SDL.h>
-#include <SDL_FontCache/SDL_FontCache.h>
 
 DGEX_BEGIN
 
@@ -34,13 +34,13 @@ void MainLoop(OnUpdateCallback onUpdate, OnEventCallback onEvent)
     bool isRunning = true;
     while (isRunning)
     {
-        SDL_Event event;
-        while (SDL_PollEvent(&event))
+        SDL_Event sdlEvent;
+        while (SDL_PollEvent(&sdlEvent))
         {
-            onEvent();
-            if (event.type == SDL_EVENT_QUIT)
+            Ref<Event> event = ConvertSdlEvent(&sdlEvent);
+            if (event)
             {
-                isRunning = false;
+                onEvent(event);
             }
         }
 

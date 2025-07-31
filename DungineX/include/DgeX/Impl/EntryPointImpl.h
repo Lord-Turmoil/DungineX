@@ -69,7 +69,7 @@ int OnUpdate(void* context)
 
 #ifdef DGEX_USE_DEFAULT_ONEVENT
 
-int OnEvent(void* context)
+int OnEvent(void* context, DgeX::Ref<DgeX::Event> event);
 {
     // Default implementation does nothing.
     return DGEX_SUCCESS;

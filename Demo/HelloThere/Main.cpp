@@ -18,6 +18,7 @@ struct State
     Ref<Texture> Image;
     Ref<Texture> Canvas;
     int Count = 0;
+    bool Quit = false;
 };
 
 int OnInit(const CommandLineArgs& args, void** context)
@@ -33,7 +34,7 @@ int OnInit(const CommandLineArgs& args, void** context)
 
 int OnStart(void* context)
 {
-    State* state = static_cast<State*>(context);
+    auto state = static_cast<State*>(context);
 
     state->DirectRenderer = CreateRenderer({ false });
     state->OrderedRenderer = CreateRenderer({ true });
@@ -42,7 +43,6 @@ int OnStart(void* context)
 
     SetFont(LoadFont("Arial"));
     SetFontSize(36.0f);
-    SetFontColor(Color::LightMagenta);
 
     DGEX_LOG_INFO(NAME, "Image size: {0}x{0}", state->Image->GetWidth(), state->Image->GetHeight());
 
@@ -51,7 +51,7 @@ int OnStart(void* context)
 
 int OnUpdate(void* context)
 {
-    State* state = static_cast<State*>(context);
+    auto state = static_cast<State*>(context);
 
     ClearDevice();
 
@@ -99,16 +99,35 @@ int OnUpdate(void* context)
     SetLineColor(Color::Blue);
     DrawLine(0, 0, 640, 480);
 
+    SetFontColor(Color::LightMagenta);
     DrawText("Hello there!", 600, 10, L(TextFlag::AlignRight));
+
+    if (IsKeyPressed(L(KeyCodes::A)))
+    {
+        SetFontColor(Color::LightGreen);
+        DrawText("Key A is pressed!", 10, 10, L(TextFlag::AlignLeft));
+    }
+
+    if (IsMousePressed(L(MouseCodes::Left)))
+    {
+        FPoint pos = GetMousePosition();
+        SetFontColor(Color::LightBlue);
+        DrawText("Mouse Left Clicked!", static_cast<int>(pos.X), static_cast<int>(pos.Y), L(TextFlag::AlignRight));
+    }
 
     FlushDevice();
 
-    return 0;
+    if (IsKeyPressed(L(KeyCodes::Escape)))
+    {
+        state->Quit = true;
+    }
+
+    return state->Quit ? 1 : 0;
 }
 
-int OnEvent(void* context)
+int OnEvent(void* context, Ref<Event> event)
 {
-    State* state = static_cast<State*>(context);
+    auto state = static_cast<State*>(context);
     int value = (state->Count++) % 255;
 
     uint8_t r = static_cast<uint8_t>(value);
@@ -116,6 +135,14 @@ int OnEvent(void* context)
     uint8_t b = static_cast<uint8_t>((value * 3) % 255);
 
     SetClearColor(Color(r, g, b));
+
+    DGEX_LOG_DEBUG(NAME, "OnEvent: {0}", event->ToString());
+
+    DispatchEvent<WindowCloseEvent>(event, [&](const WindowCloseEvent& e) {
+        DGEX_LOG_INFO(NAME, "Window close event received");
+        state->Quit = true;
+        return true;
+    });
 
     return 0;
 }

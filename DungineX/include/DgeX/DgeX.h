@@ -58,9 +58,16 @@
 #include "DgeX/Defines.h"
 #include "DgeX/Version.h"
 
+#include "DgeX/Application/Event/KeyEvents.h"
+#include "DgeX/Application/Event/MouseEvents.h"
+#include "DgeX/Application/Event/WindowEvents.h"
+
 #include "DgeX/Device/Graphics/Graphics.h"
 #include "DgeX/Device/Graphics/Renderer.h"
 #include "DgeX/Device/Graphics/Window.h"
+
+#include "DgeX/Device/Input/Input.h"
+#include "DgeX/Device/Input/KeyCodes.h"
 
 #include "DgeX/Renderer/Color.h"
 #include "DgeX/Renderer/Font.h"

@@ -44,9 +44,9 @@
         }                                                                                                              \
     } while (0)
 
-#define _DGEX_ASSERT_WITH_MSG(EXPRESSION, ...)                                                                         \
+#define _DGEX_ASSERT_WITH_MSG(EXPRESSION, MESSAGE)                                                                     \
     _DGEX_ASSERT_IMPL(EXPRESSION, "Assertion '{0}' failed at {1}:{2}: {3}", DGEX_STRINGIFY_MACRO(EXPRESSION),          \
-                      std::filesystem::path(__FILE__).filename().string(), __LINE__, __VA_ARGS__)
+                      std::filesystem::path(__FILE__).filename().string(), __LINE__, MESSAGE)
 
 #define _DGEX_ASSERT_NO_MSG(EXPRESSION)                                                                                \
     _DGEX_ASSERT_IMPL(EXPRESSION, "Assertion '{0}' failed at {1}:{2}", DGEX_STRINGIFY_MACRO(EXPRESSION),               \
@@ -63,6 +63,7 @@
  * DGEX_ASSERT(a > b, "a must not greater than b");
  */
 #define DGEX_ASSERT(...) DGEX_EXPAND_MACRO(_DGEX_ASSERT_MACRO(__VA_ARGS__)(__VA_ARGS__))
+
 #else
 #define DGEX_ASSERT(...)
 #endif

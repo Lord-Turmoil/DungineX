@@ -3,39 +3,60 @@
  ******************************************************************************
  *                   Project Name : DungineX                                  *
  *                                                                            *
- *                      File Name : MainLoop.h                                *
+ *                      File Name : KeyEvent.cpp                              *
  *                                                                            *
  *                     Programmer : Tony S.                                   *
  *                                                                            *
- *                     Start Date : June 2, 2025                              *
+ *                     Start Date : August 15, 2025                           *
  *                                                                            *
- *                    Last Update : June 2, 2025                              *
+ *                    Last Update : August 15, 2025                           *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
  *                                                                            *
- * Main loop of the game.                                                     *
+ * Keyboard event types.                                                      *
  ******************************************************************************/
 
-#pragma once
+#include "DgeX/Application/Event/KeyEvents.h"
 
-#include "DgeX/Defines.h"
-
-#include "DgeX/Utils/Types.h"
+#include <sstream>
 
 DGEX_BEGIN
 
-class Event;
+KeyCode KeyEvent::GetKeyCode() const
+{
+    return _code;
+}
 
-using OnUpdateCallback = bool (*)(void);
-using OnEventCallback = void (*)(Ref<Event>);
+KeyEvent::KeyEvent(KeyCode code) : _code(code)
+{
+}
 
-/**
- * @brief Run the main loop.
- *
- * @param onUpdate Called on frame update.
- * @param onEvent Called on receiving new events.
- */
-void MainLoop(OnUpdateCallback onUpdate, OnEventCallback onEvent);
+KeyPressedEvent::KeyPressedEvent(KeyCode code, bool repeat) : KeyEvent(code), _repeat(repeat)
+{
+}
+
+std::string KeyPressedEvent::ToString() const
+{
+    std::stringstream ss;
+    ss << GetName() << " [code=" << _code << ", repeat=" << _repeat << "]";
+    return ss.str();
+}
+
+bool KeyPressedEvent::IsRepeat() const
+{
+    return _repeat;
+}
+
+KeyReleasedEvent::KeyReleasedEvent(KeyCode code) : KeyEvent(code)
+{
+}
+
+std::string KeyReleasedEvent::ToString() const
+{
+    std::stringstream ss;
+    ss << GetName() << " [code=" << _code << "]";
+    return ss.str();
+}
 
 DGEX_END
