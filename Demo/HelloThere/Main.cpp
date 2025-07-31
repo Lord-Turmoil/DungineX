@@ -33,7 +33,7 @@ int OnInit(const CommandLineArgs& args, void** context)
 
 int OnStart(void* context)
 {
-    State* state = static_cast<State*>(context);
+    auto state = static_cast<State*>(context);
 
     state->DirectRenderer = CreateRenderer({ false });
     state->OrderedRenderer = CreateRenderer({ true });
@@ -42,7 +42,6 @@ int OnStart(void* context)
 
     SetFont(LoadFont("Arial"));
     SetFontSize(36.0f);
-    SetFontColor(Color::LightMagenta);
 
     DGEX_LOG_INFO(NAME, "Image size: {0}x{0}", state->Image->GetWidth(), state->Image->GetHeight());
 
@@ -51,7 +50,7 @@ int OnStart(void* context)
 
 int OnUpdate(void* context)
 {
-    State* state = static_cast<State*>(context);
+    auto state = static_cast<State*>(context);
 
     ClearDevice();
 
@@ -99,16 +98,35 @@ int OnUpdate(void* context)
     SetLineColor(Color::Blue);
     DrawLine(0, 0, 640, 480);
 
+    SetFontColor(Color::LightMagenta);
     DrawText("Hello there!", 600, 10, L(TextFlag::AlignRight));
 
+    if (IsKeyPressed(KeyCode::A))
+    {
+        SetFontColor(Color::LightGreen);
+        DrawText("Key A is pressed!", 10, 10, L(TextFlag::AlignLeft));
+    }
+
+    if (IsMousePressed(MouseCode::Left))
+    {
+        Point pos = GetMousePosition();
+        SetFontColor(Color::LightBlue);
+        DrawText("Mouse Left Clicked!", pos.X, pos.Y, L(TextFlag::AlignRight));
+    }
+
     FlushDevice();
+
+    if (IsKeyPressed(KeyCode::Escape))
+    {
+        return 1;
+    }
 
     return 0;
 }
 
 int OnEvent(void* context)
 {
-    State* state = static_cast<State*>(context);
+    auto state = static_cast<State*>(context);
     int value = (state->Count++) % 255;
 
     uint8_t r = static_cast<uint8_t>(value);

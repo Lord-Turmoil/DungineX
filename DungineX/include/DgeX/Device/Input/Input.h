@@ -3,53 +3,49 @@
  ******************************************************************************
  *                   Project Name : DungineX                                  *
  *                                                                            *
- *                      File Name : MainLoop.h                                *
+ *                      File Name : Input.h                                   *
  *                                                                            *
  *                     Programmer : Tony S.                                   *
  *                                                                            *
- *                     Start Date : June 2, 2025                              *
+ *                     Start Date : July 31, 2025                             *
  *                                                                            *
- *                    Last Update : June 2, 2025                              *
+ *                    Last Update : July 31, 2025                             *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
  *                                                                            *
- * Main loop of the game.                                                     *
+ * Direct input handling.                                                     *
  ******************************************************************************/
 
-#include "Impl/MainLoop.h"
+#pragma once
 
-#include "DgeX/Device/Graphics/Renderer.h"
-#include "DgeX/Utils/Log.h"
-
-#include <SDL3/SDL.h>
+#include "DgeX/Defines.h"
+#include "DgeX/Device/Input/KeyCode.h"
+#include "DgeX/Utils/Types.h"
 
 DGEX_BEGIN
 
-void MainLoop(OnUpdateCallback onUpdate, OnEventCallback onEvent)
-{
-    DGEX_CORE_INFO("Main loop started");
+/**
+ * @brief Checks if a specific key is currently pressed.
+ *
+ * @param key The key code to check.
+ * @return true if the key is pressed, false otherwise.
+ */
+DGEX_API bool IsKeyPressed(KeyCode key);
 
-    bool isRunning = true;
-    while (isRunning)
-    {
-        SDL_Event event;
-        while (SDL_PollEvent(&event))
-        {
-            onEvent();
-            if (event.type == SDL_EVENT_QUIT)
-            {
-                isRunning = false;
-            }
-        }
+/**
+ * @brief Checks if a specific mouse button is currently pressed.
+ *
+ * @param button The mouse button code to check.
+ * @return true if the mouse button is pressed, false otherwise.
+ */
+DGEX_API bool IsMousePressed(MouseCode button);
 
-        if (onUpdate())
-        {
-            isRunning = false;
-        }
-    }
-
-    DGEX_CORE_INFO("Main loop ended");
-}
+/**
+ * @brief Get the current position of the mouse cursor.
+ *
+ * @return The position of the mouse from the top-left corner of the window.
+ */
+DGEX_API Point GetMousePosition();
 
 DGEX_END
