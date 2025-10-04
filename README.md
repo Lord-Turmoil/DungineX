@@ -20,3 +20,23 @@ DungineX is built using [CMake](https://cmake.org/). First, you need to fetch al
 ```bash
 git submodule update --init --recursive
 ```
+
+For unit testing, some files should be copied to the build directory. Rerun CMake configuration to automatically copy them. 
+
+
+## Use DungineX
+
+You can set up DungineX as a submodule in your own project:
+
+```bash
+git submodule add https://github.com/Lord-Turmoil/DungineX.git
+```
+
+Then, in your `CMakeLists.txt`, you can include DungineX like this:
+
+```cmake
+add_subdirectory(DungineX)
+target_link_libraries(YourProject PRIVATE DgeX::DgeX)
+```
+
+If you want to use static linking, you can pass `DGEX_USE_SHARED=OFF`.

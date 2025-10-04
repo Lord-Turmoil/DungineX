@@ -14,8 +14,8 @@ TEST_CASE("Expected Test")
     CHECK(expected); // implicit convertion to bool
     CHECK_EQ(expected.Value().Value, 1);
 
-    DgeX::Expected<Good, int> expected = Failure(2);
-    CHECK(!expected.IsExpected());
-    CHECK(!expected);
-    CHECK_EQ(expected.Error(), 2);
+    DgeX::Expected<Good, int> unexpected = Failure(2);
+    CHECK(!unexpected.IsExpected());
+    CHECK(!unexpected);
+    CHECK_EQ(unexpected.Error(), 2);
 }

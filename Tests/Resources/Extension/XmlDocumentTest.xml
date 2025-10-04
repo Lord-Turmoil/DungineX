@@ -1,0 +1,23 @@
+<Page name="main">
+    <Styles>
+        <Style name="box">
+            <Property name="width" value="200px"/>
+            <Property name="height" value="100px"/>
+            <Property name="fontSize" value="30px"/>
+        </Style>
+        <Style name="button">
+            <Property name="fontSize" value="20px"/>
+            <State name="hover">
+                <Property name="fontSize" value="40px"/>
+            </State>
+        </Style>
+    </Styles>
+
+    <Box style="box" backgroundColor="#AA0000">
+        <Button text="Click Me">
+            <State name="hover">
+                <Property name="backgroundColor" value="#00AA00"/>
+            </State>
+        </Button>
+    </Box>
+</Page>

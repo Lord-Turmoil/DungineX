@@ -3,30 +3,43 @@
  ******************************************************************************
  *                   Project Name : DungineX                                  *
  *                                                                            *
- *                      File Name : Macros.h                                  *
+ *                      File Name : Timer.h                                   *
  *                                                                            *
  *                     Programmer : Tony S.                                   *
  *                                                                            *
- *                     Start Date : May 25, 2025                              *
+ *                     Start Date : August 24, 2025                           *
  *                                                                            *
- *                    Last Update : May 25, 2025                              *
+ *                    Last Update : August 24, 2025                           *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
  *                                                                            *
- * Utility macro definitions.                                                 *
+ * Timer.                                                                     *
  ******************************************************************************/
 
 #pragma once
 
-#include <cstring>
+#include "DgeX/Defines.h"
 
-// All macros are prefixed with DGEX_ to avoid name collisions.
+DGEX_BEGIN
 
-#define DGEX_EXPAND_MACRO(x)    x
-#define DGEX_STRINGIFY_MACRO(x) #x
-#define DGEX_STRINGIFY(x)       DGEX_STRINGIFY_MACRO(x)
+using timestamp_t = float;
 
-#define DGEX_BIT(x) (1 << (x))
+/**
+ * @brief Get the elapsed time since start of the game in seconds.
+ *
+ * @return Current timestamp in seconds.
+ */
+DGEX_API timestamp_t GetTimestamp();
 
-#define DGEX_STR_EQUAL(a, b) (strcmp(a, b) == 0)
+/**
+ * @brief Get the elapsed time since start time in seconds.
+ *
+ * Ensure that start time is obtained from GetTimestamp().
+ *
+ * @param startTime Start time.
+ * @return Elapsed time from start time.
+ */
+DGEX_API timestamp_t GetElapsedTime(timestamp_t startTime);
+
+DGEX_END

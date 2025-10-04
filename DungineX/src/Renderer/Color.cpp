@@ -21,6 +21,8 @@
 
 #include "DgeX/Utils/Math.h"
 
+#include <sstream>
+
 DGEX_BEGIN
 
 // clang-format off
@@ -52,6 +54,28 @@ Color::Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) : R(r), G(g), B(b), A(a
 {
 }
 
+Color::Color(const char* value) : R(0), G(0), B(0), A(255)
+{
+    uint8_t r, g, b, a;
+
+    if ((sscanf_s(value, "#%02hhx%02hhx%02hhx%02hhx", &a, &r, &g, &b) == 4) ||
+        (sscanf_s(value, "rgba(%hhu,%hhu,%hhu,%hhu)", &r, &g, &b, &a) == 4))
+    {
+        R = r;
+        G = g;
+        B = b;
+        A = a;
+    }
+    else if ((sscanf_s(value, "#%02hhx%02hhx%02hhx", &r, &g, &b) == 3) ||
+             (sscanf_s(value, "rgb(%hhu,%hhu,%hhu)", &r, &g, &b) == 3))
+    {
+        R = r;
+        G = g;
+        B = b;
+        A = 255;
+    }
+}
+
 Color Color::FromHex(uint32_t color)
 {
     // clang-format off
@@ -67,6 +91,39 @@ Color Color::FromHex(uint32_t color)
 uint32_t Color::ToHex() const
 {
     return (A << 24) | (R << 16) | (G << 8) | B;
+}
+
+std::string Color::ToString() const
+{
+    std::stringstream ss;
+    ss << "#" << std::hex << A << R << G << B;
+    return ss.str();
+}
+
+std::string Color::ToString(ColorFormats format) const
+{
+    std::stringstream ss;
+    switch (format)
+    {
+    case ColorFormats::RGB:
+        ss << "rgb(" << R << ", " << G << ", " << B << ")";
+        break;
+    case ColorFormats::RGBA:
+        ss << "rgba(" << R << ", " << G << ", " << B << ", " << A << ")";
+        break;
+    case ColorFormats::HRGB:
+        ss << "#" << std::hex << R << G << B;
+        break;
+    case ColorFormats::HARGB:
+        ss << "#" << std::hex << A << R << G << B;
+        break;
+    }
+    return ss.str();
+}
+
+bool Color::operator==(const Color& other) const
+{
+    return (R == other.R) && (G == other.G) && (B == other.B) && (A == other.A);
 }
 
 Color& Color::operator*=(float scalar)

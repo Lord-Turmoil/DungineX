@@ -3,30 +3,34 @@
  ******************************************************************************
  *                   Project Name : DungineX                                  *
  *                                                                            *
- *                      File Name : Macros.h                                  *
+ *                      File Name : Timer.cpp                                 *
  *                                                                            *
  *                     Programmer : Tony S.                                   *
  *                                                                            *
- *                     Start Date : May 25, 2025                              *
+ *                     Start Date : August 24, 2025                           *
  *                                                                            *
- *                    Last Update : May 25, 2025                              *
+ *                    Last Update : August 24, 2025                           *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
  *                                                                            *
- * Utility macro definitions.                                                 *
+ * Timer.                                                                     *
  ******************************************************************************/
 
-#pragma once
+#include "DgeX/Core/Timer.h"
 
-#include <cstring>
+#include <SDL3/SDL.h>
 
-// All macros are prefixed with DGEX_ to avoid name collisions.
+DGEX_BEGIN
 
-#define DGEX_EXPAND_MACRO(x)    x
-#define DGEX_STRINGIFY_MACRO(x) #x
-#define DGEX_STRINGIFY(x)       DGEX_STRINGIFY_MACRO(x)
+timestamp_t GetTimestamp()
+{
+    return static_cast<timestamp_t>(SDL_GetTicks()) / 1000.0f;
+}
 
-#define DGEX_BIT(x) (1 << (x))
+timestamp_t GetElapsedTime(timestamp_t startTime)
+{
+    return GetTimestamp() - startTime;
+}
 
-#define DGEX_STR_EQUAL(a, b) (strcmp(a, b) == 0)
+DGEX_END

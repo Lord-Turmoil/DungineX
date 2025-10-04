@@ -23,8 +23,6 @@
 
 #include <SDL3/SDL.h>
 
-#include <Windows.h>
-
 DGEX_BEGIN
 
 bool IsKeyPressed(KeyCode code)

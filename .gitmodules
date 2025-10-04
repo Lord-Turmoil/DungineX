@@ -13,3 +13,6 @@
 [submodule "Vendor/SDL_FontCache"]
 	path = Vendor/SDL_FontCache
 	url = https://github.com/Lord-Turmoil/SDL_FontCache.git
+[submodule "Vendor/tinyxml2"]
+	path = Vendor/tinyxml2
+	url = https://github.com/leethomason/tinyxml2.git

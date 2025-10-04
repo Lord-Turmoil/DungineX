@@ -22,11 +22,20 @@
 #include "DgeX/Defines.h"
 
 #include <cstdint>
+#include <string>
 
 DGEX_BEGIN
 
 #define DGEX_COLOR_OPAQUE      255
 #define DGEX_COLOR_TRANSPARENT 0
+
+enum class ColorFormats
+{
+    RGB,  // rgb(r, g, b)
+    RGBA, // rgba(r, g, b, a)
+    HRGB, // #RRGGBB
+    HARGB // #AARRGGBB
+};
 
 struct Color
 {
@@ -55,6 +64,19 @@ struct Color
     DGEX_API Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a = DGEX_COLOR_OPAQUE);
 
     /**
+     * @brief Construct color from string.
+     *
+     * The string can be in formats of:
+     * - #RRGGBB
+     * - #AARRGGBB
+     * - rgb(r, g, b)
+     * - rgba(r, g, b, a)
+     *
+     * @param value Color value.
+     */
+    DGEX_API Color(const char* value);
+
+    /**
      * @brief Get color from hex number.
      *
      * Hex color in format of: 0xAARRGGBB
@@ -65,6 +87,10 @@ struct Color
     DGEX_API static Color FromHex(uint32_t color);
 
     DGEX_API uint32_t ToHex() const;
+    DGEX_API std::string ToString() const;
+    DGEX_API std::string ToString(ColorFormats format) const;
+
+    DGEX_API bool operator==(const Color& other) const;
 
     DGEX_API Color& operator*=(float scalar);
     DGEX_API Color& operator/=(float scalar);

@@ -62,6 +62,12 @@ add_subdirectory(SDL_FontCache EXCLUDE_FROM_ALL)
 
 add_subdirectory(spdlog)
 
+#---------------------------------------------------------------------
+# Adding tinyxml2 for XML parsing
+#---------------------------------------------------------------------
+
+add_subdirectory(tinyxml2)
+
 # --------------------------------------------------------------------
 # Creating all-in-one vendor dependency
 # --------------------------------------------------------------------
@@ -76,6 +82,7 @@ target_link_libraries(DgeX_Vendor INTERFACE
     SDL3_FontCache::SDL3_FontCache
     SDL3::SDL3 # SDL must be the last item in the list.
     spdlog::spdlog
+    tinyxml2::tinyxml2
 )
 
 add_library(DgeX::Vendor ALIAS DgeX_Vendor)
