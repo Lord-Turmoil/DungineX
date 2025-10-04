@@ -95,9 +95,99 @@ struct Color
     DGEX_API Color& operator*=(float scalar);
     DGEX_API Color& operator/=(float scalar);
 
+    // Although I don't think adding or subtracting colors make sense,
+    // they are somehow required for easing but just provide them for completeness.
+    // These two will not change alpha channel.
+    DGEX_API Color operator+(const Color& other) const;
+    DGEX_API Color operator-(const Color& other) const;
+
     DGEX_API friend Color operator*(const Color& color, float scalar);
     DGEX_API friend Color operator*(float scalar, const Color& color);
     DGEX_API friend Color operator/(const Color& color, float scalar);
 };
+
+DGEX_END
+
+// Definition of math functions.
+
+#include "DgeX/Utils/Math.h"
+
+DGEX_BEGIN
+
+namespace Math
+{
+
+template <>
+inline Color Cos<Color>(Color x)
+{
+    return { static_cast<uint8_t>(std::cos(static_cast<float>(x.R)) * 255),
+             static_cast<uint8_t>(std::cos(static_cast<float>(x.G)) * 255),
+             static_cast<uint8_t>(std::cos(static_cast<float>(x.B)) * 255), x.A };
+}
+
+template <>
+inline Color Sin<Color>(Color x)
+{
+    return { static_cast<uint8_t>(std::sin(static_cast<float>(x.R)) * 255),
+             static_cast<uint8_t>(std::sin(static_cast<float>(x.G)) * 255),
+             static_cast<uint8_t>(std::sin(static_cast<float>(x.B)) * 255), x.A };
+}
+
+template <>
+inline Color Tan(Color x)
+{
+    return { static_cast<uint8_t>(std::tan(static_cast<float>(x.R)) * 255),
+             static_cast<uint8_t>(std::tan(static_cast<float>(x.G)) * 255),
+             static_cast<uint8_t>(std::tan(static_cast<float>(x.B)) * 255), x.A };
+}
+
+// What, power of color? I don't think it should be used...
+template <>
+inline Color Pow(Color x, float y)
+{
+    return { static_cast<uint8_t>(std::pow(static_cast<float>(x.R) / 255.0f, y) * 255),
+             static_cast<uint8_t>(std::pow(static_cast<float>(x.G) / 255.0f, y) * 255),
+             static_cast<uint8_t>(std::pow(static_cast<float>(x.B) / 255.0f, y) * 255), x.A };
+}
+
+template <>
+inline Color Pow2(Color x)
+{
+    return Pow(x, 2.0f);
+}
+
+template <>
+inline Color Pow3(Color x)
+{
+    return Pow(x, 3.0f);
+}
+
+template <>
+inline Color Pow4(Color x)
+{
+    return Pow(x, 4.0f);
+}
+
+template <>
+inline Color Pow5(Color x)
+{
+    return Pow(x, 5.0f);
+}
+
+template <>
+inline Color Abs(Color x)
+{
+    return x;
+}
+
+template <>
+inline Color Sqrt(Color x)
+{
+    return { static_cast<uint8_t>(std::sqrt(static_cast<float>(x.R))),
+             static_cast<uint8_t>(std::sqrt(static_cast<float>(x.G))),
+             static_cast<uint8_t>(std::sqrt(static_cast<float>(x.B))), x.A };
+};
+
+} // namespace Math
 
 DGEX_END

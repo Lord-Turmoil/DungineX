@@ -3,53 +3,50 @@
  ******************************************************************************
  *                   Project Name : DungineX                                  *
  *                                                                            *
- *                      File Name : Timer.cpp                                 *
+ *                      File Name : WidgetEvents.h                            *
  *                                                                            *
  *                     Programmer : Tony S.                                   *
  *                                                                            *
- *                     Start Date : August 24, 2025                           *
+ *                     Start Date : October 4, 2025                           *
  *                                                                            *
- *                    Last Update : August 24, 2025                           *
+ *                    Last Update : October 4, 2025                           *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
  *                                                                            *
- * Timer.                                                                     *
+ * Widget event types.                                                        *
  ******************************************************************************/
 
-#include "DgeX/Core/Timer.h"
+#pragma once
 
-#include <SDL3/SDL.h>
+#include "DgeX/Application/Event/Event.h"
 
 DGEX_BEGIN
 
-timestamp_t GetTimestamp()
-{
-    return static_cast<timestamp_t>(SDL_GetTicks()) / 1000.0f;
-}
+class BaseWidget;
 
-timestamp_t GetElapsedTime(timestamp_t startTime)
+class MouseEnterEvent final : public Event
 {
-    return GetTimestamp() - startTime;
-}
+public:
+    MouseEnterEvent() = default;
 
-DeltaTime::DeltaTime(timestamp_t time) : _time(time)
-{
-}
+    DECL_EVENT_CLASS_TYPE(MouseEnter)
+};
 
-DeltaTime::operator timestamp_t() const
+class MouseLeaveEvent final : public Event
 {
-    return Seconds();
-}
+public:
+    MouseLeaveEvent() = default;
 
-timestamp_t DeltaTime::Seconds() const
-{
-    return _time;
-}
+    DECL_EVENT_CLASS_TYPE(MouseLeave)
+};
 
-timestamp_t DeltaTime::Milliseconds() const
+class MouseClickEvent final : public Event
 {
-    return _time * 1000.0f;
-}
+public:
+    MouseClickEvent() = default;
+
+    DECL_EVENT_CLASS_TYPE(MouseClick)
+};
 
 DGEX_END

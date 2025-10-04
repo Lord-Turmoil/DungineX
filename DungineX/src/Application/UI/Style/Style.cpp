@@ -27,6 +27,38 @@ DGEX_BEGIN
 namespace UI
 {
 
+BaseStyle::BaseStyle(const BaseStyle& other)
+{
+    _name = other._name;
+    _properties = other._properties;
+}
+
+BaseStyle::BaseStyle(BaseStyle&& other) noexcept
+{
+    _name = std::move(other._name);
+    _properties = std::move(other._properties);
+}
+
+BaseStyle& BaseStyle::operator=(const BaseStyle& other)
+{
+    if (this != &other)
+    {
+        _name = other._name;
+        _properties = other._properties;
+    }
+    return *this;
+}
+
+BaseStyle& BaseStyle::operator=(BaseStyle&& other) noexcept
+{
+    if (this != &other)
+    {
+        _name = std::move(other._name);
+        _properties = std::move(other._properties);
+    }
+    return *this;
+}
+
 BaseStyle::BaseStyle(std::string name) : _name(std::move(name))
 {
 }
@@ -64,7 +96,7 @@ BaseStyle::BaseStyle(Ext::XmlElement element)
     }
 }
 
-void BaseStyle::Merge(const Ref<BaseStyle>& style)
+void BaseStyle::_Merge(const Ref<BaseStyle>& style)
 {
     if (!style)
     {
@@ -77,7 +109,7 @@ void BaseStyle::Merge(const Ref<BaseStyle>& style)
     }
 }
 
-void BaseStyle::Merge(Ext::XmlElement element)
+void BaseStyle::_Merge(Ext::XmlElement element)
 {
     Ext::XmlAttribute attribute = element.FirstAttribute();
     while (attribute)
@@ -132,7 +164,7 @@ bool BaseStyle::HasProperty(const std::string& name)
     return _properties.find(name) != _properties.end();
 }
 
-void BaseStyle::DumpProperties(tinyxml2::XMLPrinter& printer) const
+void BaseStyle::_DumpProperties(tinyxml2::XMLPrinter& printer) const
 {
     for (const auto& [propName, propValue] : _properties)
     {
@@ -141,6 +173,44 @@ void BaseStyle::DumpProperties(tinyxml2::XMLPrinter& printer) const
         printer.PushAttribute("value", propValue.c_str());
         printer.CloseElement();
     }
+}
+
+Style::Style(const Style& other) : BaseStyle(other)
+{
+    _name = other._name;
+    for (const auto& [stateName, stateStyle] : other._states)
+    {
+        _states[stateName] = CreateRef<BaseStyle>(*stateStyle);
+    }
+}
+
+Style::Style(Style&& other) noexcept : BaseStyle(std::move(other))
+{
+    _states = std::move(other._states);
+}
+
+Style& Style::operator=(const Style& other)
+{
+    if (this != &other)
+    {
+        BaseStyle::operator=(other);
+        _states.clear();
+        for (const auto& [stateName, stateStyle] : other._states)
+        {
+            _states[stateName] = CreateRef<BaseStyle>(*stateStyle);
+        }
+    }
+    return *this;
+}
+
+Style& Style::operator=(Style&& other) noexcept
+{
+    if (this != &other)
+    {
+        BaseStyle::operator=(std::move(other));
+        _states = std::move(other._states);
+    }
+    return *this;
 }
 
 bool BaseStyle::IsValid() const
@@ -183,12 +253,12 @@ void Style::Merge(const Ref<Style>& style)
         return;
     }
 
-    BaseStyle::Merge(style);
+    _Merge(style);
     for (const auto& [stateName, stateStyle] : style->_states)
     {
         if (auto it = _states.find(stateName); it != _states.end())
         {
-            it->second->Merge(stateStyle);
+            it->second->_Merge(stateStyle);
         }
         else
         {
@@ -199,7 +269,7 @@ void Style::Merge(const Ref<Style>& style)
 
 void Style::Merge(Ext::XmlElement element)
 {
-    BaseStyle::Merge(element);
+    _Merge(element);
 
     Ext::XmlElement stateElement = element.FirstChild("State");
     while (stateElement)
@@ -209,7 +279,7 @@ void Style::Merge(Ext::XmlElement element)
         {
             if (auto it = _states.find(style->GetName()); it != _states.end())
             {
-                it->second->Merge(style);
+                it->second->_Merge(style);
             }
             else
             {
@@ -268,12 +338,12 @@ void Style::_Dump(tinyxml2::XMLPrinter& printer) const
 {
     printer.OpenElement("Style");
     printer.PushAttribute("name", GetName().c_str());
-    DumpProperties(printer);
+    _DumpProperties(printer);
     for (const auto& [name, style] : _states)
     {
         printer.OpenElement("State");
         printer.PushAttribute("name", name.c_str());
-        style->DumpProperties(printer);
+        style->_DumpProperties(printer);
         printer.CloseElement();
     }
     printer.CloseElement();

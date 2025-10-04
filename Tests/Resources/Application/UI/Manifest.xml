@@ -1,0 +1,27 @@
+<App name="UITest">
+    <Resources>
+        
+    </Resources>
+    
+    <Include src="./Styles.xml"></Include>
+
+    <Styles>
+        <Style name="inlined-style">
+            <Property name="width" value="200px"/>
+            <Property name="height" value="100px"/>
+        </Style>
+    </Styles>
+
+    <Include src="./HomePage.xml"></Include>
+
+    <Page name="inlined-page">
+        <Button id="1" backgroundColor="#AA0000">
+            <State name="hover">
+                <Property name="backgroundColor" value="#00AA00"/>
+            </State>
+            <State name="active">
+                <Property name="backgroundColor" value="#0000AA"/>
+            </State>
+        </Button>
+    </Page>
+</App>

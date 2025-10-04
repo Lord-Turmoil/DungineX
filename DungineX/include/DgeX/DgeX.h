@@ -45,10 +45,11 @@
  * like to say thank you to:                                                  *
  * - SDL3 (https://www.libsdl.org/) and all its components                    *
  * - spdlog (https://github.com/gabime/spdlog)                                *
+ * - tinyxml2 (https://github.com/leethomason/tinyxml2)                       *
  * -------------------------------------------------------------------------- *
  *                                                                            *
- *               "This is the moment, when all I've done,                     *
- *         all of my dreaming, scheming and screaming become one."            *
+ *                 "This is the moment, when all I've done,                   *
+ *          all of my dreaming, scheming and screaming become one."           *
  *                                                                            *
  *                                                         - Jekyll & Hyde    *
  ******************************************************************************/
@@ -60,7 +61,12 @@
 
 #include "DgeX/Application/Event/KeyEvents.h"
 #include "DgeX/Application/Event/MouseEvents.h"
+#include "DgeX/Application/Event/WidgetEvents.h"
 #include "DgeX/Application/Event/WindowEvents.h"
+#include "DgeX/Application/UI/Style/Style.h"
+#include "DgeX/Application/UI/Style/WidgetProperty.h"
+
+#include "DgeX/Core/Timer.h"
 
 #include "DgeX/Device/Graphics/Graphics.h"
 #include "DgeX/Device/Graphics/Renderer.h"
@@ -75,8 +81,12 @@
 #include "DgeX/Renderer/Texture.h"
 
 #include "DgeX/Utils/Assert.h"
+#include "DgeX/Utils/Easing.h"
+#include "DgeX/Utils/Files.h"
 #include "DgeX/Utils/Log.h"
 #include "DgeX/Utils/Macros.h"
 #include "DgeX/Utils/Math.h"
+#include "DgeX/Utils/Random.h"
 #include "DgeX/Utils/Strings.h"
 #include "DgeX/Utils/Types.h"
+#include "DgeX/Utils/UUID.h"

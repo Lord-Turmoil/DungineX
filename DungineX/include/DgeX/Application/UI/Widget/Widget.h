@@ -3,63 +3,65 @@
  ******************************************************************************
  *                   Project Name : DungineX                                  *
  *                                                                            *
- *                      File Name : Timer.h                                   *
+ *                      File Name : VisualWidget.h                            *
  *                                                                            *
  *                     Programmer : Tony S.                                   *
  *                                                                            *
- *                     Start Date : August 24, 2025                           *
+ *                     Start Date : October 4, 2025                           *
  *                                                                            *
- *                    Last Update : August 24, 2025                           *
+ *                    Last Update : October 4, 2025                           *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
  *                                                                            *
- * Timer.                                                                     *
+ * Widget that can be displayed on the scree.                                 *
  ******************************************************************************/
 
 #pragma once
 
-#include "DgeX/Defines.h"
+#include "DgeX/Application/UI/Style/WidgetProperty.h"
+#include "DgeX/Application/UI/Widget/BaseWidget.h"
 
 DGEX_BEGIN
 
-using timestamp_t = float;
+namespace UI
+{
 
 /**
- * @brief Get the elapsed time since start of the game in seconds.
+ * @brief Base class for visible widgets.
  *
- * @return Current timestamp in seconds.
+ * Intentionally private inherit from std::enable_shared_from_this.
  */
-DGEX_API timestamp_t GetTimestamp();
-
-/**
- * @brief Get the elapsed time since start time in seconds.
- *
- * Ensure that start time is obtained from GetTimestamp().
- *
- * @param startTime Start time.
- * @return Elapsed time from start time.
- */
-DGEX_API timestamp_t GetElapsedTime(timestamp_t startTime);
-
-/**
- * @brief A utility structure to represent a delta time.
- */
-class DeltaTime
+class Widget : public BaseWidget, std::enable_shared_from_this<Widget>
 {
 public:
-    DeltaTime(timestamp_t time);
+    Widget(Ext::XmlElement element);
+    ~Widget() override = default;
+
+    Ref<Widget> AsWidget() override;
+
+    Ref<Widget> ParentWidget() const;
+    Ref<Widget> GetChildWidgetById(const std::string& id) const;
+
+public:
+    void Update(DeltaTime delta) override;
+
+    WidgetProperties& GetProperties();
+    const WidgetProperties& GetProperties() const;
+
+protected:
+    bool _IsInside(FPoint position) const override;
+    void _ApplyStyles() override;
 
     /**
-     * @brief Implicit conversion to timestamp_t in seconds.
+     * @brief Rearrange the widget layout.
      */
-    operator timestamp_t() const;
-
-    timestamp_t Seconds() const;
-    timestamp_t Milliseconds() const;
+    virtual void _Rearrange();
 
 private:
-    timestamp_t _time;
+    WidgetProperties _properties;
 };
+
+} // namespace UI
 
 DGEX_END

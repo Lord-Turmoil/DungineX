@@ -5,11 +5,12 @@
 message(STATUS "Build DungineX unit tests")
 
 set(tests 
+    Property
     Style
-    Version
+    XmlDocument
     Expected
     Strings
-    XmlDocument
+    Version
 )
 
 foreach(test ${tests})

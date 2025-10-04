@@ -34,9 +34,11 @@ DGEX_BEGIN
 /**
  * We use Scope for std::unique_ptr.
  */
-template <typename T> using Scope = std::unique_ptr<T>;
+template <typename T>
+using Scope = std::unique_ptr<T>;
 
-template <typename T, typename... Args> constexpr Scope<T> CreateScope(Args&&... args)
+template <typename T, typename... Args>
+constexpr Scope<T> CreateScope(Args&&... args)
 {
     return std::make_unique<T>(std::forward<Args>(args)...);
 }
@@ -44,12 +46,17 @@ template <typename T, typename... Args> constexpr Scope<T> CreateScope(Args&&...
 /**
  * We use Ref for std::shared_ptr.
  */
-template <typename T> using Ref = std::shared_ptr<T>;
+template <typename T>
+using Ref = std::shared_ptr<T>;
 
-template <typename T, typename... Args> constexpr Ref<T> CreateRef(Args&&... args)
+template <typename T, typename... Args>
+constexpr Ref<T> CreateRef(Args&&... args)
 {
     return std::make_shared<T>(std::forward<Args>(args)...);
 }
+
+template <typename T>
+using WeakRef = std::weak_ptr<T>;
 
 // ============================================================================
 // Type Alias Helper
@@ -62,7 +69,8 @@ template <typename T, typename... Args> constexpr Ref<T> CreateRef(Args&&... arg
  * @param value Value to convert to its literal type.
  * @return The value of its underlying type.
  */
-template <typename T> constexpr auto L(T value) noexcept
+template <typename T>
+constexpr auto L(T value) noexcept
 {
     return static_cast<std::underlying_type_t<T>>(value);
 }
@@ -71,7 +79,8 @@ template <typename T> constexpr auto L(T value) noexcept
 // Shapes
 // ----------------------------------------------------------------------------
 
-template <typename T> struct RectT
+template <typename T>
+struct RectT
 {
     T X;
     T Y;
@@ -86,7 +95,8 @@ template <typename T> struct RectT
 using Rect = RectT<int>;
 using FRect = RectT<float>;
 
-template <typename T> struct PointT
+template <typename T>
+struct PointT
 {
     T X;
     T Y;

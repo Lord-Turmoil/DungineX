@@ -3,53 +3,41 @@
  ******************************************************************************
  *                   Project Name : DungineX                                  *
  *                                                                            *
- *                      File Name : Timer.cpp                                 *
+ *                      File Name : UUID.cpp                                  *
  *                                                                            *
  *                     Programmer : Tony S.                                   *
+ *                     Programmer : Tony Lewis                                *
  *                                                                            *
- *                     Start Date : August 24, 2025                           *
+ *                     Start Date : October 4, 2025                           *
  *                                                                            *
- *                    Last Update : August 24, 2025                           *
+ *                    Last Update : October 4, 2025                           *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
  *                                                                            *
- * Timer.                                                                     *
+ * UUID implementation.                                                       *
  ******************************************************************************/
 
-#include "DgeX/Core/Timer.h"
+#include <sstream>
 
-#include <SDL3/SDL.h>
+#include "DgeX/Utils/UUID.h"
+#include "DgeX/Utils/Random.h"
 
 DGEX_BEGIN
 
-timestamp_t GetTimestamp()
-{
-    return static_cast<timestamp_t>(SDL_GetTicks()) / 1000.0f;
-}
-
-timestamp_t GetElapsedTime(timestamp_t startTime)
-{
-    return GetTimestamp() - startTime;
-}
-
-DeltaTime::DeltaTime(timestamp_t time) : _time(time)
+UUID::UUID() : _uuid(Utils::Random::RandomUInt64())
 {
 }
 
-DeltaTime::operator timestamp_t() const
+UUID::UUID(uint64_t uuid) : _uuid(uuid)
 {
-    return Seconds();
 }
 
-timestamp_t DeltaTime::Seconds() const
+std::string UUID::ToString() const
 {
-    return _time;
-}
-
-timestamp_t DeltaTime::Milliseconds() const
-{
-    return _time * 1000.0f;
+    std::ostringstream ss;
+    ss << std::hex << std::uppercase << _uuid;
+    return ss.str();
 }
 
 DGEX_END

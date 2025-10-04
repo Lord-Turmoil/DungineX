@@ -1,5 +1,3 @@
-#include "DgeX/Application/UI/Style/Style.h"
-
 #include "doctest/Common.h"
 #include "doctest/doctest.h"
 
@@ -30,4 +28,12 @@ TEST_CASE("Style Load Test")
 
     boxStyle->Merge(buttonStyle);
     CHECK_EQ(boxStyle->GetProperty("fontSize"), "20px");
+
+    Ref<Style> copiedStyle = CreateRef<Style>(*boxStyle);
+    CHECK_EQ(copiedStyle->GetProperty("width"), "200px");
+    CHECK_EQ(copiedStyle->GetStateProperty("hover", "fontSize"), "40px");
+
+    copiedStyle->SetProperty("width", "300px");
+    CHECK_EQ(copiedStyle->GetProperty("width"), "300px");
+    CHECK_EQ(boxStyle->GetProperty("width"), "200px");
 }

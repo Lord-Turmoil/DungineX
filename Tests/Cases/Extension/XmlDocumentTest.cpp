@@ -1,5 +1,3 @@
-#include "DgeX/Extension/XmlDocument.h"
-
 #include "doctest/Common.h"
 #include "doctest/doctest.h"
 

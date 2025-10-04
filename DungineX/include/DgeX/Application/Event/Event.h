@@ -106,8 +106,14 @@ private:
  * @param func Handling function.
  * @return Whether the event is dispatched or not.
  */
-template <typename T, typename F> bool DispatchEvent(const Ref<Event>& event, const F& func)
+template <typename T, typename F>
+DGEX_API bool DispatchEvent(const Ref<Event>& event, const F& func)
 {
+    if (event->IsHandled())
+    {
+        return true;
+    }
+
     if (event->GetType() == T::GetStaticType())
     {
         if (func(static_cast<T&>(*event)))
@@ -116,7 +122,44 @@ template <typename T, typename F> bool DispatchEvent(const Ref<Event>& event, co
         }
         return true;
     }
+
     return false;
+}
+
+class EventListener
+{
+public:
+    virtual ~EventListener() = default;
+
+    DGEX_API virtual bool OnEvent(const Ref<Event>& event) const = 0;
+};
+
+template <typename T, typename F>
+class EventListenerImpl : public EventListener
+{
+public:
+    explicit EventListenerImpl(const F& handler) : _handler(handler)
+    {
+    }
+
+    explicit EventListenerImpl(F&& handler) : _handler(std::move(handler))
+    {
+    }
+
+    bool OnEvent(const Ref<Event>& event) const override
+    {
+        // Ensure the type matches.
+        return DispatchEvent<T, F>(event, _handler);
+    }
+
+private:
+    F _handler;
+};
+
+template <typename T, typename F>
+DGEX_API constexpr Ref<EventListener> CreateEventListener(F&& handler)
+{
+    return CreateRef<EventListenerImpl<T, F>>(std::forward<F>(handler));
 }
 
 DGEX_END

@@ -53,7 +53,8 @@ public:
     DGEX_API float FloatValue(int defaultValue = 0) const;
     DGEX_API bool BoolValue(int defaultValue = false) const;
 
-    DGEX_API template <typename T> T ValueAs(const T& defaultValue = T()) const;
+    template <typename T>
+    DGEX_API T ValueAs(const T& defaultValue = T()) const;
 
     /**
      * @brief Get the next attribute.
@@ -136,7 +137,8 @@ public:
      * @param defaultValue Default value if attribute not found.
      * @return The value in custom type.
      */
-    DGEX_API template <typename T> T AttributeAs(const char* name, const T& defaultValue = T()) const;
+    template <typename T>
+    DGEX_API T AttributeAs(const char* name, const T& defaultValue = T()) const;
 
     /**
      * @brief
@@ -145,8 +147,10 @@ public:
      * @param value
      * @return
      */
-    DGEX_API template <typename T> bool QueryAttributeAs(const char* name, T* value) const;
-    DGEX_API template <typename T> void SetAttributeAs(const char* name, const T& value) const;
+    template <typename T>
+    DGEX_API bool QueryAttributeAs(const char* name, T* value) const;
+    template <typename T>
+    DGEX_API void SetAttributeAs(const char* name, const T& value) const;
 
     /**
      * @brief Get the first attribute of the element.
@@ -229,7 +233,8 @@ private:
     tinyxml2::XMLElement* _impl;
 };
 
-template <typename T> T XmlAttribute::ValueAs(const T& defaultValue) const
+template <typename T>
+T XmlAttribute::ValueAs(const T& defaultValue) const
 {
     if (_impl)
     {
@@ -238,7 +243,8 @@ template <typename T> T XmlAttribute::ValueAs(const T& defaultValue) const
     return defaultValue;
 }
 
-template <typename T> T XmlElement::AttributeAs(const char* name, const T& defaultValue) const
+template <typename T>
+T XmlElement::AttributeAs(const char* name, const T& defaultValue) const
 {
     if (const char* attribute = Attribute(name))
     {
@@ -247,7 +253,8 @@ template <typename T> T XmlElement::AttributeAs(const char* name, const T& defau
     return defaultValue;
 }
 
-template <typename T> bool XmlElement::QueryAttributeAs(const char* name, T* value) const
+template <typename T>
+bool XmlElement::QueryAttributeAs(const char* name, T* value) const
 {
     if (const char* attribute = Attribute(name))
     {
@@ -257,7 +264,8 @@ template <typename T> bool XmlElement::QueryAttributeAs(const char* name, T* val
     return false;
 }
 
-template <typename T> void XmlElement::SetAttributeAs(const char* name, const T& value) const
+template <typename T>
+void XmlElement::SetAttributeAs(const char* name, const T& value) const
 {
     SetAttribute(name, value.ToString().c_str());
 }

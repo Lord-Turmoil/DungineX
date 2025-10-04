@@ -25,9 +25,14 @@
 #include <filesystem>
 
 #ifdef DGEX_ENABLE_ASSERT
-#define DGEX_DEBUG_BREAK() __debugbreak()
+#define DGEX_DEBUG_BREAK()                                                                                             \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        __debugbreak();                                                                                                \
+        abort();                                                                                                       \
+    } while (0)
 #else
-#define DGEX_DEBUG_BREAK()
+#define DGEX_DEBUG_BREAK() abort()
 #endif
 
 #ifdef DGEX_ENABLE_ASSERT
@@ -40,6 +45,18 @@
         if (!(EXPRESSION))                                                                                             \
         {                                                                                                              \
             _DGEX_ASSERT_LOGGER(MESSAGE, __VA_ARGS__);                                                                 \
+            DGEX_DEBUG_BREAK();                                                                                        \
+        }                                                                                                              \
+    } while (0)
+
+#define _DGEX_ASSERT_LOG_IMPL(EXPRESSION, ...)                                                                         \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        if (!(EXPRESSION))                                                                                             \
+        {                                                                                                              \
+            _DGEX_ASSERT_LOGGER("Assertion '{0}' failed at {1}:{2}", DGEX_STRINGIFY_MACRO(EXPRESSION),                 \
+                                std::filesystem::path(__FILE__).filename().string(), __LINE__);                        \
+            _DGEX_ASSERT_LOGGER(__VA_ARGS__);                                                                          \
             DGEX_DEBUG_BREAK();                                                                                        \
         }                                                                                                              \
     } while (0)
@@ -63,6 +80,8 @@
  * DGEX_ASSERT(a > b, "a must not greater than b");
  */
 #define DGEX_ASSERT(...) DGEX_EXPAND_MACRO(_DGEX_ASSERT_MACRO(__VA_ARGS__)(__VA_ARGS__))
+
+#define DGEX_ASSERT_LOG(EXPRESSION, ...) DGEX_EXPAND_MACRO(_DGEX_ASSERT_LOG_IMPL(EXPRESSION, __VA_ARGS__))
 
 #else
 #define DGEX_ASSERT(...)

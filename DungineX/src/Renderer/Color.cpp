@@ -141,6 +141,20 @@ Color& Color::operator/=(float scalar)
     return this->operator*=(1.0f / scalar);
 }
 
+Color Color::operator+(const Color& other) const
+{
+    return { static_cast<uint8_t>(Math::Clamp<int>(static_cast<int>(R) + static_cast<int>(other.R), 0, 255)),
+             static_cast<uint8_t>(Math::Clamp<int>(static_cast<int>(G) + static_cast<int>(other.G), 0, 255)),
+             static_cast<uint8_t>(Math::Clamp<int>(static_cast<int>(B) + static_cast<int>(other.B), 0, 255)), A };
+}
+
+Color Color::operator-(const Color& other) const
+{
+    return { static_cast<uint8_t>(Math::Clamp<int>(static_cast<int>(R) - static_cast<int>(other.R), 0, 255)),
+             static_cast<uint8_t>(Math::Clamp<int>(static_cast<int>(G) - static_cast<int>(other.G), 0, 255)),
+             static_cast<uint8_t>(Math::Clamp<int>(static_cast<int>(B) - static_cast<int>(other.B), 0, 255)), A };
+}
+
 Color operator*(const Color& color, float scalar)
 {
     Color result(color);
