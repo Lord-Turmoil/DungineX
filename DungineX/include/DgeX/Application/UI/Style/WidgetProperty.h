@@ -5,7 +5,7 @@
  *                                                                            *
  *                      File Name : WidgetProperty.h                          *
  *                                                                            *
- *                     Programmer : Tony S.                                   *
+ *                     Programmer : Tony Lewis                                *
  *                                                                            *
  *                     Start Date : October 5, 2025                           *
  *                                                                            *

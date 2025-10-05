@@ -5,7 +5,7 @@
  *                                                                            *
  *                      File Name : VisualWidget.cpp                          *
  *                                                                            *
- *                     Programmer : Tony S.                                   *
+ *                     Programmer : Tony Lewis                                *
  *                                                                            *
  *                     Start Date : October 5, 2025                           *
  *                                                                            *

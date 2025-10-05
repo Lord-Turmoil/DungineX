@@ -5,11 +5,11 @@
  *                                                                            *
  *                      File Name : DgeX.h                                    *
  *                                                                            *
- *                     Programmer : Tony S.                                   *
+ *                     Programmer : Tony Lewis                                *
  *                                                                            *
  *                     Start Date : May 26, 2025                              *
  *                                                                            *
- *                    Last Update : June 1, 2025                              *
+ *                    Last Update : October 5, 2025                           *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -46,6 +46,10 @@
  * - SDL3 (https://www.libsdl.org/) and all its components                    *
  * - spdlog (https://github.com/gabime/spdlog)                                *
  * - tinyxml2 (https://github.com/leethomason/tinyxml2)                       *
+ *                                                                            *
+ * Also, some components are inspired by the Cherno's Hazel engine, thank you *
+ * so much!                                                                   *
+ * - Hazel (https://github.com/TheCherno/Hazel)                               *
  * -------------------------------------------------------------------------- *
  *                                                                            *
  *                 "This is the moment, when all I've done,                   *

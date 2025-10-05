@@ -5,7 +5,7 @@
  *                                                                            *
  *                      File Name : Graphics.h                                *
  *                                                                            *
- *                     Programmer : Tony S.                                   *
+ *                     Programmer : Tony Lewis                                *
  *                                                                            *
  *                     Start Date : June 3, 2025                              *
  *                                                                            *

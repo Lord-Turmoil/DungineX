@@ -5,7 +5,7 @@
  *                                                                            *
  *                      File Name : EventAdapter.h                            *
  *                                                                            *
- *                     Programmer : Tony S.                                   *
+ *                     Programmer : Tony Lewis                                *
  *                                                                            *
  *                     Start Date : August 15, 2025                           *
  *                                                                            *

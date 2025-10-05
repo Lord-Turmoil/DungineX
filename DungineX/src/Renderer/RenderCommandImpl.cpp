@@ -5,7 +5,7 @@
  *                                                                            *
  *                      File Name : RenderCommandImpl.cpp                     *
  *                                                                            *
- *                     Programmer : Tony S.                                   *
+ *                     Programmer : Tony Lewis                                *
  *                                                                            *
  *                     Start Date : June 19, 2025                             *
  *                                                                            *

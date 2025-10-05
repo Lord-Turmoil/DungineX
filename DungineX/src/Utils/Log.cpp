@@ -5,7 +5,7 @@
  *                                                                            *
  *                      File Name : Log.cpp                                   *
  *                                                                            *
- *                     Programmer : Tony S.                                   *
+ *                     Programmer : Tony Lewis                                *
  *                                                                            *
  *                     Start Date : June 1, 2025                              *
  *                                                                            *

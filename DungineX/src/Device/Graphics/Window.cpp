@@ -5,7 +5,7 @@
  *                                                                            *
  *                      File Name : Window.cpp                                *
  *                                                                            *
- *                     Programmer : Tony S.                                   *
+ *                     Programmer : Tony Lewis                                *
  *                                                                            *
  *                     Start Date : June 2, 2025                              *
  *                                                                            *

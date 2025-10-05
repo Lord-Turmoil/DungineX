@@ -5,7 +5,7 @@
  *                                                                            *
  *                      File Name : Event.h                                   *
  *                                                                            *
- *                     Programmer : Tony S.                                   *
+ *                     Programmer : Tony Lewis                                *
  *                                                                            *
  *                     Start Date : August 3, 2025                            *
  *                                                                            *
