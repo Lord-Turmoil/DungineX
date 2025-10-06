@@ -127,62 +127,74 @@ public:
     DGEX_API const std::string& GetName() const;
 
 public:
-    template <typename T> DGEX_API void Trace(const T& msg)
+    template <typename T>
+    DGEX_API void Trace(const T& msg)
     {
         _impl->trace(msg);
     }
 
-    template <typename... Args> DGEX_API void Trace(spdlog::format_string_t<Args...> fmt, Args&&... args)
+    template <typename... Args>
+    DGEX_API void Trace(spdlog::format_string_t<Args...> fmt, Args&&... args)
     {
         _impl->trace(fmt, std::forward<Args>(args)...);
     }
 
-    template <typename T> DGEX_API void Debug(const T& msg)
+    template <typename T>
+    DGEX_API void Debug(const T& msg)
     {
         _impl->debug(msg);
     }
 
-    template <typename... Args> DGEX_API void Debug(spdlog::format_string_t<Args...> fmt, Args&&... args)
+    template <typename... Args>
+    DGEX_API void Debug(spdlog::format_string_t<Args...> fmt, Args&&... args)
     {
         _impl->debug(fmt, std::forward<Args>(args)...);
     }
 
-    template <typename T> DGEX_API void Info(const T& msg)
+    template <typename T>
+    DGEX_API void Info(const T& msg)
     {
         _impl->info(msg);
     }
 
-    template <typename... Args> DGEX_API void Info(spdlog::format_string_t<Args...> fmt, Args&&... args)
+    template <typename... Args>
+    DGEX_API void Info(spdlog::format_string_t<Args...> fmt, Args&&... args)
     {
         _impl->info(fmt, std::forward<Args>(args)...);
     }
 
-    template <typename T> DGEX_API void Warn(const T& msg)
+    template <typename T>
+    DGEX_API void Warn(const T& msg)
     {
         _impl->warn(msg);
     }
 
-    template <typename... Args> DGEX_API void Warn(spdlog::format_string_t<Args...> fmt, Args&&... args)
+    template <typename... Args>
+    DGEX_API void Warn(spdlog::format_string_t<Args...> fmt, Args&&... args)
     {
         _impl->warn(fmt, std::forward<Args>(args)...);
     }
 
-    template <typename T> DGEX_API void Error(const T& msg)
+    template <typename T>
+    DGEX_API void Error(const T& msg)
     {
         _impl->error(msg);
     }
 
-    template <typename... Args> DGEX_API void Error(spdlog::format_string_t<Args...> fmt, Args&&... args)
+    template <typename... Args>
+    DGEX_API void Error(spdlog::format_string_t<Args...> fmt, Args&&... args)
     {
         _impl->error(fmt, std::forward<Args>(args)...);
     }
 
-    template <typename T> DGEX_API void Critical(const T& msg)
+    template <typename T>
+    DGEX_API void Critical(const T& msg)
     {
         _impl->critical(msg);
     }
 
-    template <typename... Args> DGEX_API void Critical(spdlog::format_string_t<Args...> fmt, Args&&... args)
+    template <typename... Args>
+    DGEX_API void Critical(spdlog::format_string_t<Args...> fmt, Args&&... args)
     {
         _impl->critical(fmt, std::forward<Args>(args)...);
     }

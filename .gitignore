@@ -5,6 +5,9 @@
 CMakeSettings.json
 *.user
 
+# OS files
+.DS_Store
+
 # CMake files
 build/
 out/

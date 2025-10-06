@@ -125,7 +125,7 @@
         {
             "name": "linux-release-shared",
             "displayName": "Release (Shared)",
-            "description": "RelWithDebInfo build for Windows with shared libraries.",
+            "description": "RelWithDebInfo build for Linux with shared libraries.",
             "hidden": true,
             "inherits": "linux-base",
             "architecture": {
@@ -139,7 +139,7 @@
         {
             "name": "linux-release-static",
             "displayName": "Release (Static)",
-            "description": "RelWithDebInfo build for Windows with static libraries.",
+            "description": "RelWithDebInfo build for Linux with static libraries.",
             "inherits": "linux-release-shared",
             "cacheVariables": {
                 "DGEX_USE_SHARED": "OFF"
@@ -148,7 +148,7 @@
         {
             "name": "linux-publish-shared",
             "displayName": "Publish (Shared)",
-            "description": "Release build for Windows with shared libraries.",
+            "description": "Release build for Linux with shared libraries.",
             "hidden": true,
             "inherits": "linux-base",
             "cacheVariables": {
@@ -159,8 +159,88 @@
         {
             "name": "linux-publish-static",
             "displayName": "Publish (Static)",
-            "description": "Release build for Windows with static libraries.",
+            "description": "Release build for Linux with static libraries.",
             "inherits": "linux-publish-shared",
+            "cacheVariables": {
+                "DGEX_USE_SHARED": "OFF"
+            }
+        },
+        {
+            "name": "macos-base",
+            "description": "Target macOS with Apple clang.",
+            "hidden": true,
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "installDir": "${sourceDir}/install/${presetName}",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "cc",
+                "CMAKE_CXX_COMPILER": "c++"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Darwin"
+            }
+        },
+        {
+            "name": "macos-debug-shared",
+            "displayName": "Debug (Shared)",
+            "description": "Debug build for macOS with shared libraries.",
+            "inherits": "macos-base",
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "macos-debug-static",
+            "displayName": "Debug (Static)",
+            "description": "Debug build for macOS with static libraries.",
+            "inherits": "macos-debug-shared",
+            "cacheVariables": {
+                "DGEX_USE_SHARED": "OFF"
+            }
+        },
+        {
+            "name": "macos-release-shared",
+            "displayName": "Release (Shared)",
+            "description": "RelWithDebInfo build for macOS with shared libraries.",
+            "inherits": "macos-base",
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+            }
+        },
+        {
+            "name": "macos-release-static",
+            "displayName": "Release (Static)",
+            "description": "RelWithDebInfo build for macOS with static libraries.",
+            "inherits": "macos-release-shared",
+            "cacheVariables": {
+                "DGEX_USE_SHARED": "OFF"
+            }
+        },
+        {
+            "name": "macos-publish-shared",
+            "displayName": "Publish (Shared)",
+            "description": "Release build for macOS with shared libraries.",
+            "inherits": "macos-base",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "DGEX_PUBLISH": "ON"
+            }
+        },
+        {
+            "name": "macos-publish-static",
+            "displayName": "Publish (Static)",
+            "description": "Release build for macOS with static libraries.",
+            "inherits": "macos-publish-shared",
             "cacheVariables": {
                 "DGEX_USE_SHARED": "OFF"
             }

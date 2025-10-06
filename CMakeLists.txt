@@ -38,7 +38,7 @@ endif()
 
 # By default, DungineX is shipped as a shared library with SDL included,
 # so that the distribution won't carry a bunch of SDL .dll files.
-if(WIN32)
+if(WIN32 OR APPLE)
     option(DGEX_USE_SHARED "Use shared libraries for DungineX" ON)
 else()
     option(DGEX_USE_SHARED "Use shared libraries for DungineX" OFF)
@@ -65,7 +65,7 @@ else()
     option(DGEX_PUBLISH "Build DungineX for publishing" ON)
 endif()
 
-if((NOT WIN32) AND (DGEX_USE_SHARED OR DGEX_BUILD_SHARED OR DGEX_USE_SHARED_SDL))
+if ((NOT (WIN32 OR APPLE)) AND (DGEX_USE_SHARED OR DGEX_BUILD_SHARED OR DGEX_USE_SHARED_SDL))
    message(FATAL_ERROR "Shared library is only supported on Windows")
 endif()
 

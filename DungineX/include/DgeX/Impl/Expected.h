@@ -28,7 +28,8 @@
 
 DGEX_BEGIN
 
-template <typename T, typename E> class Expected
+template <typename T, typename E>
+class Expected
 {
     static_assert(!std::is_same_v<T, void>, "T must not be void");
     static_assert(!std::is_same_v<E, void>, "E must not be void");

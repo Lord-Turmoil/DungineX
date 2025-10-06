@@ -48,48 +48,47 @@
 
 #if (defined(_WIN32) || defined(_WIN64))
 #define DGEX_PLATFORM_WINDOWS
-#else
+#elif (defined(__linux__))
 #define DGEX_PLATFORM_UNIX
+#elif (defined(__APPLE__) || defined(__MACH__))
+#define DGEX_PLATFORM_MACOS
+#else
+#error "Unsupported platform"
 #endif
+
+// clang-format off
+#ifdef DGEX_PLATFORM_WINDOWS
 
 #ifdef DGEX_EXPORT
-
-#ifdef DGEX_ENGINE
-
-#ifdef DGEX_PLATFORM_WINDOWS
-
-#define DGEX_API  __declspec(dllexport)
-#define DGEX_DATA __declspec(dllexport)
-
+#   ifdef DGEX_ENGINE
+#       define DGEX_API  __declspec(dllexport)
+#       define DGEX_DATA __declspec(dllexport)
+#   else
+#       define DGEX_API
+#       define DGEX_DATA __declspec(dllimport)
+#   endif // DGEX_ENGINE
 #else
-
-#define DGEX_API  __attribute__((visibility("default")))
-#define DGEX_DATA __attribute__((visibility("default")))
-
+#   define DGEX_API
+#   define DGEX_DATA
 #endif
 
 #else
 
-#ifdef DGEX_PLATFORM_WINDOWS
-
-#define DGEX_API
-#define DGEX_DATA __declspec(dllimport)
-
+#ifdef DGEX_EXPORT
+#   ifdef DGEX_ENGINE
+#       define DGEX_API  __attribute__((visibility("default")))
+#       define DGEX_DATA __attribute__((visibility("default")))
+#   else
+#       define DGEX_API
+#       define DGEX_DATA
+#   endif // DGEX_ENGINE
 #else
-
-#define DGEX_API
-#define DGEX_DATA
-
+#   define DGEX_API
+#   define DGEX_DATA
 #endif
 
-#endif // DGEX_ENGINE
-
-#else
-
-#define DGEX_API
-#define DGEX_DATA
-
-#endif // DGEX_EXPORT
+#endif // DGEX_PLATFORM_WINDOWS
+// clang-format on
 
 #ifdef __cplusplus
 

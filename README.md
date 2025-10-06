@@ -7,20 +7,19 @@ Copyright &copy; New Desire Studios 2025
 
 ---
 
-|  [main](https://github.com/Lord-Turmoil/DungineX/tree/main)  |   [dev](https://github.com/Lord-Turmoil/DungineX/tree/dev)   |
-| :----------------------------------------------------------: | :----------------------------------------------------------: |
-| [![Build (main)](https://github.com/Lord-Turmoil/DungineX/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/Lord-Turmoil/DungineX/actions/workflows/build.yml) | [![Build (dev)](https://github.com/Lord-Turmoil/DungineX/actions/workflows/build.yml/badge.svg?branch=dev)](https://github.com/Lord-Turmoil/DungineX/actions/workflows/build.yml) |
+| Platform |  [main](https://github.com/Lord-Turmoil/DungineX/tree/main)  |   [dev](https://github.com/Lord-Turmoil/DungineX/tree/dev)   |
+| :------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
+| Windows  | [![Build (main)](https://github.com/Lord-Turmoil/DungineX/actions/workflows/windows.yml/badge.svg?branch=main)](https://github.com/Lord-Turmoil/DungineX/actions/workflows/windows.yml?query=branch%3Amain) | [![Build (dev)](https://github.com/Lord-Turmoil/DungineX/actions/workflows/windows.yml/badge.svg?branch=dev)](https://github.com/Lord-Turmoil/DungineX/actions/workflows/windows.yml?query=branch%3Adev) |
+|  Linux   | [![Build (main)](https://github.com/Lord-Turmoil/DungineX/actions/workflows/linux.yml/badge.svg?branch=main)](https://github.com/Lord-Turmoil/DungineX/actions/workflows/linux.yml?query=branch%3Amain) | [![Build (dev)](https://github.com/Lord-Turmoil/DungineX/actions/workflows/linux.yml/badge.svg?branch=dev)](https://github.com/Lord-Turmoil/DungineX/actions/workflows/linux.yml?query=branch%3Adev) |
+|  MacOS   | [![Build (main)](https://github.com/Lord-Turmoil/DungineX/actions/workflows/macos.yml/badge.svg?branch=main)](https://github.com/Lord-Turmoil/DungineX/actions/workflows/macos.yml?query=branch%3Amain) | [![Build (dev)](https://github.com/Lord-Turmoil/DungineX/actions/workflows/macos.yml/badge.svg?branch=dev)](https://github.com/Lord-Turmoil/DungineX/actions/workflows/macos.yml?query=branch%3Adev) |
 
 ## Overview
 
-DungineX is a 2D game engine built on top of [SDL 3](https://github.com/libsdl-org/SDL), supporting both Windows and Linux.
-
-> [!WARNING]
-> Although DungineX targets both Windows and Linux, it prioritizes Windows, and some features may not be available on Linux.
+DungineX is a 2D game engine built on top of [SDL 3](https://github.com/libsdl-org/SDL), therefore supporting Windows, Linux and even MacOS.
 
 ## Project Setup
 
-DungineX uses git submodules to manage dependencies. After you clone the repository, init and update all submodules.
+DungineX uses git submodules to manage dependencies. After you clone the repository, init it and update all submodules.
 
 ```bash
 git submodule update --init --recursive
@@ -51,6 +50,9 @@ You can also use presets defined in `CMakePresets.json`.
 cmake --preset list # list avalable presets
 cmake --preset linux-debug-static
 ```
+
+> [!WARNING]
+> On Linux, shared library is not supported yet.
 
 ## Use DungineX
 
