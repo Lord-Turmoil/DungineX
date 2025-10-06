@@ -22,7 +22,10 @@
 #include "DgeX/Application/Event/MouseEvents.h"
 #include "DgeX/Application/Event/WidgetEvents.h"
 #include "DgeX/Utils/Assert.h"
+#include "DgeX/Utils/Macros.h"
 #include "DgeX/Utils/UUID.h"
+
+#include <algorithm>
 
 DGEX_BEGIN
 
@@ -170,6 +173,7 @@ Ref<Widget> BaseWidget::AsWidget()
 
 void BaseWidget::Update(DeltaTime delta)
 {
+    DGEX_USED(delta);
 }
 
 void BaseWidget::OnEvent(const Ref<Event>& event)
@@ -253,6 +257,7 @@ void BaseWidget::_Notify(const Ref<Event>& event)
 
 bool BaseWidget::_IsInside(FPoint position) const
 {
+    DGEX_USED(position);
     return false;
 }
 
@@ -285,6 +290,7 @@ void BaseWidget::_OnEventHover(const Ref<Event>& event)
 
     DispatchEvent<MouseButtonPressedEvent>(event, [this](MouseButtonPressedEvent& e) {
         SetState(WidgetState::Active);
+        DGEX_USED(e);
         return true; // prevent propagation
     });
 }
@@ -303,13 +309,14 @@ void BaseWidget::_OnEventActive(const Ref<Event>& event)
     DispatchEvent<MouseButtonReleasedEvent>(event, [this](MouseButtonReleasedEvent& e) {
         SetState(WidgetState::Hover);
         _Notify(CreateRef<MouseClickEvent>());
+        DGEX_USED(e);
         return true; // prevent propagation
     });
 }
 
 void BaseWidget::_OnEventDisabled(const Ref<Event>& event)
 {
-    // do nothing.
+    DGEX_USED(event);
 }
 
 } // namespace UI

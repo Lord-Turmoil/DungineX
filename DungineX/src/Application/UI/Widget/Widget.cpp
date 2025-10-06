@@ -28,6 +28,7 @@ namespace UI
 
 Widget::Widget(Ext::XmlElement element)
 {
+    DGEX_USED(element);
 }
 
 Ref<Widget> Widget::AsWidget()
@@ -156,6 +157,10 @@ void Widget::_ApplyStyles()
 
     const NumberProperty opacity = GetStyleProperty<NumberProperty>("opacity", NumberProperty(1.0f));
     _properties.SetOpacity(Math::Clamp(opacity.Value, 0.0f, 1.0f));
+}
+
+void Widget::_Rearrange()
+{
 }
 
 } // namespace UI

@@ -20,6 +20,7 @@
 #pragma once
 
 #include "DgeX/Application/UI/Style/Property.h"
+#include "DgeX/Renderer/Color.h"
 
 DGEX_BEGIN
 

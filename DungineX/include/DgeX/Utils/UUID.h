@@ -24,6 +24,7 @@
 #include <spdlog/fmt/fmt.h>
 
 #include <cstdint>
+#include <iterator>
 #include <string>
 
 DGEX_BEGIN

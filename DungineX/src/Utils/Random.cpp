@@ -31,7 +31,8 @@ static std::mt19937_64 sEngine(sRandomDevice());
 static std::uniform_int_distribution<uint64_t> sUint64Distribution;
 static std::uniform_int_distribution<uint32_t> sUint32Distribution;
 
-template <typename T> static void EnsureMinMax(T& min, T& max)
+template <typename T>
+static void EnsureMinMax(T& min, T& max)
 {
     if (min > max)
     {
@@ -42,7 +43,7 @@ template <typename T> static void EnsureMinMax(T& min, T& max)
 int RandomInt(int min, int max)
 {
     EnsureMinMax(min, max);
-    return min + static_cast<int>(sUint32Distribution(sEngine) % (max - min + 1));
+    return min + static_cast<int>(sUint32Distribution(sEngine) % static_cast<uint32_t>(max - min + 1));
 }
 
 float RandomFloat(float min, float max)

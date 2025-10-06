@@ -19,6 +19,8 @@
 
 #include "DgeX/Application/UI/Style/WidgetProperty.h"
 
+#include "DgeX/Utils/Macros.h"
+
 #include <regex>
 
 DGEX_BEGIN
@@ -57,7 +59,7 @@ NumberProperty::NumberProperty(const char* value) : Value(0.0f)
     if (std::regex_match(source, matches, NUMBER_PATTERN))
     {
         float number;
-        if (sscanf_s(matches[1].str().c_str(), "%f", &number) != 1)
+        if (DGEX_SSCANF(matches[1].str().c_str(), "%f", &number) != 1)
         {
             DGEX_CORE_WARN("Invalid value '{}' for NumberProperty, defaulting to 0", value);
             return;
@@ -95,7 +97,7 @@ MetricProperty::MetricProperty(const char* value) : Value(0.0f), Unit(MetricUnit
     if (std::regex_match(source, matches, METRIC_PATTERN))
     {
         float number;
-        if (sscanf_s(matches[1].str().c_str(), "%f", &number) != 1)
+        if (DGEX_SSCANF(matches[1].str().c_str(), "%f", &number) != 1)
         {
             DGEX_CORE_WARN("Invalid value '{}' for MetricProperty, defaulting to 0", value);
             return;
@@ -141,40 +143,40 @@ ColorProperty::ColorProperty(const char* value) : Value(Color::Black)
     {
         if (matches[1].str().length() == 3)
         {
-            sscanf_s(matches[1].str().c_str(), "%1hhx%1hhx%1hhx", &r, &g, &b);
+            DGEX_SSCANF(matches[1].str().c_str(), "%1hhx%1hhx%1hhx", &r, &g, &b);
             Value = Color(static_cast<uint8_t>(r | (r << 4)), static_cast<uint8_t>(g | (g << 4)),
                           static_cast<uint8_t>(b | (b << 4)));
         }
         else if (matches[1].str().length() == 4)
         {
-            sscanf_s(matches[1].str().c_str(), "%1hhx%1hhx%1hhx%1hhx", &a, &r, &g, &b);
+            DGEX_SSCANF(matches[1].str().c_str(), "%1hhx%1hhx%1hhx%1hhx", &a, &r, &g, &b);
             Value = Color(static_cast<uint8_t>(r | (r << 4)), static_cast<uint8_t>(g | (g << 4)),
                           static_cast<uint8_t>(b | (b << 4)), static_cast<uint8_t>(a | (a << 4)));
         }
         else if (matches[1].str().length() == 6)
         {
-            sscanf_s(matches[1].str().c_str(), "%02hhx%02hhx%02hhx", &r, &g, &b);
+            DGEX_SSCANF(matches[1].str().c_str(), "%02hhx%02hhx%02hhx", &r, &g, &b);
             Value = Color(r, g, b);
         }
         else if (matches[1].str().length() == 8)
         {
-            sscanf_s(matches[1].str().c_str(), "%02hhx%02hhx%02hhx%02hhx", &a, &r, &g, &b);
+            DGEX_SSCANF(matches[1].str().c_str(), "%02hhx%02hhx%02hhx%02hhx", &a, &r, &g, &b);
             Value = Color(r, g, b, a);
         }
     }
     else if (std::regex_match(source, matches, RGB_PATTERN))
     {
-        sscanf_s(matches[1].str().c_str(), "%hhu", &r);
-        sscanf_s(matches[2].str().c_str(), "%hhu", &g);
-        sscanf_s(matches[3].str().c_str(), "%hhu", &b);
+        DGEX_SSCANF(matches[1].str().c_str(), "%hhu", &r);
+        DGEX_SSCANF(matches[2].str().c_str(), "%hhu", &g);
+        DGEX_SSCANF(matches[3].str().c_str(), "%hhu", &b);
         Value = Color(r, g, b);
     }
     else if (std::regex_match(source, matches, RGBA_PATTERN))
     {
-        sscanf_s(matches[1].str().c_str(), "%hhu", &r);
-        sscanf_s(matches[2].str().c_str(), "%hhu", &g);
-        sscanf_s(matches[3].str().c_str(), "%hhu", &b);
-        sscanf_s(matches[4].str().c_str(), "%hhu", &a);
+        DGEX_SSCANF(matches[1].str().c_str(), "%hhu", &r);
+        DGEX_SSCANF(matches[2].str().c_str(), "%hhu", &g);
+        DGEX_SSCANF(matches[3].str().c_str(), "%hhu", &b);
+        DGEX_SSCANF(matches[4].str().c_str(), "%hhu", &a);
         Value = Color(r, g, b, a);
     }
     else

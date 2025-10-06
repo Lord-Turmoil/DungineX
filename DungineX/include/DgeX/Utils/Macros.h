@@ -30,3 +30,11 @@
 #define DGEX_BIT(x) (1 << (x))
 
 #define DGEX_STR_EQUAL(a, b) (strcmp(a, b) == 0)
+
+#ifdef DGEX_PLATFORM_WINDOWS
+#define DGEX_SSCANF sscanf_s
+#else
+#define DGEX_SSCANF sscanf
+#endif
+
+#define DGEX_USED(x) (void)(x)

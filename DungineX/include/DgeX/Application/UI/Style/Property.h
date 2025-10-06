@@ -19,12 +19,10 @@
 
 #pragma once
 
-#include <utility>
-
 #include "DgeX/Core/Timer.h"
-#include "DgeX/Renderer/Color.h"
 #include "DgeX/Utils/Assert.h"
 #include "DgeX/Utils/Easing.h"
+#include "DgeX/Utils/Macros.h"
 
 DGEX_BEGIN
 
@@ -69,6 +67,7 @@ public:
      */
     virtual void Update(DeltaTime delta)
     {
+        DGEX_USED(delta);
     }
 
 protected:
@@ -113,7 +112,6 @@ protected:
     timestamp_t _duration;
     timestamp_t _elapsed;
 };
-
 
 } // namespace UI
 

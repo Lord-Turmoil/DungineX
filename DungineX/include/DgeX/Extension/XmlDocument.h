@@ -50,8 +50,8 @@ public:
     DGEX_API const char* Value(const char* defaultValue = nullptr) const;
 
     DGEX_API int IntValue(int defaultValue = 0) const;
-    DGEX_API float FloatValue(int defaultValue = 0) const;
-    DGEX_API bool BoolValue(int defaultValue = false) const;
+    DGEX_API float FloatValue(float defaultValue = 0.0f) const;
+    DGEX_API bool BoolValue(bool defaultValue = false) const;
 
     template <typename T>
     DGEX_API T ValueAs(const T& defaultValue = T()) const;

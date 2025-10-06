@@ -19,6 +19,7 @@
 
 #include "DgeX/Renderer/Color.h"
 
+#include "DgeX/Utils/Macros.h"
 #include "DgeX/Utils/Math.h"
 
 #include <sstream>
@@ -58,16 +59,16 @@ Color::Color(const char* value) : R(0), G(0), B(0), A(255)
 {
     uint8_t r, g, b, a;
 
-    if ((sscanf_s(value, "#%02hhx%02hhx%02hhx%02hhx", &a, &r, &g, &b) == 4) ||
-        (sscanf_s(value, "rgba(%hhu,%hhu,%hhu,%hhu)", &r, &g, &b, &a) == 4))
+    if ((DGEX_SSCANF(value, "#%02hhx%02hhx%02hhx%02hhx", &a, &r, &g, &b) == 4) ||
+        (DGEX_SSCANF(value, "rgba(%hhu,%hhu,%hhu,%hhu)", &r, &g, &b, &a) == 4))
     {
         R = r;
         G = g;
         B = b;
         A = a;
     }
-    else if ((sscanf_s(value, "#%02hhx%02hhx%02hhx", &r, &g, &b) == 3) ||
-             (sscanf_s(value, "rgb(%hhu,%hhu,%hhu)", &r, &g, &b) == 3))
+    else if ((DGEX_SSCANF(value, "#%02hhx%02hhx%02hhx", &r, &g, &b) == 3) ||
+             (DGEX_SSCANF(value, "rgb(%hhu,%hhu,%hhu)", &r, &g, &b) == 3))
     {
         R = r;
         G = g;
@@ -90,7 +91,7 @@ Color Color::FromHex(uint32_t color)
 
 uint32_t Color::ToHex() const
 {
-    return (A << 24) | (R << 16) | (G << 8) | B;
+    return static_cast<uint32_t>((A << 24) | (R << 16) | (G << 8) | B);
 }
 
 std::string Color::ToString() const

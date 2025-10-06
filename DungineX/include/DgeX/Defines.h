@@ -46,21 +46,41 @@
 // Platform Detection
 // ----------------------------------------------------------------------------
 
-#if !(defined(_WIN32) || defined(_WIN64))
-#error "DungineX only supports Windows platform!"
+#if (defined(_WIN32) || defined(_WIN64))
+#define DGEX_PLATFORM_WINDOWS
+#else
+#define DGEX_PLATFORM_UNIX
 #endif
 
 #ifdef DGEX_EXPORT
 
 #ifdef DGEX_ENGINE
 
+#ifdef DGEX_PLATFORM_WINDOWS
+
 #define DGEX_API  __declspec(dllexport)
 #define DGEX_DATA __declspec(dllexport)
 
 #else
 
+#define DGEX_API  __attribute__((visibility("default")))
+#define DGEX_DATA __attribute__((visibility("default")))
+
+#endif
+
+#else
+
+#ifdef DGEX_PLATFORM_WINDOWS
+
 #define DGEX_API
 #define DGEX_DATA __declspec(dllimport)
+
+#else
+
+#define DGEX_API
+#define DGEX_DATA
+
+#endif
 
 #endif // DGEX_ENGINE
 

@@ -43,12 +43,12 @@ int XmlAttribute::IntValue(int defaultValue) const
     return _impl ? _impl->IntValue() : defaultValue;
 }
 
-float XmlAttribute::FloatValue(int defaultValue) const
+float XmlAttribute::FloatValue(float defaultValue) const
 {
     return _impl ? _impl->FloatValue() : defaultValue;
 }
 
-bool XmlAttribute::BoolValue(int defaultValue) const
+bool XmlAttribute::BoolValue(bool defaultValue) const
 {
     return _impl ? _impl->BoolValue() : defaultValue;
 }

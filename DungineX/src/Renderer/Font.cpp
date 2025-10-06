@@ -20,6 +20,7 @@
 #include "DgeX/Renderer/Font.h"
 
 #include "DgeX/Device/Graphics/Renderer.h"
+#include "DgeX/Utils/Assert.h"
 #include "DgeX/Utils/Log.h"
 
 #include <SDL_FontCache/SDL_FontCache.h>
@@ -66,6 +67,7 @@ void Font::Destroy()
 
 static Ref<Font> LoadFontImpl(const std::string& path)
 {
+#ifdef DGEX_PLATFORM_WINDOWS
     std::filesystem::path fontPath = path;
 
     if (!fontPath.has_extension())
@@ -94,25 +96,27 @@ static Ref<Font> LoadFontImpl(const std::string& path)
     DGEX_CORE_WARN("Failed to load font: {0}, {1}", fontPath.string(), SDL_GetError());
 
     return nullptr;
+#else
+    DGEX_USED(path);
+    DGEX_ASSERT(false, "Font loading not implemented on this platform");
+    return nullptr;
+#endif
 }
 
 Ref<Font> LoadFont(const std::string& path)
 {
     Ref<Font> font = LoadFontImpl(path);
-    if (!font)
+    if (font)
     {
-        return font;
+        std::string name = font->GetName();
+        if (Ref<Font> oldFont = sLoadedFonts[name])
+        {
+            DGEX_CORE_WARN("Font {0} loaded multiple times, using existing one", name);
+            font->Destroy(); // unload the new font immediately
+            return oldFont;
+        }
+        sLoadedFonts[name] = font;
     }
-
-    std::string name = font->GetName();
-    if (Ref<Font> oldFont = sLoadedFonts[name])
-    {
-        DGEX_CORE_WARN("Font {0} loaded multiple times, using existing one", name);
-        font->Destroy(); // unload the new font immediately
-        return oldFont;
-    }
-
-    sLoadedFonts[name] = font;
 
     return font;
 }

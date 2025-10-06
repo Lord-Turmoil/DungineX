@@ -87,7 +87,13 @@ int OnExit(void* context)
 
 #endif // DGEX_USE_DEFAULT_ONEXIT
 
-inline int main(int argc, char* argv[])
+#ifdef DGEX_PLATFORM_WINDOWS
+#define DGEX_MAIN_INLINE inline
+#else
+#define DGEX_MAIN_INLINE
+#endif
+
+DGEX_MAIN_INLINE int main(int argc, char* argv[])
 {
 #ifdef DGEX_USE_CALLBACKS
     auto callbacks = DgeXCallbackRegistration(DgeXOnInit, DgeXOnStart, DgeXOnUpdate, DgeXOnEvent, DgeXOnExit);

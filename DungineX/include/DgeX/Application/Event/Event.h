@@ -157,7 +157,7 @@ private:
 };
 
 template <typename T, typename F>
-DGEX_API constexpr Ref<EventListener> CreateEventListener(F&& handler)
+DGEX_API Ref<EventListener> CreateEventListener(F&& handler)
 {
     return CreateRef<EventListenerImpl<T, F>>(std::forward<F>(handler));
 }

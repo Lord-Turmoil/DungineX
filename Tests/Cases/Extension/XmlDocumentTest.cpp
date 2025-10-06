@@ -1,4 +1,4 @@
-#include "doctest/Common.h"
+#include "doctest/Extension.h"
 #include "doctest/doctest.h"
 
 #include <DgeX/DgeX.h>

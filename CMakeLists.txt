@@ -12,8 +12,16 @@ include(cmake/utils.cmake)
 
 project(DungineX-Engine)
 
-if(NOT WIN32)
-    message(FATAL_ERROR "DungineX targets only Windows!")
+# Detecting build type.
+if(DGEX_PUBLISH)
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "CMake build type" FORCE)
+    message(STATUS "DGEX_PUBLISH detected, using Release mode")
+elseif(DGEX_RELEASE)
+    set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING "CMake build type" FORCE)
+    message(STATUS "DGEX_RELEASE detected, using RelWithDebInfo mode")
+elseif(DGEX_DEBUG)
+    set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "CMake build type" FORCE)
+    message(STATUS "DGEX_DEBUG detected, using Debug mode")
 endif()
 
 # Set default build type if not specified.
@@ -30,7 +38,11 @@ endif()
 
 # By default, DungineX is shipped as a shared library with SDL included,
 # so that the distribution won't carry a bunch of SDL .dll files.
-option(DGEX_USE_SHARED "Use shared libraries for DungineX" ON)
+if(WIN32)
+    option(DGEX_USE_SHARED "Use shared libraries for DungineX" ON)
+else()
+    option(DGEX_USE_SHARED "Use shared libraries for DungineX" OFF)
+endif()
 option(DGEX_USE_SHARED_SDL "Use shared libraries for SDL" OFF)
 
 if(DGEX_USE_SHARED)
@@ -53,6 +65,10 @@ else()
     option(DGEX_PUBLISH "Build DungineX for publishing" ON)
 endif()
 
+if((NOT WIN32) AND (DGEX_USE_SHARED OR DGEX_BUILD_SHARED OR DGEX_USE_SHARED_SDL))
+   message(FATAL_ERROR "Shared library is only supported on Windows")
+endif()
+
 # If DungineX is the master project, then change the output directories for a more
 # friendly organization of the build artifacts.
 if(DGEX_MASTER_PROJECT)
@@ -71,11 +87,9 @@ endif()
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if(MSVC)
-    if(NOT CMAKE_GENERATOR STREQUAL "Ninja")
-        # Parallelize each target, unless Ninja is the generator.
-        add_definitions(/MP)				
-    endif()
+if (MSVC AND (NOT CMAKE_GENERATOR STREQUAL "Ninja"))
+    # Parallelize each target, unless Ninja is the generator.
+    add_definitions(/MP)
 endif()
 
 if(DGEX_MASTER_PROJECT)

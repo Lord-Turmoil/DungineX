@@ -274,7 +274,7 @@ T Style::GetStatePropertyAs(const std::string& state, const std::string& name, c
     {
         if (it->second->HasProperty(name))
         {
-            return T(it->second->GetProperty(name, defaultValue).c_str());
+            return T(it->second->GetProperty(name, "").c_str());
         }
     }
     return GetPropertyAs<T>(name, defaultValue);

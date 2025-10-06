@@ -25,6 +25,9 @@
 #include <filesystem>
 
 #ifdef DGEX_ENABLE_ASSERT
+
+#ifdef DGEX_PLATFORM_WINDOWS
+
 #define DGEX_DEBUG_BREAK()                                                                                             \
     do                                                                                                                 \
     {                                                                                                                  \
@@ -32,8 +35,16 @@
         abort();                                                                                                       \
     } while (0)
 #else
+
 #define DGEX_DEBUG_BREAK() abort()
-#endif
+
+#endif // DGEX_PLATFORM_WINDOWS
+
+#else
+
+#define DGEX_DEBUG_BREAK() abort()
+
+#endif // DGEX_ENABLE_ASSERT
 
 #ifdef DGEX_ENABLE_ASSERT
 
@@ -84,5 +95,7 @@
 #define DGEX_ASSERT_LOG(EXPRESSION, ...) DGEX_EXPAND_MACRO(_DGEX_ASSERT_LOG_IMPL(EXPRESSION, __VA_ARGS__))
 
 #else
+
 #define DGEX_ASSERT(...)
-#endif
+
+#endif // DGEX_ENABLE_ASSERT

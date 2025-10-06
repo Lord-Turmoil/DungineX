@@ -19,8 +19,7 @@
 
 #pragma once
 
-#pragma warning(disable : 4305) // disable truncation from 'double' to 'float'
-#pragma warning(disable : 4244) // disable conversion from 'double' to 'float', possible loss of data
+#include "DgeX/Defines.h"
 
 #include "DgeX/Utils/Math.h"
 
@@ -277,29 +276,29 @@ constexpr T EaseInOutElastic(T x)
 }
 
 template <typename T>
-constexpr T EaseInBounce(T x)
-{
-    return T(1) - EaseOutBounce(T(1) - x);
-}
-
-template <typename T>
 constexpr T EaseOutBounce(T x)
 {
-    const T c = 7.5625;
-    const T s = 2.75;
+    const T c = T(7.5625);
+    const T s = T(2.75);
     if (x < 1 / s)
     {
         return c * x * x;
     }
     if (x < 2 / s)
     {
-        return c * (x -= 1.5 / s) * x + 0.75;
+        return T(c * (x - T(1.5) / s) * (x - T(1.5) / s) + 0.75);
     }
     if (x < 2.5 / s)
     {
-        return c * (x -= 2.25 / s) * x + 0.9375;
+        return T(c * (x - T(2.25) / s) * (x - T(2.25) / s) + T(0.9375));
     }
-    return c * (x -= 2.625 / s) * x + 0.984375;
+    return T(c * (x - T(2.625) / s) * (x - T(2.625) / s) + T(0.984375));
+}
+
+template <typename T>
+constexpr T EaseInBounce(T x)
+{
+    return T(1) - EaseOutBounce(T(1) - x);
 }
 
 template <typename T>
@@ -384,6 +383,3 @@ EasingFn<T> StyleToEasingFn(const std::string& style)
 } // namespace Utils::Easing
 
 DGEX_END
-
-#pragma warning(default : 4244)
-#pragma warning(default : 4305)

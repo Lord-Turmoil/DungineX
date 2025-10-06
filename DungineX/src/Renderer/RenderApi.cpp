@@ -41,7 +41,7 @@ struct RenderApiContext
     Color FillColor;
 
     Color FontColor;
-    Ref<Font> Font;
+    Ref<Font> FontFace;
     float FontSize;
 };
 
@@ -57,7 +57,7 @@ dgex_error_t InitRenderApi()
     sContext.LineColor = Color::White;
     sContext.FillColor = Color::White;
     sContext.FontColor = Color::White;
-    sContext.Font = nullptr;
+    sContext.FontFace = nullptr;
     sContext.FontSize = 16.0f;
 
     Ref<Font> font = LoadFont("C:/Windows/Fonts/Arial.ttf");
@@ -166,12 +166,12 @@ void SetFont(const Ref<Font>& font)
         DGEX_CORE_WARN("Cannot set empty font");
         return;
     }
-    sContext.Font = font;
+    sContext.FontFace = font;
 }
 
 Ref<Font> GetFont()
 {
-    return sContext.Font;
+    return sContext.FontFace;
 }
 
 void SetFontColor(Color color)
@@ -343,13 +343,13 @@ void DrawTexture(const Ref<Texture>& texture, const TextureStyle& style, const T
 
 void DrawText(const char* text, int x, int y, TextFlags flags)
 {
-    if (!sContext.Font)
+    if (!sContext.FontFace)
     {
         DGEX_CORE_WARN("No font specified");
         return;
     }
 
-    auto font = static_cast<FC_Font*>(sContext.Font->GetImpl());
+    auto font = static_cast<FC_Font*>(sContext.FontFace->GetImpl());
     float scale = GetFontScale(sContext.FontSize);
 
     if (sActiveRenderer)
@@ -368,13 +368,13 @@ void DrawText(const char* text, int x, int y, TextFlags flags)
 
 void DrawTextArea(const char* text, const Rect& rect, TextFlags flags)
 {
-    if (!sContext.Font)
+    if (!sContext.FontFace)
     {
         DGEX_CORE_WARN("No font specified");
         return;
     }
 
-    auto font = static_cast<FC_Font*>(sContext.Font->GetImpl());
+    auto font = static_cast<FC_Font*>(sContext.FontFace->GetImpl());
     float scale = GetFontScale(sContext.FontSize);
     FC_Rect fcRect{ rect.X, rect.Y, rect.Width, rect.Height };
 
