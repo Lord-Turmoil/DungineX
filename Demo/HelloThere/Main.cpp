@@ -41,7 +41,6 @@ int OnStart(void* context)
     state->Image = LoadTexture("gs_tiger.svg");
     state->Canvas = CreateTexture(300, 300);
 
-    SetFont(LoadFont("Arial"));
     SetFontSize(36.0f);
 
     DGEX_LOG_INFO(NAME, "Image size: {0}x{0}", state->Image->GetWidth(), state->Image->GetHeight());
@@ -100,6 +99,7 @@ int OnUpdate(void* context)
     DrawLine(0, 0, 640, 480);
 
     SetFontColor(Color::LightMagenta);
+    SetFontStyle("Regular");
     DrawText("Hello there!", 600, 10, L(TextFlag::AlignRight));
 
     if (IsKeyPressed(L(KeyCodes::A)))
@@ -112,6 +112,7 @@ int OnUpdate(void* context)
     {
         FPoint pos = GetMousePosition();
         SetFontColor(Color::LightBlue);
+        SetFontStyle("Italic");
         DrawText("Mouse Left Clicked!", static_cast<int>(pos.X), static_cast<int>(pos.Y), L(TextFlag::AlignRight));
     }
 

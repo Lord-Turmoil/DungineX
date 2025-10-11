@@ -29,7 +29,7 @@ Files used for unit testing will be automatically copied to their locations duri
 
 > [!WARNING]
 >
-> SDL required a bunch of dependencies on Linux. For more information, see [Build Dependencies](https://github.com/libsdl-org/SDL/blob/main/docs/README-linux.md#build-dependencies).
+> SDL required a bunch of dependencies on Linux. For more information, see [SDL Build Dependencies](https://github.com/libsdl-org/SDL/blob/main/docs/README-linux.md#build-dependencies) and [sysfonts](https://github.com/Lord-Turmoil/sysfonts).
 
 ## Build
 

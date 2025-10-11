@@ -16,3 +16,6 @@
 [submodule "Vendor/tinyxml2"]
 	path = Vendor/tinyxml2
 	url = https://github.com/leethomason/tinyxml2.git
+[submodule "Vendor/sysfonts"]
+	path = Vendor/sysfonts
+	url = https://github.com/Lord-Turmoil/sysfonts.git

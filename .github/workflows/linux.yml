@@ -29,6 +29,9 @@ jobs:
       with:
         submodules: recursive
 
+    - name: Configure Dependency # for sysfonts
+      run: sudo apt-get install -y libfontconfig1-dev
+
     - name: Setup Ninja
       uses: ashutoshvarma/setup-ninja@master
 

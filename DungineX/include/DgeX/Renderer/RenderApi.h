@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : June 2, 2025                              *
  *                                                                            *
- *                    Last Update : June 19, 2025                             *
+ *                    Last Update : October 11, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -26,7 +26,8 @@
 
 DGEX_BEGIN
 
-class Font;
+class Fontface;
+class FontFamily;
 class Renderer;
 class Texture;
 class TextureRenderCommandBuilder;
@@ -176,18 +177,27 @@ DGEX_API void SetFillColor(Color color);
 DGEX_API Color GetFillColor();
 
 /**
- * @brief Set current font.
+ * @brief Set current font family.
  *
- * @param font Current font.
+ * @param font Current font family.
  */
-DGEX_API void SetFont(const Ref<Font>& font);
+DGEX_API void SetFont(const Ref<FontFamily>& font);
+
+/**
+ * @brief Set the current font style.
+ *
+ * If the style is not found, the default style will be used.
+ *
+ * @param style Font style.
+ */
+DGEX_API void SetFontStyle(const std::string& style);
 
 /**
  * @brief Get the current font.
  *
  * @return Current font.
  */
-DGEX_API Ref<Font> GetFont();
+DGEX_API Ref<FontFamily> GetFont();
 
 /**
  * @brief Set the current font color.

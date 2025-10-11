@@ -49,7 +49,7 @@
 #if (defined(_WIN32) || defined(_WIN64))
 #define DGEX_PLATFORM_WINDOWS
 #elif (defined(__linux__))
-#define DGEX_PLATFORM_UNIX
+#define DGEX_PLATFORM_LINUX
 #elif (defined(__APPLE__) || defined(__MACH__))
 #define DGEX_PLATFORM_MACOS
 #else

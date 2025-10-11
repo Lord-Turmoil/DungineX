@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : June 2, 2025                              *
  *                                                                            *
- *                    Last Update : June 3, 2025                              *
+ *                    Last Update : October 11, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -30,8 +30,6 @@
 #include <SDL3/SDL.h>
 #include <SDL_FontCache/SDL_FontCache.h>
 
-#include <climits>
-
 DGEX_BEGIN
 
 struct RenderApiContext
@@ -41,7 +39,8 @@ struct RenderApiContext
     Color FillColor;
 
     Color FontColor;
-    Ref<Font> FontFace;
+    Ref<FontFamily> Font;
+    Ref<Fontface> ActiveFont;
     float FontSize;
 };
 
@@ -50,6 +49,44 @@ static Ref<Texture> sActiveRenderTarget = nullptr;
 
 static RenderApiContext sContext;
 
+static dgex_error_t InitDefaultFont()
+{
+    if (int ret = InitFonts(); ret != DGEX_SUCCESS)
+    {
+        DGEX_CORE_ERROR("Failed to initialize fonts: {");
+        return ret;
+    }
+
+#ifdef DGEX_PLATFORM_WINDOWS
+    sContext.Font = LoadFont("Arial");
+#elif defined DGEX_PLATFORM_LINUX
+    sContext.Font = LoadFont("DejaVu Sans");
+#elif defined DGEX_PLATFORM_MACOS
+    sContext.Font = LoadFont("Helvetica");
+#endif
+
+    if (!sContext.Font)
+    {
+        DGEX_CORE_WARN("Default font not found, using the first available font");
+        const std::vector<FontFamilyMeta>& families = GetAvailableFontFamilies();
+        if (families.empty())
+        {
+            DGEX_CORE_ERROR("No available font found");
+            return DGEX_ERROR_FONT_INIT;
+        }
+        sContext.Font = LoadFont(families.front().Name);
+    }
+    if (!sContext.Font)
+    {
+        DGEX_CORE_ERROR("Failed to load default font");
+        return DGEX_ERROR_FONT_INIT;
+    }
+
+    sContext.ActiveFont = sContext.Font->GetFont("Regular");
+
+    return DGEX_SUCCESS;
+}
+
 dgex_error_t InitRenderApi()
 {
     // Initialize context.
@@ -57,16 +94,14 @@ dgex_error_t InitRenderApi()
     sContext.LineColor = Color::White;
     sContext.FillColor = Color::White;
     sContext.FontColor = Color::White;
-    sContext.FontFace = nullptr;
+    sContext.Font = nullptr;
+    sContext.ActiveFont = nullptr;
     sContext.FontSize = 16.0f;
 
-    Ref<Font> font = LoadFont("C:/Windows/Fonts/Arial.ttf");
-    if (!font)
+    if (int ret = InitDefaultFont(); ret != DGEX_SUCCESS)
     {
-        DGEX_CORE_ERROR("Failed to load default system font");
-        return DGEX_ERROR_RENDERER_API_INIT;
+        return ret;
     }
-    SetFont(font);
 
     DGEX_CORE_DEBUG("Render API initialized");
 
@@ -159,19 +194,21 @@ Color GetFillColor()
     return sContext.FillColor;
 }
 
-void SetFont(const Ref<Font>& font)
+void SetFont(const Ref<FontFamily>& font)
 {
-    if (!font)
-    {
-        DGEX_CORE_WARN("Cannot set empty font");
-        return;
-    }
-    sContext.FontFace = font;
+    DGEX_ASSERT(font, "Cannot set nullptr font");
+    sContext.Font = font;
+    SetFontStyle("Regular");
 }
 
-Ref<Font> GetFont()
+void SetFontStyle(const std::string& style)
 {
-    return sContext.FontFace;
+    sContext.ActiveFont = sContext.Font->GetFont(style);
+}
+
+Ref<FontFamily> GetFont()
+{
+    return sContext.Font;
 }
 
 void SetFontColor(Color color)
@@ -343,13 +380,13 @@ void DrawTexture(const Ref<Texture>& texture, const TextureStyle& style, const T
 
 void DrawText(const char* text, int x, int y, TextFlags flags)
 {
-    if (!sContext.FontFace)
+    if (!sContext.Font)
     {
         DGEX_CORE_WARN("No font specified");
         return;
     }
 
-    auto font = static_cast<FC_Font*>(sContext.FontFace->GetImpl());
+    auto font = static_cast<FC_Font*>(sContext.ActiveFont->GetImpl());
     float scale = GetFontScale(sContext.FontSize);
 
     if (sActiveRenderer)
@@ -368,13 +405,13 @@ void DrawText(const char* text, int x, int y, TextFlags flags)
 
 void DrawTextArea(const char* text, const Rect& rect, TextFlags flags)
 {
-    if (!sContext.FontFace)
+    if (!sContext.Font)
     {
         DGEX_CORE_WARN("No font specified");
         return;
     }
 
-    auto font = static_cast<FC_Font*>(sContext.FontFace->GetImpl());
+    auto font = static_cast<FC_Font*>(sContext.ActiveFont->GetImpl());
     float scale = GetFontScale(sContext.FontSize);
     FC_Rect fcRect{ rect.X, rect.Y, rect.Width, rect.Height };
 

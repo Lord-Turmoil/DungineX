@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : June 2, 2025                              *
  *                                                                            *
- *                    Last Update : June 2, 2025                              *
+ *                    Last Update : October 11, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -22,6 +22,7 @@
 using dgex_error_t = int;
 
 #define DGEX_SUCCESS 0
+#define DGEX_ERROR   1
 
 #define DGEX_ERROR_GRAPHICS(NO) (100 + (NO))
 #define DGEX_ERROR_AUDIO(NO)    (200 + (NO))
@@ -33,6 +34,8 @@ using dgex_error_t = int;
 #define DGEX_ERROR_WINDOW_INIT       (DGEX_ERROR_GRAPHICS(3))
 #define DGEX_ERROR_RENDERER_INIT     (DGEX_ERROR_GRAPHICS(4))
 #define DGEX_ERROR_RENDERER_API_INIT (DGEX_ERROR_GRAPHICS(5))
+
+#define DGEX_ERROR_FONT_INIT (DGEX_ERROR_RESOURCE(1))
 
 #define DGEX_ERROR_CUSTOM_INIT  (DGEX_ERROR_CUSTOM(1))
 #define DGEX_ERROR_CUSTOM_START (DGEX_ERROR_CUSTOM(2))

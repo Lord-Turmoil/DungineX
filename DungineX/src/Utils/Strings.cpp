@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : June 8, 2025                              *
  *                                                                            *
- *                    Last Update : June 8, 2025                              *
+ *                    Last Update : October 11, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -42,6 +42,24 @@ bool Strings::StartsWith(const std::string& source, const std::string& pattern)
     return true;
 }
 
+bool Strings::StartsWith(const char* source, const char* pattern)
+{
+    if (source == nullptr || pattern == nullptr)
+    {
+        return false;
+    }
+
+    while (*pattern)
+    {
+        if (*source++ != *pattern++)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 bool Strings::EndsWith(const std::string& source, const std::string& pattern)
 {
     size_t sourceLength = source.length();
@@ -55,6 +73,40 @@ bool Strings::EndsWith(const std::string& source, const std::string& pattern)
     for (size_t i = 0; i < patternLen; i++)
     {
         if (source[sourceLength - i] != pattern[patternLen - i])
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool Strings::EndsWith(const char* source, const char* pattern)
+{
+    if (source == nullptr || pattern == nullptr)
+    {
+        return false;
+    }
+
+    const char* s = source;
+    const char* p = pattern;
+    while (*s)
+    {
+        s++;
+    }
+    while (*p)
+    {
+        p++;
+    }
+
+    while (p != pattern)
+    {
+        if (s == source)
+        {
+            return false;
+        }
+
+        if (*--s != *--p)
         {
             return false;
         }

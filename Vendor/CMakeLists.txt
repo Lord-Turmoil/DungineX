@@ -68,6 +68,12 @@ add_subdirectory(spdlog)
 
 add_subdirectory(tinyxml2)
 
+#---------------------------------------------------------------------
+# Adding sysfonts for font discovery
+#---------------------------------------------------------------------
+
+add_subdirectory(sysfonts)
+
 # --------------------------------------------------------------------
 # Creating all-in-one vendor dependency
 # --------------------------------------------------------------------
@@ -83,6 +89,7 @@ target_link_libraries(DgeX_Vendor INTERFACE
     SDL3::SDL3 # SDL must be the last item in the list.
     spdlog::spdlog
     tinyxml2::tinyxml2
+    sysfonts::sysfonts
 )
 
 add_library(DgeX::Vendor ALIAS DgeX_Vendor)

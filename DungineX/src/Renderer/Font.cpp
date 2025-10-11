@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : June 8, 2025                              *
  *                                                                            *
- *                    Last Update : June 8, 2025                              *
+ *                    Last Update : October 11, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -22,52 +22,224 @@
 #include "DgeX/Device/Graphics/Renderer.h"
 #include "DgeX/Utils/Assert.h"
 #include "DgeX/Utils/Log.h"
+#include "DgeX/Utils/Strings.h"
 
 #include <SDL_FontCache/SDL_FontCache.h>
+#include <sysfonts/sysfonts.h>
 
 #include <filesystem>
 #include <unordered_map>
+#include <vector>
 
 DGEX_BEGIN
 
-static constexpr float DEFAULT_POINT_SIZE = 100.f;
-static std::unordered_map<std::string, Ref<Font>> sLoadedFonts;
-
-Font::Font(TTF_Font* font) : _font(font), _impl(FC_CreateFont())
+Fontface::Fontface(TTF_Font* font) : _font(font), _impl(FC_CreateFont())
 {
+    _name = TTF_GetFontFamilyName(_font);
+    _style = TTF_GetFontStyleName(_font);
     FC_LoadFontFromTTF(static_cast<FC_Font*>(_impl), GetNativeRenderer(), font, FC_MakeColor(0, 0, 0, 255));
-    DGEX_CORE_DEBUG("Created font: {0}", GetName());
 }
 
-const char* Font::GetName() const
+const std::string& Fontface::GetName() const
 {
-    return TTF_GetFontFamilyName(_font);
+    return _name;
 }
 
-TTF_Font* Font::GetNativeFont() const
+const std::string& Fontface::GetStyle() const
+{
+    return _style;
+}
+
+TTF_Font* Fontface::GetNativeFont() const
 {
     return _font;
 }
 
-void* Font::GetImpl() const
+void* Fontface::GetImpl() const
 {
     return _impl;
 }
 
-void Font::Destroy()
+void Fontface::Destroy()
 {
     if (_impl)
     {
-        DGEX_CORE_DEBUG("Destroyed font: {0}", GetName());
         FC_FreeFont(static_cast<FC_Font*>(_impl));
         _impl = nullptr;
         _font = nullptr;
     }
 }
 
-static Ref<Font> LoadFontImpl(const std::string& path)
+FontFamily::FontFamily(const std::vector<Ref<Fontface>>& fonts)
+{
+    DGEX_ASSERT(!fonts.empty(), "Font family must have at least one fontface");
+    _name = fonts[0]->GetName();
+    _fonts = fonts;
+}
+
+// ============================================================================
+// Function implementation.
+// ----------------------------------------------------------------------------
+
+static constexpr float DEFAULT_POINT_SIZE = 100.f;
+static std::unordered_map<std::string, Ref<Fontface>> sLoadedFonts;
+
+static std::vector<FontFamilyMeta> sFontFamilies;
+
+static FontfaceMeta FontInfoToFontfaceMeta(const SF_FontInfo* info);
+static void AddFontFromFontfaceMeta(const FontfaceMeta& meta);
+
+static Ref<Fontface> LoadFontfaceFromFile(const std::string& path);
+static Ref<Fontface> LoadFontfaceFromMeta(const FontfaceMeta& meta);
+static Ref<FontFamily> LoadFontFamilyFromMeta(const FontFamilyMeta& meta);
+
+const std::string& FontFamily::GetName() const
+{
+    return _name;
+}
+
+Ref<Fontface> FontFamily::GetFont(const std::string& style) const
+{
+    for (const Ref<Fontface>& font : _fonts)
+    {
+        if (font->GetStyle() == style)
+        {
+            return font;
+        }
+    }
+    return _fonts[0];
+}
+
+float GetFontScale(float pointSize)
+{
+    return pointSize / DEFAULT_POINT_SIZE;
+}
+
+static int _SF_Callback(const SF_FontInfo* info, void* context)
+{
+    DGEX_USED(context);
+
+#ifdef DGEX_PLATFORM_WINDOWS
+    // On Windows, loading a font is costly, so we only load selected fonts.
+    if (!(Strings::StartsWith(info->family, "Arial") || Strings::StartsWith(info->style, "Segoe UI")))
+    {
+        return SF_CONTINUE;
+    }
+#endif
+    FontfaceMeta meta = FontInfoToFontfaceMeta(info);
+    if (meta.Name.empty())
+    {
+        DGEX_CORE_WARN("Font with empty family name found, ignoring");
+        return SF_CONTINUE;
+    }
+    if (meta.Style.empty())
+    {
+        meta.Style = "Regular";
+    }
+    if (meta.Path.empty())
+    {
+        DGEX_CORE_WARN("Font {0} with empty path found, ignoring", meta.Name);
+        return SF_CONTINUE;
+    }
+
+    AddFontFromFontfaceMeta(meta);
+
+    return SF_CONTINUE;
+}
+
+dgex_error_t InitFonts()
+{
+    sFontFamilies.clear();
+
+    if (SF_EnumFonts(_SF_Callback, nullptr) != SF_SUCCESS)
+    {
+        DGEX_CORE_WARN("Failed to enumerate system fonts: {0}", SF_GetError());
+        return DGEX_ERROR_FONT_INIT;
+    }
+
+    return DGEX_SUCCESS;
+}
+
+dgex_error_t AddFont(const std::string& path, const std::string& name)
+{
+    Ref<Fontface> font = LoadFontfaceFromFile(path);
+    if (!font)
+    {
+        return DGEX_ERROR;
+    }
+
+    FontfaceMeta meta = { name.empty() ? font->GetName() : name, font->GetStyle(), std::filesystem::path(path) };
+    AddFontFromFontfaceMeta(meta);
+
+    font->Destroy();
+
+    return DGEX_SUCCESS;
+}
+
+Ref<FontFamily> LoadFont(const std::string& name)
+{
+    for (const FontFamilyMeta& meta : sFontFamilies)
+    {
+        if (meta.Name == name)
+        {
+            return LoadFontFamilyFromMeta(meta);
+        }
+    }
+    DGEX_CORE_WARN("Font family {0} not found", name);
+
+    return nullptr;
+}
+
+const std::vector<FontFamilyMeta>& GetAvailableFontFamilies()
+{
+    return sFontFamilies;
+}
+
+// ============================================================================
+// Internal function implementation.
+// ----------------------------------------------------------------------------
+
+FontfaceMeta FontInfoToFontfaceMeta(const SF_FontInfo* info)
 {
 #ifdef DGEX_PLATFORM_WINDOWS
+    Ref<Fontface> font = LoadFontfaceFromFile(info->path);
+    if (!font)
+    {
+        return { "", "", std::filesystem::path() };
+    }
+    FontfaceMeta meta = { font->GetName(), font->GetStyle(), std::filesystem::path(info->path) };
+    font->Destroy();
+    return meta;
+#else
+    return { info->family ? info->family : "", info->style ? info->style : "Regular",
+             info->path ? std::filesystem::path(info->path) : std::filesystem::path() };
+#endif
+}
+
+void AddFontFromFontfaceMeta(const FontfaceMeta& meta)
+{
+    for (auto& [Name, Fonts] : sFontFamilies)
+    {
+        if (Name == meta.Name)
+        {
+            for (const FontfaceMeta& fontface : Fonts)
+            {
+                if (fontface.Style == meta.Style)
+                {
+                    DGEX_CORE_WARN("Duplicated style {0} in font {1}, ignoring", meta.Style, meta.Name);
+                    return;
+                }
+            }
+            Fonts.push_back(meta);
+            return;
+        }
+    }
+
+    sFontFamilies.emplace_back(FontFamilyMeta{ meta.Name, { meta } });
+}
+
+Ref<Fontface> LoadFontfaceFromFile(const std::string& path)
+{
     std::filesystem::path fontPath = path;
 
     if (!fontPath.has_extension())
@@ -75,55 +247,40 @@ static Ref<Font> LoadFontImpl(const std::string& path)
         fontPath += ".ttf";
     }
 
-    TTF_Font* font = TTF_OpenFont(fontPath.string().c_str(), DEFAULT_POINT_SIZE);
-    if (font)
+    if (TTF_Font* font = TTF_OpenFont(fontPath.string().c_str(), DEFAULT_POINT_SIZE))
     {
-        return CreateRef<Font>(font);
-    }
-    if (fontPath.is_absolute())
-    {
-        DGEX_CORE_WARN("Failed to load font: {0}, {1}", fontPath.string(), SDL_GetError());
-        return nullptr;
+        return CreateRef<Fontface>(font);
     }
 
-    // Try relative path in system drive.
-    fontPath = "C:/Windows/Fonts" / fontPath;
-    font = TTF_OpenFont(fontPath.string().c_str(), DEFAULT_POINT_SIZE);
-    if (font)
-    {
-        return CreateRef<Font>(font);
-    }
-    DGEX_CORE_WARN("Failed to load font: {0}, {1}", fontPath.string(), SDL_GetError());
+    DGEX_CORE_ERROR("Failed to load font: {0}, {1}", fontPath.string(), SDL_GetError());
 
     return nullptr;
-#else
-    DGEX_USED(path);
-    DGEX_ASSERT(false, "Font loading not implemented on this platform");
-    return nullptr;
-#endif
 }
 
-Ref<Font> LoadFont(const std::string& path)
+Ref<Fontface> LoadFontfaceFromMeta(const FontfaceMeta& meta)
 {
-    Ref<Font> font = LoadFontImpl(path);
-    if (font)
+    return LoadFontfaceFromFile(meta.Path.string());
+}
+
+Ref<FontFamily> LoadFontFamilyFromMeta(const FontFamilyMeta& meta)
+{
+    std::vector<Ref<Fontface>> fonts;
+
+    for (const FontfaceMeta& fontfaceMeta : meta.Fonts)
     {
-        std::string name = font->GetName();
-        if (Ref<Font> oldFont = sLoadedFonts[name])
+        Ref<Fontface> fontface = LoadFontfaceFromMeta(fontfaceMeta);
+        if (fontface)
         {
-            DGEX_CORE_WARN("Font {0} loaded multiple times, using existing one", name);
-            font->Destroy(); // unload the new font immediately
-            return oldFont;
+            fonts.push_back(fontface);
         }
-        sLoadedFonts[name] = font;
     }
 
-    return font;
-}
+    if (fonts.empty())
+    {
+        DGEX_CORE_WARN("No valid fontface found in font family {0}", meta.Name);
+    }
 
-float GetFontScale(float pointSize)
-{
-    return pointSize / DEFAULT_POINT_SIZE;
+    return CreateRef<FontFamily>(fonts);
 }
 
 DGEX_END
