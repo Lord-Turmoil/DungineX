@@ -21,11 +21,49 @@
 
 #include "DgeX/Utils/Assert.h"
 #include "DgeX/Utils/Macros.h"
+#include "DgeX/Utils/UUID.h"
 
 DGEX_BEGIN
 
 namespace UI
 {
+
+BaseStyle::BaseStyle(std::string name) : _name(std::move(name))
+{
+}
+
+BaseStyle::BaseStyle(Ext::XmlElement element)
+{
+    if (!element.IsValid())
+    {
+        DGEX_CORE_ERROR("Invalid XML element for BaseStyle");
+        return;
+    }
+
+    if (const char* name = element.Attribute("name"))
+    {
+        _name = name;
+    }
+    else
+    {
+        DGEX_CORE_WARN("BaseStyle element missing 'name' attribute");
+        _name = UUID().ToString();
+    }
+
+    Ext::XmlElement property = element.FirstChild("Property");
+    while (property)
+    {
+        if (const char* name = property.Attribute("name"))
+        {
+            _properties[name] = property.Attribute("value", "");
+        }
+        else
+        {
+            DGEX_CORE_ERROR("Property element missing 'name' attribute in '{0}'", _name);
+        }
+        property = property.NextSibling("Property");
+    }
+}
 
 BaseStyle::BaseStyle(const BaseStyle& other)
 {
@@ -57,43 +95,6 @@ BaseStyle& BaseStyle::operator=(BaseStyle&& other) noexcept
         _properties = std::move(other._properties);
     }
     return *this;
-}
-
-BaseStyle::BaseStyle(std::string name) : _name(std::move(name))
-{
-}
-
-BaseStyle::BaseStyle(Ext::XmlElement element)
-{
-    if (!element.IsValid())
-    {
-        DGEX_CORE_ERROR("Invalid XML element for BaseStyle");
-        return;
-    }
-
-    if (const char* name = element.Attribute("name"))
-    {
-        _name = name;
-    }
-    else
-    {
-        DGEX_CORE_ERROR("BaseStyle element missing 'name' attribute");
-        return;
-    }
-
-    Ext::XmlElement property = element.FirstChild("Property");
-    while (property)
-    {
-        if (const char* name = property.Attribute("name"))
-        {
-            _properties[name] = property.Attribute("value", "");
-        }
-        else
-        {
-            DGEX_CORE_ERROR("Property element missing 'name' attribute in '{0}'", _name);
-        }
-        property = property.NextSibling("Property");
-    }
 }
 
 void BaseStyle::_Merge(const Ref<BaseStyle>& style)
@@ -175,6 +176,34 @@ void BaseStyle::_DumpProperties(tinyxml2::XMLPrinter& printer) const
     }
 }
 
+Style::Style(const std::string& name) : BaseStyle(name)
+{
+}
+
+Style::Style(Ext::XmlElement element) : BaseStyle(element)
+{
+    if (!element.IsValid())
+    {
+        DGEX_CORE_ERROR("Invalid XML element for Style");
+        return;
+    }
+
+    Ext::XmlElement stateElement = element.FirstChild("State");
+    while (stateElement)
+    {
+        Ref<BaseStyle> style = CreateRef<BaseStyle>(stateElement);
+        if (style->IsValid())
+        {
+            _states[style->GetName()] = style;
+        }
+        else
+        {
+            DGEX_CORE_ERROR("State element missing 'name' attribute in '{0}'", GetName());
+        }
+        stateElement = stateElement.NextSibling("State");
+    }
+}
+
 Style::Style(const Style& other) : BaseStyle(other)
 {
     _name = other._name;
@@ -216,34 +245,6 @@ Style& Style::operator=(Style&& other) noexcept
 bool BaseStyle::IsValid() const
 {
     return !_name.empty();
-}
-
-Style::Style(const std::string& name) : BaseStyle(name)
-{
-}
-
-Style::Style(Ext::XmlElement element) : BaseStyle(element)
-{
-    if (!element.IsValid())
-    {
-        DGEX_CORE_ERROR("Invalid XML element for Style");
-        return;
-    }
-
-    Ext::XmlElement stateElement = element.FirstChild("State");
-    while (stateElement)
-    {
-        Ref<BaseStyle> style = CreateRef<BaseStyle>(stateElement);
-        if (style->IsValid())
-        {
-            _states[style->GetName()] = style;
-        }
-        else
-        {
-            DGEX_CORE_ERROR("State element missing 'name' attribute in '{0}'", GetName());
-        }
-        stateElement = stateElement.NextSibling("State");
-    }
 }
 
 void Style::Merge(const Ref<Style>& style)
@@ -323,6 +324,15 @@ void Style::SetStateProperty(const std::string& state, const std::string& name, 
 bool Style::HasState(const std::string& state)
 {
     return _states.find(state) != _states.end();
+}
+
+bool Style::HasStateProperty(const std::string& state, const std::string& name)
+{
+    if (auto it = _states.find(state); it != _states.end())
+    {
+        return it->second->HasProperty(name);
+    }
+    return false;
 }
 
 void Style::Dump(const Ref<Files::OutputHandle>& handle) const

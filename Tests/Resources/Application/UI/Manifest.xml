@@ -1,8 +1,8 @@
 <App name="UITest">
     <Resources>
-        
+
     </Resources>
-    
+
     <Include src="./Styles.xml"></Include>
 
     <Styles>
@@ -15,12 +15,12 @@
     <Include src="./HomePage.xml"></Include>
 
     <Page name="inlined-page">
-        <Button id="1" backgroundColor="#AA0000">
+        <Button id="inlined-1" style="button">
             <State name="hover">
-                <Property name="backgroundColor" value="#00AA00"/>
+                <Property name="background-color" value="#00AA00"/>
             </State>
             <State name="active">
-                <Property name="backgroundColor" value="#0000AA"/>
+                <Property name="background-color" value="#0000AA"/>
             </State>
         </Button>
     </Page>

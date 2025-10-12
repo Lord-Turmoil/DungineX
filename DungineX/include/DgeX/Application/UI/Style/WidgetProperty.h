@@ -78,22 +78,31 @@ namespace UI
  */
 struct WidgetProperties
 {
-    DEFINE_NON_TRANSITIONABLE_PROPERTY(Position, std::string)
+    DEFINE_NON_TRANSITIONABLE_PROPERTY(Position, std::string) // position: auto, relative
 
-    DEFINE_PROPERTY(X, float)
-    DEFINE_PROPERTY(Y, float)
-    DEFINE_PROPERTY(Width, float)
-    DEFINE_PROPERTY(Height, float)
+    DEFINE_PROPERTY(X, float)      // x: px, % (relative to parent)
+    DEFINE_PROPERTY(Y, float)      // y: px, % (relative to parent)
+    DEFINE_PROPERTY(Width, float)  // width: px, %
+    DEFINE_PROPERTY(Height, float) // height: px, %
 
-    DEFINE_PROPERTY(ForegroundColor, Color)
-    DEFINE_PROPERTY(BackgroundColor, Color)
+    DEFINE_PROPERTY(ForegroundColor, Color) // color: hex, rgb, rgba
+    DEFINE_PROPERTY(BackgroundColor, Color) // background-color: hex, rgb, rgba
 
-    DEFINE_PROPERTY(Opacity, float)
+    DEFINE_PROPERTY(Opacity, float)  // opacity: 0.0 - 1.0, 0% - 100%
+    DEFINE_PROPERTY(Rotation, float) // rotation: degrees
+    DEFINE_PROPERTY(Scale, float)    // scale: 1.0 = 100%
 
-    DEFINE_NON_TRANSITIONABLE_PROPERTY(TransitionTime, float)
-    DEFINE_NON_TRANSITIONABLE_PROPERTY(TransitionStyle, std::string)
+    DEFINE_PROPERTY(FontSize, float)                           // font-size: px (inherited)
+    DEFINE_NON_TRANSITIONABLE_PROPERTY(Font, std::string)      // font-family (inherited)
+    DEFINE_NON_TRANSITIONABLE_PROPERTY(FontStyle, std::string) // font-style (inherited)
 
-    void Update(DeltaTime delta);
+    DEFINE_NON_TRANSITIONABLE_PROPERTY(TextAlign, std::string)     // text-align: left, center, right
+    DEFINE_NON_TRANSITIONABLE_PROPERTY(VerticalAlign, std::string) // vertical-align: top, middle, bottom
+
+    DEFINE_NON_TRANSITIONABLE_PROPERTY(TransitionTime, float)        // transition-time: e.g. 1s, 1000ms
+    DEFINE_NON_TRANSITIONABLE_PROPERTY(TransitionStyle, std::string) // transition-style: see `StyleToEasingFn`
+
+    void Update(DeltaTime delta) const;
 };
 
 enum class MetricUnit

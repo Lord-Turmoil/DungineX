@@ -21,6 +21,7 @@
 
 #include "DgeX/Application/Event/MouseEvents.h"
 #include "DgeX/Application/Event/WidgetEvents.h"
+#include "DgeX/Application/UI/Widget/WidgetContext.h"
 #include "DgeX/Utils/Assert.h"
 #include "DgeX/Utils/Macros.h"
 #include "DgeX/Utils/UUID.h"
@@ -36,18 +37,50 @@ BaseWidget::BaseWidget() : _id(UUID().ToString()), _state(WidgetState::Normal)
 {
 }
 
-BaseWidget::BaseWidget(std::string id) : _id(std::move(id)), _state(WidgetState::Normal)
+BaseWidget::BaseWidget(std::string name, std::string id)
+    : _name(std::move(name)), _id(std::move(id)), _state(WidgetState::Normal)
 {
 }
 
-BaseWidget::BaseWidget(Ext::XmlElement element) : _id(UUID().ToString()), _state(WidgetState::Normal)
+BaseWidget::BaseWidget(WidgetContext& context, Ext::XmlElement element)
+    : _id(UUID().ToString()), _state(WidgetState::Normal)
 {
     DGEX_ASSERT(element.IsValid(), "Invalid XML for widget construction");
 
+    _name = element.Name();
+
+    // Ensure all widgets have an ID.
     if (const char* id = element.Attribute("id"))
     {
         _id = id;
     }
+    else
+    {
+        _id = UUID().ToString();
+    }
+
+    // Load styles.
+    const char* style = element.Attribute("style");
+    Ref<Style> baseStyle;
+    if (style)
+    {
+        baseStyle = context.GetStyle(style);
+    }
+
+    if (baseStyle)
+    {
+        _style = CreateRef<Style>(*baseStyle);
+        _style->Merge(element);
+    }
+    else
+    {
+        _style = CreateRef<Style>(element);
+    }
+}
+
+const std::string& BaseWidget::GetName() const
+{
+    return _name;
 }
 
 const std::string& BaseWidget::GetId() const
@@ -97,6 +130,21 @@ bool BaseWidget::IsDisabled() const
 Ref<Style> BaseWidget::GetStyle() const
 {
     return _style;
+}
+
+bool BaseWidget::HasStyleProperty(const std::string& name) const
+{
+    if (_state == WidgetState::Normal)
+    {
+        return _style->HasProperty(name);
+    }
+
+    if (_style->HasStateProperty(ToString(_state), name))
+    {
+        return true;
+    }
+
+    return _style->HasProperty(name);
 }
 
 Ref<BaseWidget> BaseWidget::Parent() const

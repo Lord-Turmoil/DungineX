@@ -19,8 +19,7 @@
 
 #pragma once
 
-#include "DgeX/Defines.h"
-#include "Types.h"
+#include "DgeX/Utils/Types.h"
 
 #include <fstream>
 #include <sstream>

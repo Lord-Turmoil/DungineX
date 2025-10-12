@@ -122,6 +122,13 @@ std::string Color::ToString(ColorFormats format) const
     return ss.str();
 }
 
+Color Color::ApplyOpacity(float opacity) const
+{
+    Color result(*this);
+    result.A = Math::Clamp<uint8_t>(static_cast<uint8_t>(static_cast<float>(A) * opacity), 0, 255);
+    return result;
+}
+
 bool Color::operator==(const Color& other) const
 {
     return (R == other.R) && (G == other.G) && (B == other.B) && (A == other.A);

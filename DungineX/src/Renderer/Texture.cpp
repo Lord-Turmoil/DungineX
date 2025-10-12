@@ -42,6 +42,27 @@ int Texture::GetHeight() const
     return static_cast<int>(SDL_GetNumberProperty(props, SDL_PROP_TEXTURE_WIDTH_NUMBER, 0));
 }
 
+void Texture::Resize(int width, int height)
+{
+    SDL_Renderer* renderer = GetNativeRenderer();
+    SDL_Texture* texture =
+        SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_TARGET, width, height);
+    if (!texture)
+    {
+        DGEX_CORE_ERROR("Failed to resize texture: {0}", SDL_GetError());
+        return;
+    }
+
+    // Just copy the old texture to the new one.
+    SDL_Texture* old = SDL_GetRenderTarget(renderer);
+    SDL_SetRenderTarget(renderer, texture);
+    SDL_RenderTexture(renderer, _texture, nullptr, nullptr);
+    SDL_SetRenderTarget(renderer, old);
+
+    SDL_DestroyTexture(_texture);
+    _texture = texture;
+}
+
 SDL_Texture* Texture::GetNativeTexture() const
 {
     return _texture;

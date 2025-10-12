@@ -1,0 +1,10 @@
+<Styles>
+    <Style name="button">
+        <Property name="color" value="#000"></Property>
+        <Property name="background-color" value="#FFF"></Property>
+        <State name="hover">
+            <Property name="background-color" value="#AAA"></Property>
+            <Property name="opacity" valu="90%"></Property>
+        </State>
+    </Style>
+</Styles>

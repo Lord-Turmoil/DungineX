@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include "DgeX/Defines.h"
 #include "DgeX/Error.h"
 #include "DgeX/Renderer/Color.h"
 #include "DgeX/Utils/Types.h"
@@ -133,6 +132,24 @@ private:
 // ============================================================================
 // Render Property Settings
 // ----------------------------------------------------------------------------
+
+enum class RenderBlendMode
+{
+    None,
+    Blend,
+    Add,
+    Mod,
+    Mul
+};
+
+/**
+ * @brief Set the blend mode for rendering.
+ *
+ * By default is `RenderBlendMode::Blend`.
+ *
+ * @param mode The blend mode.
+ */
+DGEX_API void SetRenderBlendMode(RenderBlendMode mode);
 
 /**
  * @brief Set clear color.
@@ -376,5 +393,17 @@ DGEX_API void DrawText(const char* text, int x, int y, TextFlags flags);
  * @param flags Controls how to render the text.
  */
 DGEX_API void DrawTextArea(const char* text, const Rect& rect, TextFlags flags);
+
+/**
+ * @brief Calculate the text area that will be occupied when rendering the text in a rectangle area.
+ *
+ * This is useful when you want to know how much space the text will occupy before actually rendering it.
+ *
+ * @param text Text to render.
+ * @param rect The text area.
+ * @param flags Controls how to render the text.
+ * @return The rectangle area that will be occupied by the rendered text.
+ */
+Rect CalcTextArea(const char* text, const Rect& rect, TextFlags flags);
 
 DGEX_END

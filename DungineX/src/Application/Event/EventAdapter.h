@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include "DgeX/Defines.h"
-
 #include "DgeX/Utils/Types.h"
 
 #include <SDL3/SDL.h>

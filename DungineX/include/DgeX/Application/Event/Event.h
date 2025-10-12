@@ -20,7 +20,6 @@
 #pragma once
 
 #include "DgeX/Application/Event/EventTypes.h"
-#include "DgeX/Defines.h"
 #include "DgeX/Utils/Types.h"
 
 #include <string>

@@ -36,6 +36,7 @@ class Event;
 namespace UI
 {
 
+class WidgetContext;
 class Style;
 
 enum class WidgetState
@@ -68,10 +69,19 @@ class BaseWidget
 {
 public:
     BaseWidget();
-    BaseWidget(std::string id);
-    BaseWidget(Ext::XmlElement element);
+    BaseWidget(std::string name, std::string id);
+    BaseWidget(WidgetContext& context, Ext::XmlElement element);
 
     virtual ~BaseWidget() = default;
+
+    /**
+     * @brief Get the name of the widget.
+     *
+     * The name is usually indicated as the XML element name.
+     *
+     * @return The name of the widget.
+     */
+    DGEX_API const std::string& GetName() const;
 
     /**
      * @brief Get the ID of the widget.
@@ -110,6 +120,17 @@ public:
 
     template <typename T>
     DGEX_API T GetStyleProperty(const std::string& name, const T& defaultValue = T()) const;
+
+    /**
+     * @brief Check if the style has a specific property.
+     *
+     * This checks the property in the current state first, then falls back to
+     * the base properties.
+     *
+     * @param name The name of the property.
+     * @return Whether the property exists or not.
+     */
+    DGEX_API bool HasStyleProperty(const std::string& name) const;
 
     /**
      * @brief Get the parent widget.
@@ -234,7 +255,8 @@ private:
     void _OnEventDisabled(const Ref<Event>& event);
 
 private:
-    std::string _id; // The unique ID of the widget.
+    std::string _name; // The name of the widget, usually the XML element name.
+    std::string _id;   // The unique ID of the widget.
     WidgetState _state;
     Ref<Style> _style;
 
@@ -248,6 +270,10 @@ protected:
 template <typename T>
 T BaseWidget::GetStyleProperty(const std::string& name, const T& defaultValue) const
 {
+    if (_state == WidgetState::Normal)
+    {
+        return _style->GetPropertyAs(name, defaultValue);
+    }
     return _style->GetStatePropertyAs(ToString(_state), name, defaultValue);
 }
 

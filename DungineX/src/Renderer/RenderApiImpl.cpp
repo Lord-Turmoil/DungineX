@@ -140,6 +140,23 @@ static void GetDrawTextProps(Color color, float scale, TextFlags flags, FC_Effec
     }
 }
 
+static void GetDrawTextProps(float scale, TextFlags flags, FC_Effect* effect)
+{
+    effect->scale = FC_MakeScale(scale, scale);
+    if (flags & L(TextFlag::AlignRight))
+    {
+        effect->alignment = FC_ALIGN_RIGHT;
+    }
+    else if (flags & L(TextFlag::AlignCenter))
+    {
+        effect->alignment = FC_ALIGN_CENTER;
+    }
+    else
+    {
+        effect->alignment = FC_ALIGN_LEFT;
+    }
+}
+
 void DrawTextImpl(SDL_Renderer* renderer, FC_Font* font, const char* text, int x, int y, Color color, float scale,
                   TextFlags flags)
 {
@@ -166,6 +183,37 @@ void DrawTextAreaImpl(SDL_Renderer* renderer, FC_Font* font, const char* text, F
     {
         FC_DrawBoxEffect(font, renderer, rect, effect, text);
     }
+}
+
+static FC_Rect FC_CalcRenderCallback(FC_Image* src, FC_Rect* srcrect, FC_Target* dest, float x, float y, float xscale,
+                                     float yscale)
+{
+    DGEX_USED(src);
+    DGEX_USED(dest);
+
+    float w = srcrect->w * xscale;
+    float h = srcrect->h * yscale;
+    FC_Rect result;
+    result.x = static_cast<int>(x);
+    result.y = static_cast<int>(y);
+    result.w = static_cast<int>(w);
+    result.h = static_cast<int>(h);
+    return result;
+}
+
+Rect CalcTextAreaImpl(SDL_Renderer* renderer, FC_Font* font, const char* text, FC_Rect rect, float scale,
+                      TextFlags flags)
+{
+    FC_Effect effect;
+
+    GetDrawTextProps(scale, flags, &effect);
+
+    FC_SetRenderCallback(FC_CalcRenderCallback);
+    FC_Rect area = FC_DrawColumnEffect(font, renderer, static_cast<float>(rect.x), static_cast<float>(rect.y),
+                                       static_cast<Uint16>(rect.w), effect, text);
+    FC_SetRenderCallback(nullptr);
+
+    return Rect(area.x, area.y, area.w, area.h);
 }
 
 DGEX_END

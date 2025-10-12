@@ -87,7 +87,7 @@ endif()
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if (MSVC AND (NOT CMAKE_GENERATOR STREQUAL "Ninja"))
+if(MSVC AND (NOT CMAKE_GENERATOR STREQUAL "Ninja"))
     # Parallelize each target, unless Ninja is the generator.
     add_definitions(/MP)
 endif()

@@ -88,7 +88,8 @@ int OnUpdate(void* context)
 
     {
         USE_RENDERER(state->OrderedRenderer);
-        SetFillColor(Color::Yellow);
+        //SetFillColor(Color::Yellow);
+        SetFillColor(Color::FromHex(0xAAFFFF55));
         DrawFilledRect(310, 10, 200, 100, 10); // on top of red
         SetFillColor(Color::Red);
         DrawFilledRect(350, 50, 200, 100);

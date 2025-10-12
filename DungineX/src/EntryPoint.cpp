@@ -24,7 +24,6 @@
 #include "Impl/MainLoop.h"
 
 #include "DgeX/Device/Graphics/Graphics.h"
-#include "DgeX/Device/Graphics/Renderer.h"
 #include "DgeX/Device/Graphics/Window.h"
 #include "DgeX/Error.h"
 #include "DgeX/Utils/Assert.h"

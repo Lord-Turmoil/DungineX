@@ -1,0 +1,140 @@
+/******************************************************************************
+ ***                   N E W  D E S I R E  S T U D I O S                    ***
+ ******************************************************************************
+ *                   Project Name : DungineX                                  *
+ *                                                                            *
+ *                      File Name : WidgetRenderer.cpp                        *
+ *                                                                            *
+ *                     Programmer : Tony Lewis                                *
+ *                                                                            *
+ *                     Start Date : October 11, 2025                          *
+ *                                                                            *
+ *                    Last Update : October 11, 2025                          *
+ *                                                                            *
+ * -------------------------------------------------------------------------- *
+ * OVERVIEW:                                                                  *
+ *                                                                            *
+ * Renderer for widgets. Since we use decoupled widget properties, all widgets*
+ * can be rendered in a unified way.                                          *
+ ******************************************************************************/
+
+#include "DgeX/Application/UI/Widget/WidgetRenderer.h"
+
+#include "DgeX/Application/UI/Widget/LabelWidget.h"
+#include "DgeX/Application/UI/Widget/Widget.h"
+#include "DgeX/Renderer/RenderApi.h"
+#include "DgeX/Renderer/Texture.h"
+#include "DgeX/Utils/Macros.h"
+#include "SDL_FontCache/SDL_FontCache.h"
+
+DGEX_BEGIN
+
+namespace UI
+{
+
+void WidgetRenderer::Render(const Ref<Widget>& widget) const
+{
+    DGEX_ASSERT(widget, "Render null widget");
+
+    const WidgetProperties& props = widget->GetProperties();
+    Ref<Texture> texture = widget->GetTexture();
+
+    // pre-render (set render target to the widget texture)
+    float width = props.Width->Value();
+    float height = props.Height->Value();
+    if (static_cast<int>(width) != texture->GetWidth() || static_cast<int>(height) != texture->GetHeight())
+    {
+        texture->Resize(static_cast<int>(width), static_cast<int>(height));
+    }
+    Ref<Texture> lastRenderTarget = GetCurrentRenderTarget();
+    SetCurrentRenderTarget(texture);
+    ClearDevice();
+
+    // rendering (render to the widget's local texture)
+    if (const auto it = _callbacks.find(widget->GetName()); it != _callbacks.end())
+    {
+        it->second->Render(widget);
+    }
+    for (const Ref<BaseWidget>& child : widget->Children())
+    {
+        if (const Ref<Widget> childWidget = child->AsWidget())
+        {
+            Render(childWidget);
+        }
+    }
+
+    // post-render (render to parent render target)
+    SetCurrentRenderTarget(lastRenderTarget);
+
+    TextureStyle style;
+    style.Scale = Math::ClampMin(props.Scale->Value(), 0.0f);
+    style.Degree = props.Rotation->Value();
+    style.Alpha = static_cast<uint8_t>(Math::Clamp(static_cast<int>(props.Opacity->Value()) * 255, 0, 255));
+
+    DrawTexture(texture, style, static_cast<int>(props.X->Value()), static_cast<int>(props.Y->Value()));
+}
+
+void WidgetRenderer::AddCallback(const std::string& name, const Ref<WidgetRendererCallback>& callback)
+{
+    _callbacks[name] = callback;
+}
+
+void BasicWidgetRenderer::Render(const Ref<Widget>& widget)
+{
+    const WidgetProperties& props = widget->GetProperties();
+    SetFillColor(props.BackgroundColor->Value());
+    DrawFilledRect(static_cast<int>(props.X->Value()), static_cast<int>(props.Y->Value()),
+                   static_cast<int>(props.Width->Value()), static_cast<int>(props.Height->Value()));
+}
+
+void LabelWidgetRenderer::Render(const Ref<Widget>& widget)
+{
+    Ref<LabelWidget> label = std::static_pointer_cast<LabelWidget>(widget);
+    const WidgetProperties& props = label->GetProperties();
+
+    // TODO: Load font from resource manager.
+
+    SetFontSize(props.FontSize->Value());
+    SetFontColor(props.ForegroundColor->Value().ApplyOpacity(props.Opacity->Value()));
+    SetFontStyle(props.FontStyle->Value());
+
+    Rect rect(static_cast<int>(props.X->Value()), static_cast<int>(props.Y->Value()),
+              static_cast<int>(props.Width->Value()), static_cast<int>(props.Height->Value()));
+
+    TextFlags flags;
+    const std::string& textAlign = props.TextAlign->Value();
+    if (textAlign == "center")
+    {
+        flags = L(TextFlag::AlignCenter);
+    }
+    else if (textAlign == "right")
+    {
+        flags = L(TextFlag::AlignRight);
+    }
+    else
+    {
+        flags = L(TextFlag::AlignLeft);
+    }
+
+    const std::string& verticalAlign = props.VerticalAlign->Value();
+    if (verticalAlign == "middle")
+    {
+        Rect area = CalcTextArea(label->GetText().c_str(), rect, flags);
+        area.Y = rect.Y + (rect.Height - area.Height) / 2;
+        DrawTextArea(label->GetText().c_str(), area, flags);
+    }
+    else if (verticalAlign == "bottom")
+    {
+        Rect area = CalcTextArea(label->GetText().c_str(), rect, flags);
+        area.Y = rect.Y + rect.Height - area.Height;
+        DrawTextArea(label->GetText().c_str(), area, flags);
+    }
+    else
+    {
+        DrawTextArea(label->GetText().c_str(), rect, flags);
+    }
+}
+
+} // namespace UI
+
+DGEX_END

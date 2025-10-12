@@ -27,7 +27,6 @@
 #define _DGEX_ENTRYPOINT_H_
 
 #include "Application/Event/Event.h"
-#include "DgeX/Defines.h"
 #include "Utils/Types.h"
 
 /**

@@ -3,48 +3,58 @@
  ******************************************************************************
  *                   Project Name : DungineX                                  *
  *                                                                            *
- *                      File Name : Input.h                                   *
+ *                      File Name : LabelWidget.h                             *
  *                                                                            *
  *                     Programmer : Tony Lewis                                *
  *                                                                            *
- *                     Start Date : July 31, 2025                             *
+ *                     Start Date : October 11, 2025                          *
  *                                                                            *
- *                    Last Update : July 31, 2025                             *
+ *                    Last Update : October 11, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
  *                                                                            *
- * Direct low-level input handling.                                           *
+ * Label widget has text.                                                     *
  ******************************************************************************/
 
 #pragma once
 
-#include "DgeX/Device/Input/KeyCodes.h"
-#include "DgeX/Utils/Types.h"
+#include "DgeX/Application/UI/Widget/Widget.h"
+
+#include <string>
 
 DGEX_BEGIN
 
-/**
- * @brief Checks if a specific key is currently pressed.
- *
- * @param code The key code to check.
- * @return true if the key is pressed, false otherwise.
- */
-DGEX_API bool IsKeyPressed(KeyCode code);
+namespace UI
+{
 
-/**
- * @brief Checks if a specific mouse button is currently pressed.
- *
- * @param code The mouse button code to check.
- * @return true if the mouse button is pressed, false otherwise.
- */
-DGEX_API bool IsMousePressed(MouseCode code);
+class LabelWidget : public Widget
+{
+public:
+    LabelWidget(WidgetContext& context, const Ext::XmlElement& element);
 
-/**
- * @brief Get the current position of the mouse cursor.
- *
- * @return The position of the mouse from the top-left corner of the window.
- */
-DGEX_API FPoint GetMousePosition();
+    /**
+     * @brief Set the text.
+     *
+     * @param text The text of the label widget.
+     */
+    void SetText(const std::string& text);
+
+    /**
+     * @brief Get the text.
+     *
+     * @return The text of the label widget.
+     */
+    const std::string& GetText() const;
+
+private:
+    void _ApplyWidth(const Widget& parent) override;
+    void _ApplyHeight(const Widget& parent) override;
+
+private:
+    std::string _text;
+};
+
+} // namespace UI
 
 DGEX_END

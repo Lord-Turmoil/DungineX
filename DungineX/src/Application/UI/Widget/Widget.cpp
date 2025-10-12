@@ -3,7 +3,7 @@
  ******************************************************************************
  *                   Project Name : DungineX                                  *
  *                                                                            *
- *                      File Name : VisualWidget.cpp                          *
+ *                      File Name : Widget.cpp                                *
  *                                                                            *
  *                     Programmer : Tony Lewis                                *
  *                                                                            *
@@ -20,15 +20,16 @@
 #include "DgeX/Application/UI/Widget/Widget.h"
 
 #include "DgeX/Application/UI/Style/Style.h"
+#include "DgeX/Renderer/Texture.h"
 
 DGEX_BEGIN
 
 namespace UI
 {
 
-Widget::Widget(Ext::XmlElement element)
+Widget::Widget(WidgetContext& context, Ext::XmlElement element)
+    : BaseWidget(context, element), _texture(CreateTexture(0, 0))
 {
-    DGEX_USED(element);
 }
 
 Ref<Widget> Widget::AsWidget()
@@ -70,6 +71,11 @@ const WidgetProperties& Widget::GetProperties() const
     return _properties;
 }
 
+Ref<Texture> Widget::GetTexture() const
+{
+    return _texture;
+}
+
 bool Widget::_IsInside(FPoint position) const
 {
     // clang-format off
@@ -89,12 +95,14 @@ void Widget::_ApplyStyles()
         return;
     }
 
-    _properties.SetTransitionTime(GetStyleProperty<NumberProperty>("transitionTime").Value);
-    _properties.SetTransitionStyle(GetStyleProperty<StringProperty>("transitionStyle", StringProperty("none")).Value);
+    _properties.SetTransitionTime(GetStyleProperty<NumberProperty>("transition-time").Value);
+    _properties.SetTransitionStyle(GetStyleProperty<StringProperty>("transition-style", StringProperty("none")).Value);
 
     const StringProperty position = GetStyleProperty<StringProperty>("position", StringProperty("auto"));
-    if (position.Value == "absolute")
+    if (position.Value == "relative")
     {
+        // The X and Y we set here is relative to its parent, and will be adjusted to global
+        // position during rearrangement. So, there we use ForceSet to avoid transition.
         const MetricProperty x = GetStyleProperty<MetricProperty>("x");
         if (x.Unit == MetricUnit::Pixel || x.Unit == MetricUnit::Unspecified)
         {
@@ -124,6 +132,61 @@ void Widget::_ApplyStyles()
         }
     }
 
+    _ApplyWidth(*parent);
+    _ApplyHeight(*parent);
+
+    _properties.SetForegroundColor(GetStyleProperty<ColorProperty>("color", ColorProperty(Color::Black)).Value);
+    _properties.SetBackgroundColor(
+        GetStyleProperty<ColorProperty>("background-color", ColorProperty(Color::White)).Value);
+
+    const NumberProperty opacity = GetStyleProperty<NumberProperty>("opacity", NumberProperty(1.0f));
+    _properties.SetOpacity(Math::Clamp(opacity.Value, 0.0f, 1.0f));
+    _properties.SetRotation(GetStyleProperty<NumberProperty>("rotation", NumberProperty(0.0f)).Value);
+    _properties.SetScale(Math::ClampMin(GetStyleProperty<NumberProperty>("scale", NumberProperty(1.0f)).Value, 0.0f));
+
+    if (HasStyleProperty("font-size"))
+    {
+        const NumberProperty fontSize = GetStyleProperty<NumberProperty>("font-size", NumberProperty(16.0f));
+        _properties.SetFontSize(Math::ClampMin(fontSize.Value, 1.0f));
+    }
+    else
+    {
+        _properties.SetFontSize(parent->GetProperties().FontSize->Value());
+    }
+
+    if (HasStyleProperty("font-family"))
+    {
+        _properties.SetFont(GetStyleProperty<StringProperty>("font-family").Value);
+    }
+    else
+    {
+        _properties.SetFont(parent->GetProperties().Font->Value());
+    }
+
+    if (HasStyleProperty("font-style"))
+    {
+        _properties.SetFontStyle(GetStyleProperty<StringProperty>("font-style").Value);
+    }
+    else
+    {
+        _properties.SetFontStyle(parent->GetProperties().FontStyle->Value());
+    }
+
+    _properties.SetTextAlign(GetStyleProperty<StringProperty>("text-align").Value);
+    _properties.SetVerticalAlign(GetStyleProperty<StringProperty>("vertical-align").Value);
+
+    // Recursively apply styles to children.
+    for (const Ref<BaseWidget>& child : _children)
+    {
+        if (Ref<Widget> widget = child->AsWidget())
+        {
+            widget->_ApplyStyles();
+        }
+    }
+}
+
+void Widget::_ApplyWidth(const Widget& parent)
+{
     const MetricProperty width = GetStyleProperty<MetricProperty>("width");
     if (width.Unit == MetricUnit::Pixel || width.Unit == MetricUnit::Unspecified)
     {
@@ -131,12 +194,16 @@ void Widget::_ApplyStyles()
     }
     else if (width.Unit == MetricUnit::Percent)
     {
-        _properties.SetWidth(Math::ClampMin(width.Value * parent->GetProperties().Width->Value(), 0.0f));
+        _properties.SetWidth(Math::ClampMin(width.Value * 0.01f * parent.GetProperties().Width->Value(), 0.0f));
     }
     else
     {
         DGEX_CORE_WARN("Unsupported unit {} for width in widget '{}'", ToString(width.Unit), GetId());
     }
+}
+
+void Widget::_ApplyHeight(const Widget& parent)
+{
     const MetricProperty height = GetStyleProperty<MetricProperty>("height");
     if (height.Unit == MetricUnit::Pixel || height.Unit == MetricUnit::Unspecified)
     {
@@ -144,23 +211,45 @@ void Widget::_ApplyStyles()
     }
     else if (height.Unit == MetricUnit::Percent)
     {
-        _properties.SetHeight(Math::ClampMin(height.Value * parent->GetProperties().Height->Value(), 0.0f));
+        _properties.SetHeight(Math::ClampMin(height.Value * 0.01f * parent.GetProperties().Height->Value(), 0.0f));
     }
     else
     {
         DGEX_CORE_WARN("Unsupported unit {} for height in widget '{}'", ToString(height.Unit), GetId());
     }
-
-    _properties.SetForegroundColor(GetStyleProperty<ColorProperty>("color", ColorProperty(Color::Black)).Value);
-    _properties.SetBackgroundColor(
-        GetStyleProperty<ColorProperty>("backgroundColor", ColorProperty(Color::White)).Value);
-
-    const NumberProperty opacity = GetStyleProperty<NumberProperty>("opacity", NumberProperty(1.0f));
-    _properties.SetOpacity(Math::Clamp(opacity.Value, 0.0f, 1.0f));
 }
 
+/**
+ * @brief Default rearrange.
+ *
+ * Default will rearrange auto-positioned children from top to bottom, left to right.
+ */
 void Widget::_Rearrange()
 {
+    float width = _properties.Width->Value();
+    float cursorX = 0;
+    float cursorY = 0;
+
+    for (const Ref<BaseWidget>& child : _children)
+    {
+        Ref<Widget> widget = child->AsWidget();
+        if (!widget)
+        {
+            continue;
+        }
+
+        if (widget->GetProperties().Position->Value() == "auto")
+        {
+            float childWidth = widget->GetProperties().Width->Value();
+            float childHeight = widget->GetProperties().Height->Value();
+            if (cursorX + childWidth > width)
+            {
+                cursorX = 0;
+                cursorY += childHeight;
+            }
+            cursorX += childWidth;
+        }
+    }
 }
 
 } // namespace UI

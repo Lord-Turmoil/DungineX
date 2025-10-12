@@ -1,0 +1,7 @@
+<Page name="home">
+    <Box>
+        <Button id="home-1" style="button">
+            <Label text="Click Me"></Label>
+        </Button>
+    </Box>
+</Page>

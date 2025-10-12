@@ -20,7 +20,7 @@
 #pragma once
 
 #include "DgeX/Defines.h"
-#include "Macros.h"
+#include "DgeX/Utils/Macros.h"
 
 #include <memory>
 #include <type_traits>

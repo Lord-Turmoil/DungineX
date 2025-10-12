@@ -90,10 +90,10 @@ static dgex_error_t InitDefaultFont()
 dgex_error_t InitRenderApi()
 {
     // Initialize context.
-    sContext.ClearColor = Color::Black;
-    sContext.LineColor = Color::White;
-    sContext.FillColor = Color::White;
-    sContext.FontColor = Color::White;
+    sContext.ClearColor = Color::White;
+    sContext.LineColor = Color::Black;
+    sContext.FillColor = Color::Black;
+    sContext.FontColor = Color::Black;
     sContext.Font = nullptr;
     sContext.ActiveFont = nullptr;
     sContext.FontSize = 16.0f;
@@ -102,6 +102,8 @@ dgex_error_t InitRenderApi()
     {
         return ret;
     }
+
+    SetRenderBlendMode(RenderBlendMode::Blend);
 
     DGEX_CORE_DEBUG("Render API initialized");
 
@@ -163,6 +165,30 @@ RenderTargetGuard::~RenderTargetGuard()
 // ----------------------------------------------------------------------------
 // Reference: https://wiki.libsdl.org/SDL3/SDL_SetRenderDrawColor
 // ----------------------------------------------------------------------------
+
+void SetRenderBlendMode(RenderBlendMode mode)
+{
+    SDL_BlendMode sdlMode = SDL_BLENDMODE_BLEND;
+    switch (mode)
+    {
+    case RenderBlendMode::None:
+        sdlMode = SDL_BLENDMODE_NONE;
+        break;
+    case RenderBlendMode::Blend:
+        sdlMode = SDL_BLENDMODE_BLEND;
+        break;
+    case RenderBlendMode::Add:
+        sdlMode = SDL_BLENDMODE_ADD;
+        break;
+    case RenderBlendMode::Mod:
+        sdlMode = SDL_BLENDMODE_MOD;
+        break;
+    case RenderBlendMode::Mul:
+        sdlMode = SDL_BLENDMODE_MUL;
+        break;
+    }
+    SDL_SetRenderDrawBlendMode(GetNativeRenderer(), sdlMode);
+}
 
 void SetClearColor(Color color)
 {
@@ -427,6 +453,13 @@ void DrawTextArea(const char* text, const Rect& rect, TextFlags flags)
     {
         DrawTextAreaImpl(GetNativeRenderer(), font, text, fcRect, sContext.FontColor, scale, flags);
     }
+}
+
+Rect CalcTextArea(const char* text, const Rect& rect, TextFlags flags)
+{
+    FC_Rect fcRect{ rect.X, rect.Y, rect.Width, rect.Height };
+    auto font = static_cast<FC_Font*>(sContext.ActiveFont->GetImpl());
+    return CalcTextAreaImpl(GetNativeRenderer(), font, text, fcRect, GetFontScale(sContext.FontSize), flags);
 }
 
 DGEX_END

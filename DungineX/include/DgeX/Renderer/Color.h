@@ -90,6 +90,14 @@ struct Color
     DGEX_API std::string ToString() const;
     DGEX_API std::string ToString(ColorFormats format) const;
 
+    /**
+     * @brief Apply additional opacity to the color.
+     *
+     * @param opacity Opacity.
+     * @return Color with additional opacity.
+     */
+    DGEX_API Color ApplyOpacity(float opacity) const;
+
     DGEX_API bool operator==(const Color& other) const;
 
     DGEX_API Color& operator*=(float scalar);

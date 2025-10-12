@@ -28,7 +28,7 @@ DGEX_BEGIN
 namespace UI
 {
 
-void WidgetProperties::Update(DeltaTime delta)
+void WidgetProperties::Update(DeltaTime delta) const
 {
     X->Update(delta);
     Y->Update(delta);
@@ -37,6 +37,9 @@ void WidgetProperties::Update(DeltaTime delta)
     ForegroundColor->Update(delta);
     BackgroundColor->Update(delta);
     Opacity->Update(delta);
+    Rotation->Update(delta);
+    Scale->Update(delta);
+    FontSize->Update(delta);
 }
 
 NumberProperty::NumberProperty() : Value(0.0f)

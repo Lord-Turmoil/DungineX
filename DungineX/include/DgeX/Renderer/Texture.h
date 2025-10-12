@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include "DgeX/Defines.h"
 #include "DgeX/Utils/Types.h"
 
 #include <SDL3/SDL.h>
@@ -47,6 +46,7 @@ public:
 
     DGEX_API int GetWidth() const;
     DGEX_API int GetHeight() const;
+    DGEX_API void Resize(int width, int height);
 
     SDL_Texture* GetNativeTexture() const;
     void Destroy();

@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include "DgeX/Defines.h"
 #include "DgeX/Extension/XmlDocument.h"
 #include "DgeX/Utils/Files.h"
 #include "DgeX/Utils/Types.h"
@@ -40,12 +39,6 @@ class BaseStyle
     friend class Style;
 
 public:
-    BaseStyle() = default;
-    BaseStyle(const BaseStyle& other);
-    BaseStyle(BaseStyle&& other) noexcept;
-    BaseStyle& operator=(const BaseStyle& other);
-    BaseStyle& operator=(BaseStyle&& other) noexcept;
-
     /**
      * @brief Create an empty style with a name.
      *
@@ -63,6 +56,12 @@ public:
      * @param element XML element.
      */
     explicit BaseStyle(Ext::XmlElement element);
+
+    BaseStyle() = default;
+    BaseStyle(const BaseStyle& other);
+    BaseStyle(BaseStyle&& other) noexcept;
+    BaseStyle& operator=(const BaseStyle& other);
+    BaseStyle& operator=(BaseStyle&& other) noexcept;
 
     virtual ~BaseStyle() = default;
 
@@ -169,11 +168,6 @@ T BaseStyle::GetPropertyAs(const std::string& name, const T& defaultValue) const
 class Style : public BaseStyle
 {
 public:
-    Style(const Style& other);
-    Style(Style&& other) noexcept;
-    Style& operator=(const Style& other);
-    Style& operator=(Style&& other) noexcept;
-
     /**
      * @brief Create an empty style with a name.
      *
@@ -187,6 +181,11 @@ public:
      * @param element An <Style></Style> element.
      */
     explicit Style(Ext::XmlElement element);
+
+    Style(const Style& other);
+    Style(Style&& other) noexcept;
+    Style& operator=(const Style& other);
+    Style& operator=(Style&& other) noexcept;
 
     /**
      * @brief Merge another style into this one.
@@ -246,6 +245,15 @@ public:
      * @return Whether the state exists.
      */
     DGEX_API bool HasState(const std::string& state);
+
+    /**
+     * @brief Check if a property exists in a specific state.
+     *
+     * @param state The name of the state.
+     * @param name The name of the property.
+     * @return Whether the state and the style exist.
+     */
+    DGEX_API bool HasStateProperty(const std::string& state, const std::string& name);
 
 public:
     /**

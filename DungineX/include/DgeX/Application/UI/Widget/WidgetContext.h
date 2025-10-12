@@ -3,48 +3,63 @@
  ******************************************************************************
  *                   Project Name : DungineX                                  *
  *                                                                            *
- *                      File Name : Input.h                                   *
+ *                      File Name : WidgetContext.h                           *
  *                                                                            *
  *                     Programmer : Tony Lewis                                *
  *                                                                            *
- *                     Start Date : July 31, 2025                             *
+ *                     Start Date : October 11, 2025                          *
  *                                                                            *
- *                    Last Update : July 31, 2025                             *
+ *                    Last Update : October 11, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
  *                                                                            *
- * Direct low-level input handling.                                           *
+ * Context during the loading of the widget. It includes styles, and maybe    *
+ * also some metadata in the future. It does not hold resources, which are    *
+ * handled by resource manager.                                               *
  ******************************************************************************/
 
 #pragma once
 
-#include "DgeX/Device/Input/KeyCodes.h"
 #include "DgeX/Utils/Types.h"
+
+#include <string>
+#include <unordered_map>
 
 DGEX_BEGIN
 
-/**
- * @brief Checks if a specific key is currently pressed.
- *
- * @param code The key code to check.
- * @return true if the key is pressed, false otherwise.
- */
-DGEX_API bool IsKeyPressed(KeyCode code);
+namespace UI
+{
+
+class Style;
 
 /**
- * @brief Checks if a specific mouse button is currently pressed.
- *
- * @param code The mouse button code to check.
- * @return true if the mouse button is pressed, false otherwise.
+ * @brief The context holds all styles and metadata during widget loading.
  */
-DGEX_API bool IsMousePressed(MouseCode code);
+class WidgetContext
+{
+public:
+    WidgetContext() = default;
 
-/**
- * @brief Get the current position of the mouse cursor.
- *
- * @return The position of the mouse from the top-left corner of the window.
- */
-DGEX_API FPoint GetMousePosition();
+    /**
+     * @brief Add a style to the context.
+     *
+     * @param style The style to add.
+     */
+    void AddStyle(const Ref<Style>& style);
+
+    /**
+     * @brief Get a style with the given name.
+     *
+     * @param name The name of the style.
+     * @return The style of the name, or nullptr if the style does not exits.
+     */
+    Ref<Style> GetStyle(const std::string& name) const;
+
+private:
+    std::unordered_map<std::string, Ref<Style>> _styles;
+};
+
+} // namespace UI
 
 DGEX_END

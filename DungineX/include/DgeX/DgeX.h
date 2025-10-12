@@ -61,6 +61,7 @@
 #pragma once
 
 #include "DgeX/Defines.h"
+#include "DgeX/Error.h"
 #include "DgeX/Version.h"
 
 #include "DgeX/Application/Event/KeyEvents.h"

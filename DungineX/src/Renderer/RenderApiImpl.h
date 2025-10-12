@@ -50,4 +50,7 @@ void DrawTextImpl(SDL_Renderer* renderer, FC_Font* font, const char* text, int x
 void DrawTextAreaImpl(SDL_Renderer* renderer, FC_Font* font, const char* text, FC_Rect rect, Color color, float scale,
                       TextFlags flags);
 
+Rect CalcTextAreaImpl(SDL_Renderer* renderer, FC_Font* font, const char* text, FC_Rect rect, float scale,
+                      TextFlags flags);
+
 DGEX_END

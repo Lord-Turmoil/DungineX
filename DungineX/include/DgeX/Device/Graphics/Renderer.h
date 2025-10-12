@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include "DgeX/Defines.h"
 #include "DgeX/Error.h"
 #include "DgeX/Utils/Types.h"
 
