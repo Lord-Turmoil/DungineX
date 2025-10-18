@@ -117,6 +117,10 @@ MetricProperty::MetricProperty(const char* value) : Value(0.0f), Unit(MetricUnit
     }
 }
 
+StringProperty::StringProperty(std::string value) : Value(std::move(value))
+{
+}
+
 StringProperty::StringProperty(const char* value)
 {
     DGEX_ASSERT(value, "Null value for StringProperty");
@@ -189,24 +193,6 @@ ColorProperty::ColorProperty(const char* value) : Value(Color::Black)
     {
         DGEX_CORE_WARN("Invalid value '{}' for ColorProperty, defaulting to black", value);
     }
-}
-
-void InitWidgetProperties(WidgetProperties& props)
-{
-    props.ForceSetPosition("auto");
-
-    props.ForceSetX(0.0f);
-    props.ForceSetY(0.0f);
-    props.ForceSetWidth(0.0f);
-    props.ForceSetHeight(0.0f);
-
-    props.ForceSetForegroundColor(Color::Black);
-    props.ForceSetBackgroundColor(Color::White);
-
-    props.ForceSetOpacity(0.0f);
-
-    props.ForceSetTransitionTime(0.0f);
-    props.ForceSetTransitionStyle("none");
 }
 
 } // namespace UI

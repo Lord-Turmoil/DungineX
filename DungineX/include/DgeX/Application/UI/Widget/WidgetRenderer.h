@@ -35,6 +35,10 @@ namespace UI
 {
 
 class Widget;
+class LabelWidget;
+class FrameWidget;
+
+class WidgetProperties;
 
 struct WidgetRenderContext
 {
@@ -67,6 +71,43 @@ public:
 };
 
 /**
+ * @brief Template implementation of WidgetRendererCallback.
+ *
+ * You have to ensure the function signature matches.
+ *
+ * @tparam T Type of the widget.
+ * @tparam F Handler function type.
+ */
+template <typename T, typename F>
+class WidgetRendererCallbackImpl : public WidgetRendererCallback
+{
+public:
+    explicit WidgetRendererCallbackImpl(const F& callback) : _callback(callback)
+    {
+    }
+
+    explicit WidgetRendererCallbackImpl(F&& callback) : _callback(std::move(callback))
+    {
+    }
+
+    ~WidgetRendererCallbackImpl() override = default;
+
+    void Render(const Ref<Widget>& widget, const WidgetRenderContext& context) override
+    {
+        _callback(static_cast<T&>(*widget), context);
+    }
+
+private:
+    F _callback;
+};
+
+template <typename T, typename F>
+DGEX_API Ref<WidgetRendererCallback> CreateWidgetRendererCallback(F&& callback)
+{
+    return CreateRef<WidgetRendererCallbackImpl<T, F>>(std::forward<F>(callback));
+}
+
+/**
  * @brief A de-coupled widget renderer.
  */
 class WidgetRenderer final
@@ -75,6 +116,19 @@ public:
     WidgetRenderer() = default;
     ~WidgetRenderer() = default;
 
+    /**
+     * @brief Render all widgets with the given root frame.
+     *
+     * @param frame Frame widget.
+     */
+    void Render(const Ref<FrameWidget>& frame) const;
+
+    /**
+     * @brief Render a widget.
+     *
+     * @param widget Widget to render.
+     * @param context Current render context.
+     */
     void Render(const Ref<Widget>& widget, WidgetRenderContext& context) const;
 
     /**
@@ -94,19 +148,19 @@ private:
 /**
  * @brief General purpose widget renderer.
  */
-class BasicWidgetRenderer : public WidgetRendererCallback
+class BasicWidgetRenderer
 {
 public:
-    void Render(const Ref<Widget>& widget, const WidgetRenderContext& context) override;
+    void operator()(Widget& widget, const WidgetRenderContext& context) const;
 };
 
 /**
  * @brief Render LabelWidget.
  */
-class LabelWidgetRenderer : public WidgetRendererCallback
+class LabelWidgetRenderer
 {
 public:
-    void Render(const Ref<Widget>& widget, const WidgetRenderContext& context) override;
+    void operator()(LabelWidget& widget, const WidgetRenderContext& context) const;
 };
 
 } // namespace UI

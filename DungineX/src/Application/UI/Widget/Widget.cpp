@@ -17,15 +17,21 @@
  * Widget that can be displayed on the scree.                                 *
  ******************************************************************************/
 
+#include <utility>
+
 #include "DgeX/Application/UI/Widget/Widget.h"
 
-#include "DgeX/Application/UI/Style/Style.h"
 #include "DgeX/Renderer/Texture.h"
 
 DGEX_BEGIN
 
 namespace UI
 {
+
+Widget::Widget(std::string name, std::string id)
+    : BaseWidget(std::move(name), std::move(id)), _texture(CreateTexture(0, 0))
+{
+}
 
 Widget::Widget(const WidgetContext& context, Ext::XmlElement element)
     : BaseWidget(context, element), _texture(CreateTexture(0, 0))
@@ -76,17 +82,7 @@ Ref<Texture> Widget::GetTexture() const
     return _texture;
 }
 
-bool Widget::_IsInside(FPoint position) const
-{
-    // clang-format off
-    return (_properties.X->Value() < position.X) &&
-           (position.X < _properties.X->Value() + _properties.Width->Value()) &&
-           (_properties.Y->Value() < position.Y) &&
-           (position.Y < _properties.Y->Value() + _properties.Height->Value());
-    // clang-format on
-}
-
-void Widget::_ApplyStyles()
+void Widget::ApplyStyles()
 {
     _properties.SetTransitionTime(GetStyleProperty<NumberProperty>("transition-time").Value);
     _properties.SetTransitionStyle(GetStyleProperty<StringProperty>("transition-style", StringProperty("none")).Value);
@@ -139,17 +135,27 @@ void Widget::_ApplyStyles()
         _properties.UnSetFontStyle();
     }
 
-    _properties.SetTextAlign(GetStyleProperty<StringProperty>("text-align").Value);
-    _properties.SetVerticalAlign(GetStyleProperty<StringProperty>("vertical-align").Value);
+    _properties.SetTextAlign(GetStyleProperty<StringProperty>("text-align", StringProperty("left")).Value);
+    _properties.SetVerticalAlign(GetStyleProperty<StringProperty>("vertical-align", StringProperty("top")).Value);
 
     // Recursively apply styles to children.
     for (const Ref<BaseWidget>& child : _children)
     {
         if (Ref<Widget> widget = child->AsWidget())
         {
-            widget->_ApplyStyles();
+            widget->ApplyStyles();
         }
     }
+}
+
+bool Widget::_IsInside(FPoint position) const
+{
+    // clang-format off
+    return (_properties.X->Value() < position.X) &&
+           (position.X < _properties.X->Value() + _properties.Width->Value()) &&
+           (_properties.Y->Value() < position.Y) &&
+           (position.Y < _properties.Y->Value() + _properties.Height->Value());
+    // clang-format on
 }
 
 void Widget::_ApplyWidth(const Widget& parent)

@@ -222,7 +222,7 @@ protected:
      *
      * This is most likely due to state change.
      */
-    virtual void _ApplyStyles();
+    virtual void ApplyStyles();
 
 private:
     void _OnEventNormal(const Ref<Event>& event);

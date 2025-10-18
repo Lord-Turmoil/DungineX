@@ -31,6 +31,7 @@ static Ref<KeyEvent> CreateKeyEvent(const SDL_KeyboardEvent* event);
 static Ref<MouseMovedEvent> CreateMouseMovedEvent(const SDL_MouseMotionEvent* event);
 static Ref<MouseScrolledEvent> CreateMouseScrolledEvent(const SDL_MouseWheelEvent* event);
 static Ref<MouseButtonEvent> CreateMouseButtonEvent(const SDL_MouseButtonEvent* event);
+static Ref<WindowResizedEvent> CreateWindowResizedEvent(const SDL_WindowEvent* event);
 
 // https://wiki.libsdl.org/SDL3/SDL_Event
 Ref<Event> ConvertSdlEvent(const SDL_Event* event)
@@ -47,6 +48,8 @@ Ref<Event> ConvertSdlEvent(const SDL_Event* event)
     case SDL_EVENT_MOUSE_BUTTON_DOWN:
     case SDL_EVENT_MOUSE_BUTTON_UP:
         return CreateMouseButtonEvent(&event->button);
+    case SDL_EVENT_WINDOW_RESIZED:
+        return CreateWindowResizedEvent(&event->window);
     case SDL_EVENT_QUIT:
         return CreateRef<WindowCloseEvent>();
     }
@@ -97,6 +100,11 @@ Ref<MouseButtonEvent> CreateMouseButtonEvent(const SDL_MouseButtonEvent* event)
         return CreateRef<MouseButtonPressedEvent>(SDL_BUTTON_ID_TO_MOUSE_CODE[event->button], event->down);
     }
     return CreateRef<MouseButtonReleasedEvent>(SDL_BUTTON_ID_TO_MOUSE_CODE[event->button]);
+}
+
+Ref<WindowResizedEvent> CreateWindowResizedEvent(const SDL_WindowEvent* event)
+{
+    return CreateRef<WindowResizedEvent>(event->data1, event->data2);
 }
 
 DGEX_END

@@ -48,6 +48,7 @@ enum class EventType
 
     // Window events
     WindowClose,
+    WindowResized,
 
     // Widget events, are fired by widgets
     // The position of the mouse can be inferred from MouseMoved event
@@ -76,6 +77,8 @@ inline std::string ToString(EventType type)
         return "MouseButtonReleased";
     case EventType::WindowClose:
         return "WindowClose";
+    case EventType::WindowResized:
+        return "WindowResized";
     case EventType::MouseEnter:
         return "MouseEnter";
     case EventType::MouseLeave:

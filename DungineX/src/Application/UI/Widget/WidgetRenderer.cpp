@@ -20,6 +20,7 @@
 
 #include "DgeX/Application/UI/Widget/WidgetRenderer.h"
 
+#include "DgeX/Application/UI/Widget/FrameWidget.h"
 #include "DgeX/Application/UI/Widget/LabelWidget.h"
 #include "DgeX/Application/UI/Widget/Widget.h"
 #include "DgeX/Renderer/RenderApi.h"
@@ -31,10 +32,125 @@ DGEX_BEGIN
 namespace UI
 {
 
-static WidgetRenderContext GetChildWidgetContext(Widget& widget, const WidgetRenderContext& parentContext)
+static WidgetRenderContext GetFrameContext(FrameWidget& frame);
+static WidgetRenderContext GetChildWidgetContext(Widget& widget, const WidgetRenderContext& parentContext);
+static void PreRender(WidgetRenderContext& context, const Ref<Widget>& widget);
+static void PostRender(const WidgetRenderContext& context, const Ref<Widget>& widget);
+
+void WidgetRenderer::Render(const Ref<FrameWidget>& frame) const
 {
+    DGEX_ASSERT(frame, "Render null frame");
+
+    WidgetRenderContext context = GetFrameContext(*frame);
+
+    Render(frame, context);
+}
+
+void WidgetRenderer::Render(const Ref<Widget>& widget, WidgetRenderContext& context) const
+{
+    DGEX_ASSERT(widget, "Render null widget");
+
+    PreRender(context, widget);
+
+    if (const auto it = _callbacks.find(widget->GetName()); it != _callbacks.end())
+    {
+        it->second->Render(widget, context);
+    }
+    for (const Ref<BaseWidget>& child : widget->Children())
+    {
+        if (const Ref<Widget> childWidget = child->AsWidget())
+        {
+            WidgetRenderContext childContext = GetChildWidgetContext(*childWidget, context);
+            Render(childWidget, childContext);
+        }
+    }
+
+    PostRender(context, widget);
+}
+
+void WidgetRenderer::AddCallback(const std::string& name, const Ref<WidgetRendererCallback>& callback)
+{
+    _callbacks[name] = callback;
+}
+
+void BasicWidgetRenderer::operator()(Widget& widget, const WidgetRenderContext& context) const
+{
+    DGEX_USED(context);
+
+    const WidgetProperties& props = widget.GetProperties();
+    SetFillColor(props.BackgroundColor->Value());
+    DrawFilledRect(static_cast<int>(props.X->Value()), static_cast<int>(props.Y->Value()),
+                   static_cast<int>(props.Width->Value()), static_cast<int>(props.Height->Value()));
+}
+
+void LabelWidgetRenderer::operator()(LabelWidget& widget, const WidgetRenderContext& context) const
+{
+    const WidgetProperties& props = widget.GetProperties();
+
+    SetFont(context.Font);
+    SetFontStyle(context.FontStyle);
+    SetFontSize(context.FontSize);
+    SetFontColor(context.FontColor);
+
+    TextFlags flags;
+    const std::string& textAlign = props.TextAlign->Value();
+    if (textAlign == "center")
+    {
+        flags = L(TextFlag::AlignCenter);
+    }
+    else if (textAlign == "right")
+    {
+        flags = L(TextFlag::AlignRight);
+    }
+    else
+    {
+        flags = L(TextFlag::AlignLeft);
+    }
+
+    Rect rect(static_cast<int>(props.X->Value()), static_cast<int>(props.Y->Value()),
+              static_cast<int>(props.Width->Value()), static_cast<int>(props.Height->Value()));
+
+    const std::string& verticalAlign = props.VerticalAlign->Value();
+    if (verticalAlign == "middle")
+    {
+        Rect area = CalcTextArea(widget.GetText().c_str(), rect, flags);
+        area.Y = rect.Y + (rect.Height - area.Height) / 2;
+        DrawTextArea(widget.GetText().c_str(), area, flags);
+    }
+    else if (verticalAlign == "bottom")
+    {
+        Rect area = CalcTextArea(widget.GetText().c_str(), rect, flags);
+        area.Y = rect.Y + rect.Height - area.Height;
+        DrawTextArea(widget.GetText().c_str(), area, flags);
+    }
+    else
+    {
+        DrawTextArea(widget.GetText().c_str(), rect, flags);
+    }
+}
+
+// ============================================================================
+// Internal function implementation.
+// ----------------------------------------------------------------------------
+
+WidgetRenderContext GetFrameContext(FrameWidget& frame)
+{
+    const WidgetProperties& props = frame.GetProperties();
     WidgetRenderContext context;
+
+    context.Target = GetCurrentRenderTarget();
+    context.Font = GetDefaultFont(); // TODO: Load font form resource manager.
+    context.FontStyle = props.FontStyle->Value();
+    context.FontColor = props.ForegroundColor->Value();
+    context.FontSize = props.FontSize->Value();
+
+    return context;
+}
+
+WidgetRenderContext GetChildWidgetContext(Widget& widget, const WidgetRenderContext& parentContext)
+{
     const WidgetProperties& properties = widget.GetProperties();
+    WidgetRenderContext context;
 
     context.Target = context.Canvas;
     if (properties.Font)
@@ -77,14 +193,11 @@ static WidgetRenderContext GetChildWidgetContext(Widget& widget, const WidgetRen
     return context;
 }
 
-void WidgetRenderer::Render(const Ref<Widget>& widget, WidgetRenderContext& context) const
+void PreRender(WidgetRenderContext& context, const Ref<Widget>& widget)
 {
-    DGEX_ASSERT(widget, "Render null widget");
-
     const WidgetProperties& props = widget->GetProperties();
     context.Canvas = widget->GetTexture();
 
-    // pre-render (set render target to the widget texture)
     float width = props.Width->Value();
     float height = props.Height->Value();
     if (static_cast<int>(width) != context.Canvas->GetWidth() ||
@@ -95,22 +208,12 @@ void WidgetRenderer::Render(const Ref<Widget>& widget, WidgetRenderContext& cont
 
     SetCurrentRenderTarget(context.Canvas);
     ClearDevice();
+}
 
-    // rendering (render to the widget's local texture)
-    if (const auto it = _callbacks.find(widget->GetName()); it != _callbacks.end())
-    {
-        it->second->Render(widget, context);
-    }
-    for (const Ref<BaseWidget>& child : widget->Children())
-    {
-        if (const Ref<Widget> childWidget = child->AsWidget())
-        {
-            WidgetRenderContext childContext = GetChildWidgetContext(*childWidget, context);
-            Render(childWidget, childContext);
-        }
-    }
+void PostRender(const WidgetRenderContext& context, const Ref<Widget>& widget)
+{
+    const WidgetProperties& props = widget->GetProperties();
 
-    // post-render (render to parent render target)
     SetCurrentRenderTarget(context.Target);
 
     TextureStyle style;
@@ -119,66 +222,6 @@ void WidgetRenderer::Render(const Ref<Widget>& widget, WidgetRenderContext& cont
     style.Alpha = static_cast<uint8_t>(Math::Clamp(static_cast<int>(props.Opacity->Value()) * 255, 0, 255));
 
     DrawTexture(context.Canvas, style, static_cast<int>(props.X->Value()), static_cast<int>(props.Y->Value()));
-}
-
-void WidgetRenderer::AddCallback(const std::string& name, const Ref<WidgetRendererCallback>& callback)
-{
-    _callbacks[name] = callback;
-}
-
-void BasicWidgetRenderer::Render(const Ref<Widget>& widget, const WidgetRenderContext& context)
-{
-    const WidgetProperties& props = widget->GetProperties();
-    SetFillColor(props.BackgroundColor->Value());
-    DrawFilledRect(static_cast<int>(props.X->Value()), static_cast<int>(props.Y->Value()),
-                   static_cast<int>(props.Width->Value()), static_cast<int>(props.Height->Value()));
-}
-
-void LabelWidgetRenderer::Render(const Ref<Widget>& widget, const WidgetRenderContext& context)
-{
-    Ref<LabelWidget> label = std::static_pointer_cast<LabelWidget>(widget);
-    const WidgetProperties& props = label->GetProperties();
-
-    SetFont(context.Font);
-    SetFontStyle(context.FontStyle);
-    SetFontSize(context.FontSize);
-    SetFontColor(context.FontColor);
-
-    TextFlags flags;
-    const std::string& textAlign = props.TextAlign->Value();
-    if (textAlign == "center")
-    {
-        flags = L(TextFlag::AlignCenter);
-    }
-    else if (textAlign == "right")
-    {
-        flags = L(TextFlag::AlignRight);
-    }
-    else
-    {
-        flags = L(TextFlag::AlignLeft);
-    }
-
-    Rect rect(static_cast<int>(props.X->Value()), static_cast<int>(props.Y->Value()),
-              static_cast<int>(props.Width->Value()), static_cast<int>(props.Height->Value()));
-
-    const std::string& verticalAlign = props.VerticalAlign->Value();
-    if (verticalAlign == "middle")
-    {
-        Rect area = CalcTextArea(label->GetText().c_str(), rect, flags);
-        area.Y = rect.Y + (rect.Height - area.Height) / 2;
-        DrawTextArea(label->GetText().c_str(), area, flags);
-    }
-    else if (verticalAlign == "bottom")
-    {
-        Rect area = CalcTextArea(label->GetText().c_str(), rect, flags);
-        area.Y = rect.Y + rect.Height - area.Height;
-        DrawTextArea(label->GetText().c_str(), area, flags);
-    }
-    else
-    {
-        DrawTextArea(label->GetText().c_str(), rect, flags);
-    }
 }
 
 } // namespace UI

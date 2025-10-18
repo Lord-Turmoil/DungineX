@@ -28,6 +28,8 @@ DGEX_BEGIN
 namespace Strings
 {
 
+bool Equals(const char* str1, const char* str2);
+
 /**
  * @brief Check if a string starts with a given prefix.
  *

@@ -205,6 +205,7 @@ struct MetricProperty
 struct StringProperty
 {
     StringProperty() = default;
+    explicit StringProperty(std::string value);
     explicit StringProperty(const char* value);
 
     std::string Value;
@@ -221,8 +222,6 @@ struct ColorProperty
 
     Color Value;
 };
-
-void InitWidgetProperties(WidgetProperties& props);
 
 } // namespace UI
 

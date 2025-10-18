@@ -19,7 +19,14 @@
 
 #include "DgeX/Utils/Strings.h"
 
+#include <cstring>
+
 DGEX_BEGIN
+
+bool Strings::Equals(const char* str1, const char* str2)
+{
+    return strcmp(str1, str2) == 0;
+}
 
 bool Strings::StartsWith(const std::string& source, const std::string& pattern)
 {

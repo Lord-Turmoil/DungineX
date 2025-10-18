@@ -37,7 +37,8 @@ namespace UI
 class Widget : public BaseWidget, std::enable_shared_from_this<Widget>
 {
 public:
-    explicit Widget(const WidgetContext& context, Ext::XmlElement element);
+    Widget(std::string name, std::string id);
+    Widget(const WidgetContext& context, Ext::XmlElement element);
     ~Widget() override = default;
 
     DGEX_API Ref<Widget> AsWidget() override;
@@ -51,11 +52,12 @@ public:
     WidgetProperties& GetProperties();
     const WidgetProperties& GetProperties() const;
 
+    void ApplyStyles() override;
+
     Ref<Texture> GetTexture() const;
 
 protected:
     bool _IsInside(FPoint position) const override;
-    void _ApplyStyles() override;
 
     // Some properties may have different default values, so we make these apply
     // methods virtual for derived widgets to override.

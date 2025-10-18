@@ -31,4 +31,19 @@ public:
     DECL_EVENT_CLASS_TYPE(WindowClose)
 };
 
+class WindowResizedEvent final : public Event
+{
+public:
+    WindowResizedEvent(int width, int height);
+
+    DECL_EVENT_CLASS_TYPE(WindowResized)
+
+    DGEX_API int GetWidth() const;
+    DGEX_API int GetHeight() const;
+
+private:
+    int _width;
+    int _height;
+};
+
 DGEX_END

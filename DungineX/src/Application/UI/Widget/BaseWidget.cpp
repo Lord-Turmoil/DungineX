@@ -103,7 +103,7 @@ void BaseWidget::SetState(StyleState state)
     if (_state != state)
     {
         _state = state;
-        _ApplyStyles();
+        ApplyStyles();
     }
 }
 
@@ -231,20 +231,25 @@ void BaseWidget::OnEvent(const Ref<Event>& event)
         _Notify(event);
     }
 
-    switch (_state)
+    if (!event->IsHandled())
     {
-    case StyleState::Normal:
-        _OnEventNormal(event);
-        break;
-    case StyleState::Hover:
-        _OnEventHover(event);
-        break;
-    case StyleState::Active:
-        _OnEventActive(event);
-        break;
-    case StyleState::Disabled:
-        _OnEventDisabled(event);
-        break;
+        switch (_state)
+        {
+        case StyleState::Normal:
+            _OnEventNormal(event);
+            break;
+        case StyleState::Hover:
+            _OnEventHover(event);
+            break;
+        case StyleState::Active:
+            _OnEventActive(event);
+            break;
+        case StyleState::Disabled:
+            _OnEventDisabled(event);
+            break;
+        case StyleState::NumStates:
+            break;
+        }
     }
 
     if (!event->IsHandled())
@@ -309,7 +314,7 @@ bool BaseWidget::_IsInside(FPoint position) const
     return false;
 }
 
-void BaseWidget::_ApplyStyles()
+void BaseWidget::ApplyStyles()
 {
 }
 
