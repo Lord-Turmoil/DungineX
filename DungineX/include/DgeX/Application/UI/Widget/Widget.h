@@ -37,7 +37,7 @@ namespace UI
 class Widget : public BaseWidget, std::enable_shared_from_this<Widget>
 {
 public:
-    explicit Widget(WidgetContext& context, Ext::XmlElement element);
+    explicit Widget(const WidgetContext& context, Ext::XmlElement element);
     ~Widget() override = default;
 
     DGEX_API Ref<Widget> AsWidget() override;

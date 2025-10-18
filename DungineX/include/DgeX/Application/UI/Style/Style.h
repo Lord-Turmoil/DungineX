@@ -31,6 +31,55 @@ DGEX_BEGIN
 namespace UI
 {
 
+enum class StyleState
+{
+    Normal = 0,
+    Hover = 1,
+    Active = 2,
+    Disabled = 3,
+    Unknown = 4,
+    NumStates = 4
+};
+
+inline std::string ToString(StyleState state)
+{
+    switch (state)
+    {
+    case StyleState::Normal:
+        return "normal";
+    case StyleState::Hover:
+        return "hover";
+    case StyleState::Active:
+        return "active";
+    case StyleState::Disabled:
+        return "disabled";
+    case StyleState::Unknown:
+        return "unknown";
+    }
+    return "unknown";
+}
+
+inline StyleState StyleStateFromString(const std::string& state)
+{
+    if (state == "normal")
+    {
+        return StyleState::Normal;
+    }
+    if (state == "hover")
+    {
+        return StyleState::Hover;
+    }
+    if (state == "active")
+    {
+        return StyleState::Active;
+    }
+    if (state == "disabled")
+    {
+        return StyleState::Disabled;
+    }
+    return StyleState::Unknown;
+}
+
 /**
  * @brief Base style is simply a collection of properties.
  */
@@ -68,18 +117,11 @@ public:
     /**
      * @brief Get the name of the style.
      *
+     * If no name is explicitly given, a random UUID string will be used.
+     *
      * @return The name of the style.
      */
     DGEX_API const std::string& GetName() const;
-
-    /**
-     * @brief Check if the style is valid.
-     *
-     * A valid style must have a non-empty name.
-     *
-     * @return Whether the style is valid.
-     */
-    DGEX_API bool IsValid() const;
 
     /**
      * @brief Get the property by name with default value.
@@ -215,7 +257,7 @@ public:
      * @param defaultValue The default value to return if property not found.
      * @return The value of the property.
      */
-    DGEX_API std::string GetStateProperty(const std::string& state, const std::string& name,
+    DGEX_API std::string GetStateProperty(StyleState state, const std::string& name,
                                           const std::string& defaultValue = "");
 
     /**
@@ -225,7 +267,7 @@ public:
      * the base properties.
      */
     template <typename T>
-    DGEX_API T GetStatePropertyAs(const std::string& state, const std::string& name, const T& defaultValue = T()) const;
+    DGEX_API T GetStatePropertyAs(StyleState state, const std::string& name, const T& defaultValue = T()) const;
 
     /**
      * @brief Set value for a property in a specific state.
@@ -236,7 +278,7 @@ public:
      * @param name The name of the property.
      * @param value The value to set.
      */
-    DGEX_API void SetStateProperty(const std::string& state, const std::string& name, const std::string& value);
+    DGEX_API void SetStateProperty(StyleState state, const std::string& name, const std::string& value);
 
     /**
      * @brief Check if a state exists.
@@ -244,7 +286,7 @@ public:
      * @param state The name of the state.
      * @return Whether the state exists.
      */
-    DGEX_API bool HasState(const std::string& state);
+    DGEX_API bool HasState(StyleState state) const;
 
     /**
      * @brief Check if a property exists in a specific state.
@@ -253,7 +295,7 @@ public:
      * @param name The name of the property.
      * @return Whether the state and the style exist.
      */
-    DGEX_API bool HasStateProperty(const std::string& state, const std::string& name);
+    DGEX_API bool HasStateProperty(StyleState state, const std::string& name);
 
 public:
     /**
@@ -272,18 +314,15 @@ private:
     void _Dump(tinyxml2::XMLPrinter& printer) const;
 
 private:
-    std::map<std::string, Ref<BaseStyle>> _states;
+    Ref<BaseStyle> _states[L(StyleState::NumStates)];
 };
 
 template <typename T>
-T Style::GetStatePropertyAs(const std::string& state, const std::string& name, const T& defaultValue) const
+T Style::GetStatePropertyAs(StyleState state, const std::string& name, const T& defaultValue) const
 {
-    if (auto it = _states.find(state); it != _states.end())
+    if (_states[L(state)])
     {
-        if (it->second->HasProperty(name))
-        {
-            return T(it->second->GetProperty(name, "").c_str());
-        }
+        return _states[L(state)]->GetPropertyAs<T>(name, defaultValue);
     }
     return GetPropertyAs<T>(name, defaultValue);
 }

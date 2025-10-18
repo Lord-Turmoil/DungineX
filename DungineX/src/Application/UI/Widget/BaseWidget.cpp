@@ -33,17 +33,17 @@ DGEX_BEGIN
 namespace UI
 {
 
-BaseWidget::BaseWidget() : _id(UUID().ToString()), _state(WidgetState::Normal)
+BaseWidget::BaseWidget() : _id(UUID().ToString()), _state(StyleState::Normal)
 {
 }
 
 BaseWidget::BaseWidget(std::string name, std::string id)
-    : _name(std::move(name)), _id(std::move(id)), _state(WidgetState::Normal)
+    : _name(std::move(name)), _id(std::move(id)), _state(StyleState::Normal)
 {
 }
 
-BaseWidget::BaseWidget(WidgetContext& context, Ext::XmlElement element)
-    : _id(UUID().ToString()), _state(WidgetState::Normal)
+BaseWidget::BaseWidget(const WidgetContext& context, Ext::XmlElement element)
+    : _id(UUID().ToString()), _state(StyleState::Normal)
 {
     DGEX_ASSERT(element.IsValid(), "Invalid XML for widget construction");
 
@@ -88,7 +88,7 @@ const std::string& BaseWidget::GetId() const
     return _id;
 }
 
-WidgetState BaseWidget::GetState() const
+StyleState BaseWidget::GetState() const
 {
     return _state;
 }
@@ -98,7 +98,7 @@ std::string BaseWidget::GetStateValue() const
     return ToString(_state);
 }
 
-void BaseWidget::SetState(WidgetState state)
+void BaseWidget::SetState(StyleState state)
 {
     if (_state != state)
     {
@@ -109,22 +109,22 @@ void BaseWidget::SetState(WidgetState state)
 
 bool BaseWidget::IsNormal() const
 {
-    return _state == WidgetState::Normal;
+    return _state == StyleState::Normal;
 }
 
 bool BaseWidget::IsHover() const
 {
-    return _state == WidgetState::Hover;
+    return _state == StyleState::Hover;
 }
 
 bool BaseWidget::IsActive() const
 {
-    return _state == WidgetState::Active;
+    return _state == StyleState::Active;
 }
 
 bool BaseWidget::IsDisabled() const
 {
-    return _state == WidgetState::Disabled;
+    return _state == StyleState::Disabled;
 }
 
 Ref<Style> BaseWidget::GetStyle() const
@@ -134,12 +134,12 @@ Ref<Style> BaseWidget::GetStyle() const
 
 bool BaseWidget::HasStyleProperty(const std::string& name) const
 {
-    if (_state == WidgetState::Normal)
+    if (_state == StyleState::Normal)
     {
         return _style->HasProperty(name);
     }
 
-    if (_style->HasStateProperty(ToString(_state), name))
+    if (_style->HasStateProperty(_state, name))
     {
         return true;
     }
@@ -233,16 +233,16 @@ void BaseWidget::OnEvent(const Ref<Event>& event)
 
     switch (_state)
     {
-    case WidgetState::Normal:
+    case StyleState::Normal:
         _OnEventNormal(event);
         break;
-    case WidgetState::Hover:
+    case StyleState::Hover:
         _OnEventHover(event);
         break;
-    case WidgetState::Active:
+    case StyleState::Active:
         _OnEventActive(event);
         break;
-    case WidgetState::Disabled:
+    case StyleState::Disabled:
         _OnEventDisabled(event);
         break;
     }
@@ -318,7 +318,7 @@ void BaseWidget::_OnEventNormal(const Ref<Event>& event)
     DispatchEvent<MouseMovedEvent>(event, [this](MouseMovedEvent& e) {
         if (_IsInside(e.GetPosition()))
         {
-            SetState(WidgetState::Hover);
+            SetState(StyleState::Hover);
             _Notify(CreateRef<MouseEnterEvent>());
         }
         return true; // prevent propagation
@@ -330,14 +330,14 @@ void BaseWidget::_OnEventHover(const Ref<Event>& event)
     DispatchEvent<MouseMovedEvent>(event, [this](MouseMovedEvent& e) {
         if (!_IsInside(e.GetPosition()))
         {
-            SetState(WidgetState::Normal);
+            SetState(StyleState::Normal);
             _Notify(CreateRef<MouseLeaveEvent>());
         }
         return true; // prevent propagation
     });
 
     DispatchEvent<MouseButtonPressedEvent>(event, [this](MouseButtonPressedEvent& e) {
-        SetState(WidgetState::Active);
+        SetState(StyleState::Active);
         DGEX_USED(e);
         return true; // prevent propagation
     });
@@ -348,14 +348,14 @@ void BaseWidget::_OnEventActive(const Ref<Event>& event)
     DispatchEvent<MouseMovedEvent>(event, [this](MouseMovedEvent& e) {
         if (!_IsInside(e.GetPosition()))
         {
-            SetState(WidgetState::Normal);
+            SetState(StyleState::Normal);
             _Notify(CreateRef<MouseLeaveEvent>());
         }
         return true; // prevent propagation
     });
 
     DispatchEvent<MouseButtonReleasedEvent>(event, [this](MouseButtonReleasedEvent& e) {
-        SetState(WidgetState::Hover);
+        SetState(StyleState::Hover);
         _Notify(CreateRef<MouseClickEvent>());
         DGEX_USED(e);
         return true; // prevent propagation

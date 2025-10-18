@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : June 8, 2025                              *
  *                                                                            *
- *                    Last Update : October 11, 2025                          *
+ *                    Last Update : October 18, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -136,6 +136,8 @@ DGEX_API float GetFontScale(float pointSize);
  * This will scan all installed system fonts for their metadata.
  * It is required to load fonts.
  *
+ * @todo Maybe we can move this time-consuming operation to a separate thread.
+ *
  * @return 0 on success, otherwise failure.
  */
 DGEX_API dgex_error_t InitFonts();
@@ -165,5 +167,14 @@ DGEX_API Ref<FontFamily> LoadFont(const std::string& name);
  * @return All available fonts.
  */
 DGEX_API const std::vector<FontFamilyMeta>& GetAvailableFontFamilies();
+
+/**
+ * @brief Get the default font on the system.
+ *
+ * At least there should be one font available.
+ *
+ * @return The default font on the system.
+ */
+DGEX_API const Ref<FontFamily>& GetDefaultFont();
 
 DGEX_END

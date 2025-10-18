@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : June 8, 2025                              *
  *                                                                            *
- *                    Last Update : October 11, 2025                          *
+ *                    Last Update : October 18, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -46,6 +46,12 @@ bool StartsWith(const std::string& source, const std::string& pattern);
  */
 bool StartsWith(const char* source, const char* pattern);
 
+template <typename... Args>
+bool StartsWith(const char* source, const char* pattern, Args... args)
+{
+    return StartsWith(source, pattern) || StartsWith(source, args...);
+}
+
 /**
  * @brief Check if a string ends with a given suffix.
  *
@@ -54,6 +60,12 @@ bool StartsWith(const char* source, const char* pattern);
  * @return Whether the source string ends with the pattern or not.
  */
 bool EndsWith(const std::string& source, const std::string& pattern);
+
+template <typename... Args>
+bool EndsWith(const std::string& source, const std::string& pattern, Args... args)
+{
+    return EndsWith(source, pattern) || EndsWith(source, args...);
+}
 
 /**
  * @brief Check if a C-style string ends with a given suffix.

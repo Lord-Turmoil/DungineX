@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : August 24, 2025                           *
  *                                                                            *
- *                    Last Update : October 4, 2025                           *
+ *                    Last Update : October 18, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -192,13 +192,14 @@ Style::Style(Ext::XmlElement element) : BaseStyle(element)
     while (stateElement)
     {
         Ref<BaseStyle> style = CreateRef<BaseStyle>(stateElement);
-        if (style->IsValid())
+        StyleState state = StyleStateFromString(style->GetName());
+        if (state == StyleState::Unknown)
         {
-            _states[style->GetName()] = style;
+            DGEX_CORE_WARN("State '{0}' is not a recognized state in '{1}', ignored", style->GetName(), element.Name());
         }
         else
         {
-            DGEX_CORE_ERROR("State element missing 'name' attribute in '{0}'", GetName());
+            _states[L(state)] = style;
         }
         stateElement = stateElement.NextSibling("State");
     }
@@ -207,15 +208,22 @@ Style::Style(Ext::XmlElement element) : BaseStyle(element)
 Style::Style(const Style& other) : BaseStyle(other)
 {
     _name = other._name;
-    for (const auto& [stateName, stateStyle] : other._states)
+    for (int i = 0; i < L(StyleState::NumStates); i++)
     {
-        _states[stateName] = CreateRef<BaseStyle>(*stateStyle);
+        if (other._states[i])
+        {
+            _states[i] = CreateRef<BaseStyle>(*other._states[i]);
+        }
     }
 }
 
 Style::Style(Style&& other) noexcept : BaseStyle(std::move(other))
 {
-    _states = std::move(other._states);
+    for (int i = 0; i < L(StyleState::NumStates); i++)
+    {
+        // OK to ignore use after move here.
+        _states[i] = std::move(other._states[i]);
+    }
 }
 
 Style& Style::operator=(const Style& other)
@@ -223,10 +231,16 @@ Style& Style::operator=(const Style& other)
     if (this != &other)
     {
         BaseStyle::operator=(other);
-        _states.clear();
-        for (const auto& [stateName, stateStyle] : other._states)
+        for (int i = 0; i < L(StyleState::NumStates); i++)
         {
-            _states[stateName] = CreateRef<BaseStyle>(*stateStyle);
+            if (other._states[i])
+            {
+                _states[i] = CreateRef<BaseStyle>(*other._states[i]);
+            }
+            else
+            {
+                _states[i] = nullptr;
+            }
         }
     }
     return *this;
@@ -237,14 +251,13 @@ Style& Style::operator=(Style&& other) noexcept
     if (this != &other)
     {
         BaseStyle::operator=(std::move(other));
-        _states = std::move(other._states);
+        for (int i = 0; i < L(StyleState::NumStates); i++)
+        {
+            // OK to ignore use after move here.
+            _states[i] = std::move(other._states[i]);
+        }
     }
     return *this;
-}
-
-bool BaseStyle::IsValid() const
-{
-    return !_name.empty();
 }
 
 void Style::Merge(const Ref<Style>& style)
@@ -255,15 +268,18 @@ void Style::Merge(const Ref<Style>& style)
     }
 
     _Merge(style);
-    for (const auto& [stateName, stateStyle] : style->_states)
+    for (int i = 0; i < L(StyleState::NumStates); i++)
     {
-        if (auto it = _states.find(stateName); it != _states.end())
+        if (style->_states[i])
         {
-            it->second->_Merge(stateStyle);
-        }
-        else
-        {
-            _states[stateName] = stateStyle;
+            if (_states[i])
+            {
+                _states[i]->_Merge(style->_states[i]);
+            }
+            else
+            {
+                _states[i] = CreateRef<BaseStyle>(*style->_states[i]);
+            }
         }
     }
 }
@@ -276,61 +292,54 @@ void Style::Merge(Ext::XmlElement element)
     while (stateElement)
     {
         Ref<BaseStyle> style = CreateRef<BaseStyle>(stateElement);
-        if (style->IsValid())
+        if (StyleState state = StyleStateFromString(style->GetName()); state != StyleState::Unknown)
         {
-            if (auto it = _states.find(style->GetName()); it != _states.end())
+            if (_states[L(state)])
             {
-                it->second->_Merge(style);
+                _states[L(state)]->_Merge(style);
             }
             else
             {
-                _states[style->GetName()] = style;
+                _states[L(state)] = CreateRef<BaseStyle>(*style);
             }
         }
         else
         {
-            DGEX_CORE_WARN("State element missing 'name' attribute in '{0}', ignored", element.Name());
+            DGEX_CORE_WARN("State '{0}' is not a recognized state in '{1}', ignored", style->GetName(), element.Name());
         }
+
         stateElement = stateElement.NextSibling("State");
     }
 }
 
-std::string Style::GetStateProperty(const std::string& state, const std::string& name, const std::string& defaultValue)
+std::string Style::GetStateProperty(StyleState state, const std::string& name, const std::string& defaultValue)
 {
-    if (auto it = _states.find(state); it != _states.end())
+    if (_states[L(state)])
     {
-        if (it->second->HasProperty(name))
-        {
-            return it->second->GetProperty(name, defaultValue);
-        }
+        return _states[L(state)]->GetProperty(name, defaultValue);
     }
     return GetProperty(name, defaultValue);
 }
 
-void Style::SetStateProperty(const std::string& state, const std::string& name, const std::string& value)
+void Style::SetStateProperty(StyleState state, const std::string& name, const std::string& value)
 {
-    if (auto it = _states.find(state); it != _states.end())
+    if (!_states[L(state)])
     {
-        it->second->SetProperty(name, value);
+        _states[L(state)] = CreateRef<BaseStyle>(ToString(state));
     }
-    else
-    {
-        auto newState = CreateRef<BaseStyle>(state);
-        newState->SetProperty(name, value);
-        _states[state] = newState;
-    }
+    _states[L(state)]->SetProperty(name, value);
 }
 
-bool Style::HasState(const std::string& state)
+bool Style::HasState(StyleState state) const
 {
-    return _states.find(state) != _states.end();
+    return _states[L(state)] != nullptr;
 }
 
-bool Style::HasStateProperty(const std::string& state, const std::string& name)
+bool Style::HasStateProperty(StyleState state, const std::string& name)
 {
-    if (auto it = _states.find(state); it != _states.end())
+    if (_states[L(state)])
     {
-        return it->second->HasProperty(name);
+        return _states[L(state)]->HasProperty(name);
     }
     return false;
 }
@@ -349,12 +358,15 @@ void Style::_Dump(tinyxml2::XMLPrinter& printer) const
     printer.OpenElement("Style");
     printer.PushAttribute("name", GetName().c_str());
     _DumpProperties(printer);
-    for (const auto& [name, style] : _states)
+    for (const auto& _state : _states)
     {
-        printer.OpenElement("State");
-        printer.PushAttribute("name", name.c_str());
-        style->_DumpProperties(printer);
-        printer.CloseElement();
+        if (_state)
+        {
+            printer.OpenElement("State");
+            printer.PushAttribute("name", _state->GetName().c_str());
+            _state->_DumpProperties(printer);
+            printer.CloseElement();
+        }
     }
     printer.CloseElement();
 }

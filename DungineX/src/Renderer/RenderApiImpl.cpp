@@ -191,8 +191,8 @@ static FC_Rect FC_CalcRenderCallback(FC_Image* src, FC_Rect* srcrect, FC_Target*
     DGEX_USED(src);
     DGEX_USED(dest);
 
-    float w = srcrect->w * xscale;
-    float h = srcrect->h * yscale;
+    float h = static_cast<float>(srcrect->h) * yscale;
+    float w = static_cast<float>(srcrect->w) * xscale;
     FC_Rect result;
     result.x = static_cast<int>(x);
     result.y = static_cast<int>(y);

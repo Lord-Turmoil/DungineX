@@ -24,14 +24,14 @@ TEST_CASE("Style Load Test")
     REQUIRE(buttonStyleElement.IsValid());
     Ref<Style> buttonStyle = CreateRef<Style>(buttonStyleElement);
     CHECK_EQ(buttonStyle->GetProperty("fontSize"), "20px");
-    CHECK_EQ(buttonStyle->GetStateProperty("hover", "fontSize"), "40px");
+    CHECK_EQ(buttonStyle->GetStateProperty(StyleState::Hover, "fontSize"), "40px");
 
     boxStyle->Merge(buttonStyle);
     CHECK_EQ(boxStyle->GetProperty("fontSize"), "20px");
 
     Ref<Style> copiedStyle = CreateRef<Style>(*boxStyle);
     CHECK_EQ(copiedStyle->GetProperty("width"), "200px");
-    CHECK_EQ(copiedStyle->GetStateProperty("hover", "fontSize"), "40px");
+    CHECK_EQ(copiedStyle->GetStateProperty(StyleState::Hover, "fontSize"), "40px");
 
     copiedStyle->SetProperty("width", "300px");
     CHECK_EQ(copiedStyle->GetProperty("width"), "300px");

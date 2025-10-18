@@ -31,7 +31,7 @@ namespace UI
 
 void WidgetContext::AddStyle(const Ref<Style>& style)
 {
-    if (!style || !style->IsValid())
+    if (!style)
     {
         DGEX_CORE_WARN("Invalid style cannot be added to context");
         return;

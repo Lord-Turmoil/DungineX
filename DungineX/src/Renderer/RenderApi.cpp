@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : June 2, 2025                              *
  *                                                                            *
- *                    Last Update : October 11, 2025                          *
+ *                    Last Update : October 18, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -57,31 +57,7 @@ static dgex_error_t InitDefaultFont()
         return ret;
     }
 
-#ifdef DGEX_PLATFORM_WINDOWS
-    sContext.Font = LoadFont("Arial");
-#elif defined DGEX_PLATFORM_LINUX
-    sContext.Font = LoadFont("DejaVu Sans");
-#elif defined DGEX_PLATFORM_MACOS
-    sContext.Font = LoadFont("Helvetica");
-#endif
-
-    if (!sContext.Font)
-    {
-        DGEX_CORE_WARN("Default font not found, using the first available font");
-        const std::vector<FontFamilyMeta>& families = GetAvailableFontFamilies();
-        if (families.empty())
-        {
-            DGEX_CORE_ERROR("No available font found");
-            return DGEX_ERROR_FONT_INIT;
-        }
-        sContext.Font = LoadFont(families.front().Name);
-    }
-    if (!sContext.Font)
-    {
-        DGEX_CORE_ERROR("Failed to load default font");
-        return DGEX_ERROR_FONT_INIT;
-    }
-
+    sContext.Font = GetDefaultFont();
     sContext.ActiveFont = sContext.Font->GetFont("Regular");
 
     return DGEX_SUCCESS;

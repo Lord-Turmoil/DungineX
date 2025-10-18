@@ -24,7 +24,7 @@ DGEX_BEGIN
 namespace UI
 {
 
-LabelWidget::LabelWidget(WidgetContext& context, const Ext::XmlElement& element) : Widget(context, element)
+LabelWidget::LabelWidget(const WidgetContext& context, const Ext::XmlElement& element) : Widget(context, element)
 {
     _text = element.Attribute("text", "");
 }

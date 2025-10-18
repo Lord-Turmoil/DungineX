@@ -31,7 +31,7 @@ namespace UI
 class LabelWidget : public Widget
 {
 public:
-    LabelWidget(WidgetContext& context, const Ext::XmlElement& element);
+    LabelWidget(const WidgetContext& context, const Ext::XmlElement& element);
 
     /**
      * @brief Set the text.

@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : October 5, 2025                           *
  *                                                                            *
- *                    Last Update : October 5, 2025                           *
+ *                    Last Update : October 18, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -56,6 +56,13 @@ DGEX_BEGIN
         SET_PROPERTY_WITHOUT_TRANSITION_IMPL(PROP, value, TYPE);                                                       \
     }
 
+#define DEFINE_NULLABLE_PROPERTY(PROP, TYPE)                                                                           \
+    DEFINE_PROPERTY(PROP, TYPE)                                                                                        \
+    void UnSet##PROP()                                                                                                 \
+    {                                                                                                                  \
+        PROP = nullptr;                                                                                                \
+    }
+
 #define DEFINE_NON_TRANSITIONABLE_PROPERTY(PROP, TYPE)                                                                 \
     Ref<Property<TYPE>> PROP;                                                                                          \
     void Set##PROP(PropertyTypeTrait<TYPE>::reference_type value)                                                      \
@@ -65,6 +72,13 @@ DGEX_BEGIN
     void ForceSet##PROP(PropertyTypeTrait<TYPE>::reference_type value)                                                 \
     {                                                                                                                  \
         SET_PROPERTY_WITHOUT_TRANSITION_IMPL(PROP, value, TYPE);                                                       \
+    }
+
+#define DEFINE_NULLABLE_NON_TRANSITIONABLE_PROPERTY(PROP, TYPE)                                                        \
+    DEFINE_NON_TRANSITIONABLE_PROPERTY(PROP, TYPE)                                                                     \
+    void UnSet##PROP()                                                                                                 \
+    {                                                                                                                  \
+        PROP = nullptr;                                                                                                \
     }
 
 namespace UI
@@ -85,16 +99,16 @@ struct WidgetProperties
     DEFINE_PROPERTY(Width, float)  // width: px, %
     DEFINE_PROPERTY(Height, float) // height: px, %
 
-    DEFINE_PROPERTY(ForegroundColor, Color) // color: hex, rgb, rgba
-    DEFINE_PROPERTY(BackgroundColor, Color) // background-color: hex, rgb, rgba
+    DEFINE_NULLABLE_PROPERTY(ForegroundColor, Color) // color: hex, rgb, rgba
+    DEFINE_PROPERTY(BackgroundColor, Color)          // background-color: hex, rgb, rgba
 
     DEFINE_PROPERTY(Opacity, float)  // opacity: 0.0 - 1.0, 0% - 100%
     DEFINE_PROPERTY(Rotation, float) // rotation: degrees
     DEFINE_PROPERTY(Scale, float)    // scale: 1.0 = 100%
 
-    DEFINE_PROPERTY(FontSize, float)                           // font-size: px (inherited)
-    DEFINE_NON_TRANSITIONABLE_PROPERTY(Font, std::string)      // font-family (inherited)
-    DEFINE_NON_TRANSITIONABLE_PROPERTY(FontStyle, std::string) // font-style (inherited)
+    DEFINE_NULLABLE_PROPERTY(FontSize, float)                           // font-size: px (inherited)
+    DEFINE_NULLABLE_NON_TRANSITIONABLE_PROPERTY(Font, std::string)      // font-family (inherited)
+    DEFINE_NULLABLE_NON_TRANSITIONABLE_PROPERTY(FontStyle, std::string) // font-style (inherited)
 
     DEFINE_NON_TRANSITIONABLE_PROPERTY(TextAlign, std::string)     // text-align: left, center, right
     DEFINE_NON_TRANSITIONABLE_PROPERTY(VerticalAlign, std::string) // vertical-align: top, middle, bottom
@@ -133,7 +147,7 @@ inline std::string ToString(MetricUnit unit)
     return "";
 }
 
-inline MetricUnit FromString(const std::string& value)
+inline MetricUnit MetricUnitFromString(const std::string& value)
 {
     if (value == "px")
     {

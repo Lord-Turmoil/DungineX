@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : October 5, 2025                           *
  *                                                                            *
- *                    Last Update : October 5, 2025                           *
+ *                    Last Update : October 18, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -27,7 +27,7 @@ DGEX_BEGIN
 namespace UI
 {
 
-Widget::Widget(WidgetContext& context, Ext::XmlElement element)
+Widget::Widget(const WidgetContext& context, Ext::XmlElement element)
     : BaseWidget(context, element), _texture(CreateTexture(0, 0))
 {
 }
@@ -88,54 +88,21 @@ bool Widget::_IsInside(FPoint position) const
 
 void Widget::_ApplyStyles()
 {
-    const Ref<Widget> parent = ParentWidget();
-    if (!parent)
-    {
-        DGEX_CORE_WARN("Widget '{}' has no parent yet, cannot apply styles", GetId());
-        return;
-    }
-
     _properties.SetTransitionTime(GetStyleProperty<NumberProperty>("transition-time").Value);
     _properties.SetTransitionStyle(GetStyleProperty<StringProperty>("transition-style", StringProperty("none")).Value);
 
-    const StringProperty position = GetStyleProperty<StringProperty>("position", StringProperty("auto"));
-    if (position.Value == "relative")
+    _properties.SetPosition(GetStyleProperty<StringProperty>("position", StringProperty("auto")).Value);
+
+    // Position and size will be set later during layout phase in `_Rearrange`.
+
+    if (HasStyleProperty("color"))
     {
-        // The X and Y we set here is relative to its parent, and will be adjusted to global
-        // position during rearrangement. So, there we use ForceSet to avoid transition.
-        const MetricProperty x = GetStyleProperty<MetricProperty>("x");
-        if (x.Unit == MetricUnit::Pixel || x.Unit == MetricUnit::Unspecified)
-        {
-            _properties.SetX(x.Value);
-        }
-        else if (x.Unit == MetricUnit::Percent)
-        {
-            _properties.SetX(x.Value * parent->GetProperties().Width->Value());
-        }
-        else
-        {
-            DGEX_CORE_WARN("Unsupported unit {} for x in widget '{}'", ToString(x.Unit), GetId());
-        }
-
-        const MetricProperty y = GetStyleProperty<MetricProperty>("y");
-        if (y.Unit == MetricUnit::Pixel || y.Unit == MetricUnit::Unspecified)
-        {
-            _properties.SetY(y.Value);
-        }
-        else if (y.Unit == MetricUnit::Percent)
-        {
-            _properties.SetY(y.Value * parent->GetProperties().Height->Value());
-        }
-        else
-        {
-            DGEX_CORE_WARN("Unsupported unit {} for y in widget '{}'", ToString(y.Unit), GetId());
-        }
+        _properties.SetForegroundColor(GetStyleProperty<ColorProperty>("color", ColorProperty(Color::Black)).Value);
     }
-
-    _ApplyWidth(*parent);
-    _ApplyHeight(*parent);
-
-    _properties.SetForegroundColor(GetStyleProperty<ColorProperty>("color", ColorProperty(Color::Black)).Value);
+    else
+    {
+        _properties.UnSetForegroundColor();
+    }
     _properties.SetBackgroundColor(
         GetStyleProperty<ColorProperty>("background-color", ColorProperty(Color::White)).Value);
 
@@ -151,7 +118,7 @@ void Widget::_ApplyStyles()
     }
     else
     {
-        _properties.SetFontSize(parent->GetProperties().FontSize->Value());
+        _properties.UnSetFontSize();
     }
 
     if (HasStyleProperty("font-family"))
@@ -160,7 +127,7 @@ void Widget::_ApplyStyles()
     }
     else
     {
-        _properties.SetFont(parent->GetProperties().Font->Value());
+        _properties.UnSetFont();
     }
 
     if (HasStyleProperty("font-style"))
@@ -169,7 +136,7 @@ void Widget::_ApplyStyles()
     }
     else
     {
-        _properties.SetFontStyle(parent->GetProperties().FontStyle->Value());
+        _properties.UnSetFontStyle();
     }
 
     _properties.SetTextAlign(GetStyleProperty<StringProperty>("text-align").Value);
@@ -238,8 +205,46 @@ void Widget::_Rearrange()
             continue;
         }
 
-        if (widget->GetProperties().Position->Value() == "auto")
+        widget->_ApplyWidth(*this);
+        widget->_ApplyHeight(*this);
+
+        if (widget->GetProperties().Position->Value() == "relative")
         {
+            // The X and Y we set here is relative to its parent, and will be adjusted to global
+            // position during rearrangement. So, there we use ForceSet to avoid transition.
+            const MetricProperty x = GetStyleProperty<MetricProperty>("x");
+            if (x.Unit == MetricUnit::Pixel || x.Unit == MetricUnit::Unspecified)
+            {
+                _properties.SetX(x.Value);
+            }
+            else if (x.Unit == MetricUnit::Percent)
+            {
+                _properties.SetX(x.Value * _properties.Width->Value());
+            }
+            else
+            {
+                DGEX_CORE_WARN("Unsupported unit {} for x in widget '{}'", ToString(x.Unit), GetId());
+            }
+
+            const MetricProperty y = GetStyleProperty<MetricProperty>("y");
+            if (y.Unit == MetricUnit::Pixel || y.Unit == MetricUnit::Unspecified)
+            {
+                _properties.SetY(y.Value);
+            }
+            else if (y.Unit == MetricUnit::Percent)
+            {
+                _properties.SetY(y.Value * _properties.Height->Value());
+            }
+            else
+            {
+                DGEX_CORE_WARN("Unsupported unit {} for y in widget '{}'", ToString(y.Unit), GetId());
+            }
+        }
+        else /* auto */
+        {
+            widget->GetProperties().SetX(cursorX);
+            widget->GetProperties().SetY(cursorY);
+
             float childWidth = widget->GetProperties().Width->Value();
             float childHeight = widget->GetProperties().Height->Value();
             if (cursorX + childWidth > width)

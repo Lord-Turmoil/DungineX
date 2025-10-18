@@ -39,30 +39,6 @@ namespace UI
 class WidgetContext;
 class Style;
 
-enum class WidgetState
-{
-    Normal,
-    Hover,
-    Active,
-    Disabled
-};
-
-inline std::string ToString(WidgetState state)
-{
-    switch (state)
-    {
-    case WidgetState::Normal:
-        return "normal";
-    case WidgetState::Hover:
-        return "hover";
-    case WidgetState::Active:
-        return "active";
-    case WidgetState::Disabled:
-        return "disabled";
-    }
-    return "normal";
-}
-
 class Widget;
 
 class BaseWidget
@@ -70,7 +46,7 @@ class BaseWidget
 public:
     BaseWidget();
     BaseWidget(std::string name, std::string id);
-    BaseWidget(WidgetContext& context, Ext::XmlElement element);
+    BaseWidget(const WidgetContext& context, Ext::XmlElement element);
 
     virtual ~BaseWidget() = default;
 
@@ -95,7 +71,7 @@ public:
      *
      * @return The state of the widget.
      */
-    DGEX_API WidgetState GetState() const;
+    DGEX_API StyleState GetState() const;
 
     /**
      * @brief Get the string value of the state.
@@ -104,7 +80,7 @@ public:
      */
     DGEX_API std::string GetStateValue() const;
 
-    DGEX_API void SetState(WidgetState state);
+    DGEX_API void SetState(StyleState state);
 
     DGEX_API bool IsNormal() const;
     DGEX_API bool IsHover() const;
@@ -257,7 +233,7 @@ private:
 private:
     std::string _name; // The name of the widget, usually the XML element name.
     std::string _id;   // The unique ID of the widget.
-    WidgetState _state;
+    StyleState _state;
     Ref<Style> _style;
 
     std::unordered_map<EventType, std::vector<Ref<EventListener>>> _listeners;
@@ -270,11 +246,11 @@ protected:
 template <typename T>
 T BaseWidget::GetStyleProperty(const std::string& name, const T& defaultValue) const
 {
-    if (_state == WidgetState::Normal)
+    if (_state == StyleState::Normal)
     {
         return _style->GetPropertyAs(name, defaultValue);
     }
-    return _style->GetStatePropertyAs(ToString(_state), name, defaultValue);
+    return _style->GetStatePropertyAs(_state, name, defaultValue);
 }
 
 } // namespace UI

@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : June 8, 2025                              *
  *                                                                            *
- *                    Last Update : October 11, 2025                          *
+ *                    Last Update : October 18, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -82,9 +82,9 @@ FontFamily::FontFamily(const std::vector<Ref<Fontface>>& fonts)
 // ----------------------------------------------------------------------------
 
 static constexpr float DEFAULT_POINT_SIZE = 100.f;
-static std::unordered_map<std::string, Ref<Fontface>> sLoadedFonts;
 
 static std::vector<FontFamilyMeta> sFontFamilies;
+static Ref<FontFamily> sDefaultFont;
 
 static FontfaceMeta FontInfoToFontfaceMeta(const SF_FontInfo* info);
 static void AddFontFromFontfaceMeta(const FontfaceMeta& meta);
@@ -121,7 +121,7 @@ static int _SF_Callback(const SF_FontInfo* info, void* context)
 
 #ifdef DGEX_PLATFORM_WINDOWS
     // On Windows, loading a font is costly, so we only load selected fonts.
-    if (!(Strings::StartsWith(info->family, "Arial") || Strings::StartsWith(info->style, "Segoe UI")))
+    if (!Strings::StartsWith(info->style, "Arial", "Segoe UI"))
     {
         return SF_CONTINUE;
     }
@@ -154,6 +154,31 @@ dgex_error_t InitFonts()
     if (SF_EnumFonts(_SF_Callback, nullptr) != SF_SUCCESS)
     {
         DGEX_CORE_WARN("Failed to enumerate system fonts: {0}", SF_GetError());
+        return DGEX_ERROR_FONT_INIT;
+    }
+
+#ifdef DGEX_PLATFORM_WINDOWS
+    sDefaultFont = LoadFont("Segoe UI");
+#elif defined DGEX_PLATFORM_LINUX
+    sDefaultFont = LoadFont("DejaVu Sans");
+#elif defined DGEX_PLATFORM_MACOS
+    sDefaultFont = LoadFont("Helvetica");
+#endif
+
+    if (!sDefaultFont)
+    {
+        DGEX_CORE_WARN("Default font not found, using the first available font");
+        const std::vector<FontFamilyMeta>& families = GetAvailableFontFamilies();
+        if (families.empty())
+        {
+            DGEX_CORE_ERROR("No available font found");
+            return DGEX_ERROR_FONT_INIT;
+        }
+        sDefaultFont = LoadFont(families.front().Name);
+    }
+    if (!sDefaultFont)
+    {
+        DGEX_CORE_ERROR("Failed to load default font");
         return DGEX_ERROR_FONT_INIT;
     }
 
@@ -193,6 +218,11 @@ Ref<FontFamily> LoadFont(const std::string& name)
 const std::vector<FontFamilyMeta>& GetAvailableFontFamilies()
 {
     return sFontFamilies;
+}
+
+const Ref<FontFamily>& GetDefaultFont()
+{
+    return sDefaultFont;
 }
 
 // ============================================================================

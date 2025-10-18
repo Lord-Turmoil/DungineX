@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : October 11, 2025                          *
  *                                                                            *
- *                    Last Update : October 11, 2025                          *
+ *                    Last Update : October 18, 2025                         *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "DgeX/Renderer/Color.h"
+#include "DgeX/Renderer/Font.h"
 #include "DgeX/Utils/Types.h"
 
 #include <string>
@@ -34,6 +36,18 @@ namespace UI
 
 class Widget;
 
+struct WidgetRenderContext
+{
+    Ref<Texture> Target; // final render target, set by parent, do not modify
+    Ref<Texture> Canvas; // current render target, set by current widget
+
+    // inherited properties, can be overridden by the current widget
+    Ref<FontFamily> Font;
+    std::string FontStyle;
+    Color FontColor;
+    float FontSize;
+};
+
 /**
  * @brief Renderer callback for a specific widget type.
  */
@@ -47,8 +61,9 @@ public:
      * @brief Should call _PreRender before rendering, and _PostRender after rendering.
      *
      * @param widget Widget to render.
+     * @param context Rendering context.
      */
-    virtual void Render(const Ref<Widget>& widget) = 0;
+    virtual void Render(const Ref<Widget>& widget, const WidgetRenderContext& context) = 0;
 };
 
 /**
@@ -60,24 +75,38 @@ public:
     WidgetRenderer() = default;
     ~WidgetRenderer() = default;
 
-    void Render(const Ref<Widget>& widget) const;
+    void Render(const Ref<Widget>& widget, WidgetRenderContext& context) const;
 
+    /**
+     * @brief Set the render callback for a specific widget type.
+     *
+     * Will override existing callback if the name already exists.
+     *
+     * @param name Name of the widget.
+     * @param callback Render callback.
+     */
     void AddCallback(const std::string& name, const Ref<WidgetRendererCallback>& callback);
 
 private:
     std::unordered_map<std::string, Ref<WidgetRendererCallback>> _callbacks;
 };
 
+/**
+ * @brief General purpose widget renderer.
+ */
 class BasicWidgetRenderer : public WidgetRendererCallback
 {
 public:
-    void Render(const Ref<Widget>& widget) override;
+    void Render(const Ref<Widget>& widget, const WidgetRenderContext& context) override;
 };
 
+/**
+ * @brief Render LabelWidget.
+ */
 class LabelWidgetRenderer : public WidgetRendererCallback
 {
 public:
-    void Render(const Ref<Widget>& widget) override;
+    void Render(const Ref<Widget>& widget, const WidgetRenderContext& context) override;
 };
 
 } // namespace UI

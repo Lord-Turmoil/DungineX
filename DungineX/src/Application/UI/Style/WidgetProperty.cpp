@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : October 4, 2025                           *
  *                                                                            *
- *                    Last Update : October 4, 2025                           *
+ *                    Last Update : October 18, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -39,7 +39,10 @@ void WidgetProperties::Update(DeltaTime delta) const
     Opacity->Update(delta);
     Rotation->Update(delta);
     Scale->Update(delta);
-    FontSize->Update(delta);
+    if (FontSize)
+    {
+        FontSize->Update(delta);
+    }
 }
 
 NumberProperty::NumberProperty() : Value(0.0f)
@@ -106,7 +109,7 @@ MetricProperty::MetricProperty(const char* value) : Value(0.0f), Unit(MetricUnit
             return;
         }
         Value = number;
-        Unit = FromString(matches[2].str());
+        Unit = MetricUnitFromString(matches[2].str());
     }
     else
     {
