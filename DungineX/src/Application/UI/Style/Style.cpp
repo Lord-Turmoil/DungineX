@@ -207,7 +207,6 @@ Style::Style(Ext::XmlElement element) : BaseStyle(element)
 
 Style::Style(const Style& other) : BaseStyle(other)
 {
-    _name = other._name;
     for (int i = 0; i < L(StyleState::NumStates); i++)
     {
         if (other._states[i])
@@ -222,7 +221,10 @@ Style::Style(Style&& other) noexcept : BaseStyle(std::move(other))
     for (int i = 0; i < L(StyleState::NumStates); i++)
     {
         // OK to ignore use after move here.
-        _states[i] = std::move(other._states[i]);
+        if (other._states[i])
+        {
+            _states[i] = std::move(other._states[i]);
+        }
     }
 }
 

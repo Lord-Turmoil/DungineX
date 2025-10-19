@@ -3,53 +3,56 @@
  ******************************************************************************
  *                   Project Name : DungineX                                  *
  *                                                                            *
- *                      File Name : FrameWidget.h                             *
+ *                      File Name : BaseInterface.h                           *
  *                                                                            *
  *                     Programmer : Tony Lewis                                *
  *                                                                            *
- *                     Start Date : October 18, 2025                          *
+ *                     Start Date : October 19, 2025                          *
  *                                                                            *
- *                    Last Update : October 18, 2025                          *
+ *                    Last Update : October 19, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
  *                                                                            *
- * Top-level widget.                                                          *
+ * Base interface definition.                                                 *
  ******************************************************************************/
 
 #pragma once
 
-#include "DgeX/Application/Event/WindowEvents.h"
-#include "DgeX/Application/UI/Widget/Widget.h"
+#include "DgeX/Application/Event/Event.h"
+#include "DgeX/Core/Timer.h"
+#include "DgeX/Utils/Types.h"
+
+#include <string>
 
 DGEX_BEGIN
 
 namespace UI
 {
 
-/**
- * @brief The top-level widget.
- *
- * Frame is the top-level widget. It should not have a parent, and only have one state.
- */
-class FrameWidget : public Widget, std::enable_shared_from_this<FrameWidget>
+class BaseInterface
 {
 public:
-    FrameWidget(std::string id);
-    FrameWidget(const WidgetContext& context, const Ext::XmlElement& element);
+    BaseInterface() = default;
+    virtual ~BaseInterface() = default;
 
-    Ref<FrameWidget> AsFrameWidget() override;
+    /**
+     * @brief Get the name of the interface.
+     *
+     * Every interface should have a unique name to identify itself.
+     *
+     * @return Name of the interface.
+     */
+    DGEX_API const std::string& GetName() const;
 
 public:
-    /**
-     * @brief Frame should not have parent, and only have one state.
-     */
-    void OnEvent(const Ref<Event>& event) override;
-
-    void ApplyStyles() override;
+    virtual void Update(DeltaTime delta);
+    virtual void OnEvent(const Ref<Event>& event);
 
 private:
-    bool _OnWindowResized(const WindowResizedEvent& event);
+    std::string _name;
+
+    Ref<FrameWidget> 
 };
 
 } // namespace UI

@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : October 11, 2025                          *
  *                                                                            *
- *                    Last Update : October 18, 2025                         *
+ *                    Last Update : October 18, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -38,7 +38,7 @@ class Widget;
 class LabelWidget;
 class FrameWidget;
 
-class WidgetProperties;
+struct WidgetProperties;
 
 struct WidgetRenderContext
 {
@@ -119,9 +119,9 @@ public:
     /**
      * @brief Render all widgets with the given root frame.
      *
-     * @param frame Frame widget.
+     * @param widget Frame widget.
      */
-    void Render(const Ref<FrameWidget>& frame) const;
+    void Render(const Ref<Widget>& widget) const;
 
     /**
      * @brief Render a widget.
@@ -143,24 +143,6 @@ public:
 
 private:
     std::unordered_map<std::string, Ref<WidgetRendererCallback>> _callbacks;
-};
-
-/**
- * @brief General purpose widget renderer.
- */
-class BasicWidgetRenderer
-{
-public:
-    void operator()(Widget& widget, const WidgetRenderContext& context) const;
-};
-
-/**
- * @brief Render LabelWidget.
- */
-class LabelWidgetRenderer
-{
-public:
-    void operator()(LabelWidget& widget, const WidgetRenderContext& context) const;
 };
 
 } // namespace UI

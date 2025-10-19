@@ -207,7 +207,7 @@ T BaseStyle::GetPropertyAs(const std::string& name, const T& defaultValue) const
  *
  *
  */
-class Style : public BaseStyle
+class Style final : public BaseStyle
 {
 public:
     /**

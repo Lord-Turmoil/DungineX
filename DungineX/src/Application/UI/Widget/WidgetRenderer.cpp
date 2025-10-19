@@ -20,8 +20,6 @@
 
 #include "DgeX/Application/UI/Widget/WidgetRenderer.h"
 
-#include "DgeX/Application/UI/Widget/FrameWidget.h"
-#include "DgeX/Application/UI/Widget/LabelWidget.h"
 #include "DgeX/Application/UI/Widget/Widget.h"
 #include "DgeX/Renderer/RenderApi.h"
 #include "DgeX/Renderer/Texture.h"
@@ -32,18 +30,19 @@ DGEX_BEGIN
 namespace UI
 {
 
-static WidgetRenderContext GetFrameContext(FrameWidget& frame);
-static WidgetRenderContext GetChildWidgetContext(Widget& widget, const WidgetRenderContext& parentContext);
+static WidgetRenderContext GetRootContext(Widget& widget);
+static WidgetRenderContext GetChildContext(Widget& widget, const WidgetRenderContext& parentContext);
+
 static void PreRender(WidgetRenderContext& context, const Ref<Widget>& widget);
 static void PostRender(const WidgetRenderContext& context, const Ref<Widget>& widget);
 
-void WidgetRenderer::Render(const Ref<FrameWidget>& frame) const
+void WidgetRenderer::Render(const Ref<Widget>& widget) const
 {
-    DGEX_ASSERT(frame, "Render null frame");
+    DGEX_ASSERT(widget, "Render null widget");
 
-    WidgetRenderContext context = GetFrameContext(*frame);
+    WidgetRenderContext context = GetRootContext(*widget);
 
-    Render(frame, context);
+    Render(widget, context);
 }
 
 void WidgetRenderer::Render(const Ref<Widget>& widget, WidgetRenderContext& context) const
@@ -56,11 +55,13 @@ void WidgetRenderer::Render(const Ref<Widget>& widget, WidgetRenderContext& cont
     {
         it->second->Render(widget, context);
     }
+
+    // Children are ordered by z-index from low to high, so we can just render them in order.
     for (const Ref<BaseWidget>& child : widget->Children())
     {
         if (const Ref<Widget> childWidget = child->AsWidget())
         {
-            WidgetRenderContext childContext = GetChildWidgetContext(*childWidget, context);
+            WidgetRenderContext childContext = GetChildContext(*childWidget, context);
             Render(childWidget, childContext);
         }
     }
@@ -73,69 +74,13 @@ void WidgetRenderer::AddCallback(const std::string& name, const Ref<WidgetRender
     _callbacks[name] = callback;
 }
 
-void BasicWidgetRenderer::operator()(Widget& widget, const WidgetRenderContext& context) const
-{
-    DGEX_USED(context);
-
-    const WidgetProperties& props = widget.GetProperties();
-    SetFillColor(props.BackgroundColor->Value());
-    DrawFilledRect(static_cast<int>(props.X->Value()), static_cast<int>(props.Y->Value()),
-                   static_cast<int>(props.Width->Value()), static_cast<int>(props.Height->Value()));
-}
-
-void LabelWidgetRenderer::operator()(LabelWidget& widget, const WidgetRenderContext& context) const
-{
-    const WidgetProperties& props = widget.GetProperties();
-
-    SetFont(context.Font);
-    SetFontStyle(context.FontStyle);
-    SetFontSize(context.FontSize);
-    SetFontColor(context.FontColor);
-
-    TextFlags flags;
-    const std::string& textAlign = props.TextAlign->Value();
-    if (textAlign == "center")
-    {
-        flags = L(TextFlag::AlignCenter);
-    }
-    else if (textAlign == "right")
-    {
-        flags = L(TextFlag::AlignRight);
-    }
-    else
-    {
-        flags = L(TextFlag::AlignLeft);
-    }
-
-    Rect rect(static_cast<int>(props.X->Value()), static_cast<int>(props.Y->Value()),
-              static_cast<int>(props.Width->Value()), static_cast<int>(props.Height->Value()));
-
-    const std::string& verticalAlign = props.VerticalAlign->Value();
-    if (verticalAlign == "middle")
-    {
-        Rect area = CalcTextArea(widget.GetText().c_str(), rect, flags);
-        area.Y = rect.Y + (rect.Height - area.Height) / 2;
-        DrawTextArea(widget.GetText().c_str(), area, flags);
-    }
-    else if (verticalAlign == "bottom")
-    {
-        Rect area = CalcTextArea(widget.GetText().c_str(), rect, flags);
-        area.Y = rect.Y + rect.Height - area.Height;
-        DrawTextArea(widget.GetText().c_str(), area, flags);
-    }
-    else
-    {
-        DrawTextArea(widget.GetText().c_str(), rect, flags);
-    }
-}
-
 // ============================================================================
 // Internal function implementation.
 // ----------------------------------------------------------------------------
 
-WidgetRenderContext GetFrameContext(FrameWidget& frame)
+WidgetRenderContext GetRootContext(Widget& widget)
 {
-    const WidgetProperties& props = frame.GetProperties();
+    const WidgetProperties& props = widget.GetProperties();
     WidgetRenderContext context;
 
     context.Target = GetCurrentRenderTarget();
@@ -147,7 +92,7 @@ WidgetRenderContext GetFrameContext(FrameWidget& frame)
     return context;
 }
 
-WidgetRenderContext GetChildWidgetContext(Widget& widget, const WidgetRenderContext& parentContext)
+WidgetRenderContext GetChildContext(Widget& widget, const WidgetRenderContext& parentContext)
 {
     const WidgetProperties& properties = widget.GetProperties();
     WidgetRenderContext context;

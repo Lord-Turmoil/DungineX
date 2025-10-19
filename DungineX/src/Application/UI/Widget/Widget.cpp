@@ -40,7 +40,7 @@ Widget::Widget(const WidgetContext& context, Ext::XmlElement element)
 
 Ref<Widget> Widget::AsWidget()
 {
-    return shared_from_this();
+    return enable_shared_from_this<Widget>::shared_from_this();
 }
 
 Ref<Widget> Widget::ParentWidget() const
@@ -65,21 +65,6 @@ void Widget::Update(DeltaTime delta)
 {
     BaseWidget::Update(delta);
     _properties.Update(delta);
-}
-
-WidgetProperties& Widget::GetProperties()
-{
-    return _properties;
-}
-
-const WidgetProperties& Widget::GetProperties() const
-{
-    return _properties;
-}
-
-Ref<Texture> Widget::GetTexture() const
-{
-    return _texture;
 }
 
 void Widget::ApplyStyles()
@@ -146,6 +131,21 @@ void Widget::ApplyStyles()
             widget->ApplyStyles();
         }
     }
+}
+
+WidgetProperties& Widget::GetProperties()
+{
+    return _properties;
+}
+
+const WidgetProperties& Widget::GetProperties() const
+{
+    return _properties;
+}
+
+Ref<Texture> Widget::GetTexture() const
+{
+    return _texture;
 }
 
 bool Widget::_IsInside(FPoint position) const

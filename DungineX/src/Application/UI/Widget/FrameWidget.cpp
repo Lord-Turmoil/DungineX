@@ -39,6 +39,11 @@ FrameWidget::FrameWidget(const WidgetContext& context, const Ext::XmlElement& el
     }
 }
 
+Ref<FrameWidget> FrameWidget::AsFrameWidget()
+{
+    return enable_shared_from_this<FrameWidget>::shared_from_this();
+}
+
 void FrameWidget::OnEvent(const Ref<Event>& event)
 {
     DispatchEvent<WindowResizedEvent>(event, [this](const WindowResizedEvent& e) { return _OnWindowResized(e); });

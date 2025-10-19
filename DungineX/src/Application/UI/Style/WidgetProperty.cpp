@@ -45,6 +45,39 @@ void WidgetProperties::Update(DeltaTime delta) const
     }
 }
 
+IntegerProperty::IntegerProperty() : Value(0)
+{
+}
+
+IntegerProperty::IntegerProperty(int value) : Value(value)
+{
+}
+
+IntegerProperty::IntegerProperty(const char* value) : Value(0)
+{
+    static const std::regex INTEGER_PATTERN(R"(^\s*([+-]?\d+)\s*$)");
+
+    DGEX_ASSERT(value, "Null value for IntegerProperty");
+
+    std::string source(value);
+    std::smatch matches;
+
+    if (std::regex_match(source, matches, INTEGER_PATTERN))
+    {
+        int number;
+        if (DGEX_SSCANF(matches[1].str().c_str(), "%d", &number) != 1)
+        {
+            DGEX_CORE_WARN("Invalid value '{}' for IntegerProperty, defaulting to 0", value);
+            return;
+        }
+        Value = number;
+    }
+    else
+    {
+        DGEX_CORE_WARN("Invalid value '{}' for IntegerProperty, defaulting to 0", value);
+    }
+}
+
 NumberProperty::NumberProperty() : Value(0.0f)
 {
 }

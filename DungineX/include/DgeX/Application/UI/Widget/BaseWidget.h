@@ -31,8 +31,6 @@
 
 DGEX_BEGIN
 
-class Event;
-
 namespace UI
 {
 
@@ -40,8 +38,9 @@ class WidgetContext;
 class Style;
 
 class Widget;
+class FrameWidget;
 
-class BaseWidget
+class BaseWidget : std::enable_shared_from_this<BaseWidget>
 {
 public:
     BaseWidget();
@@ -72,15 +71,6 @@ public:
      * @return The state of the widget.
      */
     DGEX_API StyleState GetState() const;
-
-    /**
-     * @brief Get the string value of the state.
-     *
-     * @return The string value of the state.
-     */
-    DGEX_API std::string GetStateValue() const;
-
-    DGEX_API void SetState(StyleState state);
 
     DGEX_API bool IsNormal() const;
     DGEX_API bool IsHover() const;
@@ -128,9 +118,8 @@ public:
     /**
      * @brief Add a direct child widget.
      *
-     * This will add the widget to the end of the children list. Currently we are
-     * not sensitive to the ordering. And if the widget already has a parent, it will
-     * be removed from the previous parent first.
+     * This will add the widget to the end of the children list. The children will
+     * be ordered by the z-index.
      *
      * @param widget The child widget to add.
      */
@@ -155,7 +144,26 @@ public:
      */
     DGEX_API Ref<BaseWidget> GetChildById(const std::string& id) const;
 
+    /**
+     * @brief Get the level of the widget in the DOM structure.
+     *
+     * This is updated when the widget is added to a parent.
+     *
+     * @return The level of the widget.
+     */
+    DGEX_API int GetLevel() const;
+
+    /**
+     * @brief Get the Z index of the widget.
+     *
+     * Currently, this value is fixed upon creation and cannot be changed.
+     *
+     * @return The Z index.
+     */
+    DGEX_API int GetZIndex() const;
+
     DGEX_API virtual Ref<Widget> AsWidget();
+    DGEX_API virtual Ref<FrameWidget> AsFrameWidget();
 
 public:
     /**
@@ -175,6 +183,13 @@ public:
      * @param event On receiving event.
      */
     virtual void OnEvent(const Ref<Event>& event);
+
+    /**
+     * @brief Update properties when the style changes.
+     *
+     * This is most likely due to state change.
+     */
+    virtual void ApplyStyles();
 
     /**
      * @brief Add an event listener to the widget.
@@ -202,6 +217,10 @@ public:
     DGEX_API void RemoveEventListeners(EventType type);
 
 protected:
+    void _SetState(StyleState state);
+
+    void _SetParent(const Ref<BaseWidget>& parent);
+
     /**
      * @brief Notify all listeners of an event.
      *
@@ -217,13 +236,6 @@ protected:
      */
     virtual bool _IsInside(FPoint position) const;
 
-    /**
-     * @brief Update properties when the style changes.
-     *
-     * This is most likely due to state change.
-     */
-    virtual void ApplyStyles();
-
 private:
     void _OnEventNormal(const Ref<Event>& event);
     void _OnEventHover(const Ref<Event>& event);
@@ -237,6 +249,11 @@ private:
     Ref<Style> _style;
 
     std::unordered_map<EventType, std::vector<Ref<EventListener>>> _listeners;
+
+    int _level;  // The depth level in the widget tree.
+    int _zIndex; // The z-index for event and rendering order.
+
+    bool _hold; // When in active, the mouse button holds but moves out of the widget.
 
 protected:
     WeakRef<BaseWidget> _parent;

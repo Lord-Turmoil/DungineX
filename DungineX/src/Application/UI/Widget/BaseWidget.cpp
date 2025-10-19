@@ -15,12 +15,20 @@
  * OVERVIEW:                                                                  *
  *                                                                            *
  * Base widget element definition.                                            *
+ * -------------------------------------------------------------------------- *
+ * REFERENCES:                                                                *
+ *                                                                            *
+ * The reaction of the widget to events follows that of HTML elements. Even   *
+ * if two elements overlap, all elements can receive mouse events. But the    *
+ * current implementation does not guarantee the order of elements receiving  *
+ * the events.                                                                *
  ******************************************************************************/
 
 #include "DgeX/Application/UI/Widget/BaseWidget.h"
 
 #include "DgeX/Application/Event/MouseEvents.h"
 #include "DgeX/Application/Event/WidgetEvents.h"
+#include "DgeX/Application/UI/Style/WidgetProperty.h"
 #include "DgeX/Application/UI/Widget/WidgetContext.h"
 #include "DgeX/Utils/Assert.h"
 #include "DgeX/Utils/Macros.h"
@@ -33,31 +41,23 @@ DGEX_BEGIN
 namespace UI
 {
 
-BaseWidget::BaseWidget() : _id(UUID().ToString()), _state(StyleState::Normal)
+BaseWidget::BaseWidget() : _id(UUID().ToString()), _state(StyleState::Normal), _level(0), _zIndex(0), _hold(false)
 {
 }
 
 BaseWidget::BaseWidget(std::string name, std::string id)
-    : _name(std::move(name)), _id(std::move(id)), _state(StyleState::Normal)
+    : _name(std::move(name)), _id(std::move(id)), _state(StyleState::Normal), _level(0), _zIndex(0), _hold(false)
 {
 }
 
 BaseWidget::BaseWidget(const WidgetContext& context, Ext::XmlElement element)
-    : _id(UUID().ToString()), _state(StyleState::Normal)
+    : _id(UUID().ToString()), _state(StyleState::Normal), _level(0), _zIndex(0), _hold(false)
 {
     DGEX_ASSERT(element.IsValid(), "Invalid XML for widget construction");
 
     _name = element.Name();
-
-    // Ensure all widgets have an ID.
-    if (const char* id = element.Attribute("id"))
-    {
-        _id = id;
-    }
-    else
-    {
-        _id = UUID().ToString();
-    }
+    _id = element.AttributeAs<StringProperty>("id", StringProperty(UUID().ToString())).Value;
+    _zIndex = element.AttributeAs<IntegerProperty>("z-index", IntegerProperty(0)).Value;
 
     // Load styles.
     const char* style = element.Attribute("style");
@@ -91,20 +91,6 @@ const std::string& BaseWidget::GetId() const
 StyleState BaseWidget::GetState() const
 {
     return _state;
-}
-
-std::string BaseWidget::GetStateValue() const
-{
-    return ToString(_state);
-}
-
-void BaseWidget::SetState(StyleState state)
-{
-    if (_state != state)
-    {
-        _state = state;
-        ApplyStyles();
-    }
 }
 
 bool BaseWidget::IsNormal() const
@@ -166,7 +152,13 @@ void BaseWidget::AddChild(const Ref<BaseWidget>& widget)
         DGEX_CORE_WARN("Widget {} already has a parent, removing from the previous parent", widget->GetId());
         widget->Parent()->RemoveChild(widget);
     }
-    _children.push_back(widget);
+    widget->_SetParent(shared_from_this());
+
+    // Ensure children are ordered by z-index from low to high.
+    const auto it = std::find_if(_children.begin(), _children.end(), [widget](const Ref<BaseWidget>& child) {
+        return child->GetZIndex() > widget->GetZIndex();
+    });
+    _children.insert(it, widget);
 }
 
 void BaseWidget::RemoveChild(const Ref<BaseWidget>& widget)
@@ -214,14 +206,32 @@ Ref<BaseWidget> BaseWidget::GetChildById(const std::string& id) const
     return nullptr;
 }
 
+int BaseWidget::GetLevel() const
+{
+    return _level;
+}
+
+int BaseWidget::GetZIndex() const
+{
+    return _zIndex;
+}
+
 Ref<Widget> BaseWidget::AsWidget()
+{
+    return nullptr;
+}
+
+Ref<FrameWidget> BaseWidget::AsFrameWidget()
 {
     return nullptr;
 }
 
 void BaseWidget::Update(DeltaTime delta)
 {
-    DGEX_USED(delta);
+    for (const auto& child : _children)
+    {
+        child->Update(delta);
+    }
 }
 
 void BaseWidget::OnEvent(const Ref<Event>& event)
@@ -292,6 +302,32 @@ void BaseWidget::RemoveEventListeners(EventType type)
     _listeners[type].clear();
 }
 
+void BaseWidget::_SetState(StyleState state)
+{
+    if (_state != state)
+    {
+        _state = state;
+        if (state == StyleState::Active)
+        {
+            _hold = true;
+        }
+        ApplyStyles();
+    }
+}
+
+void BaseWidget::_SetParent(const Ref<BaseWidget>& parent)
+{
+    _parent = parent;
+
+    _level = 0;
+    Ref<BaseWidget> p = parent;
+    while (p)
+    {
+        _level++;
+        p = p->Parent();
+    }
+}
+
 void BaseWidget::_Notify(const Ref<Event>& event)
 {
     for (const auto& listener : _listeners[event->GetType()])
@@ -320,50 +356,68 @@ void BaseWidget::ApplyStyles()
 
 void BaseWidget::_OnEventNormal(const Ref<Event>& event)
 {
-    DispatchEvent<MouseMovedEvent>(event, [this](MouseMovedEvent& e) {
+    DispatchEvent<MouseMovedEvent>(event, [this](const MouseMovedEvent& e) {
         if (_IsInside(e.GetPosition()))
         {
-            SetState(StyleState::Hover);
+            _SetState(StyleState::Hover);
             _Notify(CreateRef<MouseEnterEvent>());
         }
-        return true; // prevent propagation
+        return false; // allow propagation
     });
 }
 
 void BaseWidget::_OnEventHover(const Ref<Event>& event)
 {
-    DispatchEvent<MouseMovedEvent>(event, [this](MouseMovedEvent& e) {
+    DispatchEvent<MouseMovedEvent>(event, [this](const MouseMovedEvent& e) {
         if (!_IsInside(e.GetPosition()))
         {
-            SetState(StyleState::Normal);
+            _SetState(StyleState::Normal);
             _Notify(CreateRef<MouseLeaveEvent>());
         }
-        return true; // prevent propagation
+        return false; // allow propagation
     });
 
-    DispatchEvent<MouseButtonPressedEvent>(event, [this](MouseButtonPressedEvent& e) {
-        SetState(StyleState::Active);
+    DispatchEvent<MouseButtonPressedEvent>(event, [this](const MouseButtonPressedEvent& e) {
+        _SetState(StyleState::Active);
         DGEX_USED(e);
-        return true; // prevent propagation
+        return false; // allow propagation
     });
 }
 
 void BaseWidget::_OnEventActive(const Ref<Event>& event)
 {
-    DispatchEvent<MouseMovedEvent>(event, [this](MouseMovedEvent& e) {
-        if (!_IsInside(e.GetPosition()))
+    DispatchEvent<MouseMovedEvent>(event, [this](const MouseMovedEvent& e) {
+        if (_IsInside(e.GetPosition()))
         {
-            SetState(StyleState::Normal);
-            _Notify(CreateRef<MouseLeaveEvent>());
+            if (!_hold)
+            {
+                _Notify(CreateRef<MouseEnterEvent>());
+                _hold = true;
+            }
         }
-        return true; // prevent propagation
+        else
+        {
+            if (_hold)
+            {
+                _Notify(CreateRef<MouseLeaveEvent>());
+                _hold = false;
+            }
+        }
+        return false; // allow propagation
     });
 
-    DispatchEvent<MouseButtonReleasedEvent>(event, [this](MouseButtonReleasedEvent& e) {
-        SetState(StyleState::Hover);
-        _Notify(CreateRef<MouseClickEvent>());
+    DispatchEvent<MouseButtonReleasedEvent>(event, [this](const MouseButtonReleasedEvent& e) {
         DGEX_USED(e);
-        return true; // prevent propagation
+        if (_hold)
+        {
+            _SetState(StyleState::Hover);
+            _Notify(CreateRef<MouseClickEvent>());
+        }
+        else
+        {
+            _SetState(StyleState::Normal);
+        }
+        return false; // prevent propagation
     });
 }
 

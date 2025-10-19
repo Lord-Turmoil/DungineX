@@ -92,6 +92,7 @@ namespace UI
  */
 struct WidgetProperties
 {
+    DEFINE_NON_TRANSITIONABLE_PROPERTY(Display, std::string)  // display: none, block
     DEFINE_NON_TRANSITIONABLE_PROPERTY(Position, std::string) // position: auto, relative
 
     DEFINE_PROPERTY(X, float)      // x: px, % (relative to parent)
@@ -167,6 +168,15 @@ inline MetricUnit MetricUnitFromString(const std::string& value)
     }
     return MetricUnit::Unspecified;
 }
+
+struct IntegerProperty
+{
+    IntegerProperty();
+    explicit IntegerProperty(int value);
+    explicit IntegerProperty(const char* value);
+
+    int Value;
+};
 
 /**
  * @brief A self-determined number property.

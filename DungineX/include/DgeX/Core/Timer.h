@@ -23,7 +23,11 @@
 
 DGEX_BEGIN
 
+#ifdef DGEX_HIGH_PRECISION_TIME
+using timestamp_t = double;
+#else
 using timestamp_t = float;
+#endif
 
 /**
  * @brief Get the elapsed time since start of the game in seconds.

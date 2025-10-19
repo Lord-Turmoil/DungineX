@@ -33,12 +33,15 @@
 
 // Exporting the DungineX library as a DLL.
 #define DGEX_EXPORT
-// Mark that we're in the engine, not client.
-#define DGEX_ENGINE
+
 // Adding extra features to kindly remind users of this project.
 #define DGEX_PUBLISH
+
 // Enable assertions.
 #define DGEX_ENABLE_ASSERT
+
+// Use high precision time representation.
+#define DGEX_HIGH_PRECISION_TIME
 
 #endif
 

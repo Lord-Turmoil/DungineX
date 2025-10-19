@@ -49,10 +49,10 @@ public:
 public:
     void Update(DeltaTime delta) override;
 
+    void ApplyStyles() override;
+
     WidgetProperties& GetProperties();
     const WidgetProperties& GetProperties() const;
-
-    void ApplyStyles() override;
 
     Ref<Texture> GetTexture() const;
 

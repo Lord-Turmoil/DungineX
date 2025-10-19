@@ -15,13 +15,15 @@
     <Include src="./HomePage.xml"></Include>
 
     <Page name="inlined-page">
-        <Button id="inlined-1" style="button">
-            <State name="hover">
-                <Property name="background-color" value="#00AA00"/>
-            </State>
-            <State name="active">
-                <Property name="background-color" value="#0000AA"/>
-            </State>
-        </Button>
+        <Frame>
+            <Button id="inlined-1" style="button">
+                <State name="hover">
+                    <Property name="background-color" value="#00AA00"/>
+                </State>
+                <State name="active">
+                    <Property name="background-color" value="#0000AA"/>
+                </State>
+            </Button>
+        </Frame>
     </Page>
 </App>
