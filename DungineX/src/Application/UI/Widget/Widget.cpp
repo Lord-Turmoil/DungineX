@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : October 5, 2025                           *
  *                                                                            *
- *                    Last Update : October 18, 2025                          *
+ *                    Last Update : October 25, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -21,6 +21,7 @@
 
 #include "DgeX/Application/UI/Widget/Widget.h"
 
+#include "DgeX/Application/UI/Widget/WidgetContext.h"
 #include "DgeX/Renderer/Texture.h"
 
 DGEX_BEGIN
@@ -28,17 +29,55 @@ DGEX_BEGIN
 namespace UI
 {
 
+static void InitializeProperties(WidgetProperties& props)
+{
+    props.OffsetX = 0.0f;
+    props.OffsetY = 0.0f;
+
+    props.SetDisplay(DisplayValues::Block);
+    props.SetPosition(PositionValues::Auto);
+
+    props.SetX(0.0f);
+    props.SetY(0.0f);
+    props.SetWidth(0.0f);
+    props.SetHeight(0.0f);
+
+    props.UnSetForegroundColor();
+    props.SetBackgroundColor(Color::White);
+
+    props.SetOpacity(1.0f);
+    props.SetRotation(0.0f);
+    props.SetScale(1.0f);
+
+    props.UnSetFontSize();
+    props.UnSetFont();
+    props.UnSetFontStyle();
+
+    props.SetTextAlign(TextAlignValues::Left);
+    props.SetVerticalAlign(VerticalAlignValues::Top);
+
+    props.SetTransitionTime(0.0f);
+    props.SetTransitionStyle("none");
+}
+
 Widget::Widget(std::string name, std::string id)
     : BaseWidget(std::move(name), std::move(id)), _texture(CreateTexture(0, 0))
 {
+    InitializeProperties(_properties);
 }
 
 Widget::Widget(const WidgetContext& context, Ext::XmlElement element)
     : BaseWidget(context, element), _texture(CreateTexture(0, 0))
 {
+    InitializeProperties(_properties);
 }
 
-Ref<Widget> Widget::AsWidget()
+Ptr<Widget> Widget::AsWidget()
+{
+    return this;
+}
+
+Ref<Widget> Widget::AsWidgetRef()
 {
     return enable_shared_from_this<Widget>::shared_from_this();
 }
@@ -47,7 +86,7 @@ Ref<Widget> Widget::ParentWidget() const
 {
     if (const Ref<BaseWidget> parent = Parent())
     {
-        return parent->AsWidget();
+        return parent->AsWidgetRef();
     }
     return nullptr;
 }
@@ -56,7 +95,7 @@ Ref<Widget> Widget::GetChildWidgetById(const std::string& id) const
 {
     if (const Ref<BaseWidget> child = GetChildById(id))
     {
-        return child->AsWidget();
+        return child->AsWidgetRef();
     }
     return nullptr;
 }
@@ -72,7 +111,7 @@ void Widget::ApplyStyles()
     _properties.SetTransitionTime(GetStyleProperty<NumberProperty>("transition-time").Value);
     _properties.SetTransitionStyle(GetStyleProperty<StringProperty>("transition-style", StringProperty("none")).Value);
 
-    _properties.SetPosition(GetStyleProperty<StringProperty>("position", StringProperty("auto")).Value);
+    _properties.SetPosition(GetStyleProperty<PositionProperty>("position", PositionProperty()).Value);
 
     // Position and size will be set later during layout phase in `_Rearrange`.
 
@@ -113,20 +152,20 @@ void Widget::ApplyStyles()
 
     if (HasStyleProperty("font-style"))
     {
-        _properties.SetFontStyle(GetStyleProperty<StringProperty>("font-style").Value);
+        _properties.SetFontStyle(GetStyleProperty<FontStyleProperty>("font-style").Value);
     }
     else
     {
         _properties.UnSetFontStyle();
     }
 
-    _properties.SetTextAlign(GetStyleProperty<StringProperty>("text-align", StringProperty("left")).Value);
-    _properties.SetVerticalAlign(GetStyleProperty<StringProperty>("vertical-align", StringProperty("top")).Value);
+    _properties.SetTextAlign(GetStyleProperty<TextAlignProperty>("text-align").Value);
+    _properties.SetVerticalAlign(GetStyleProperty<VerticalAlignProperty>("vertical-align").Value);
 
     // Recursively apply styles to children.
     for (const Ref<BaseWidget>& child : _children)
     {
-        if (Ref<Widget> widget = child->AsWidget())
+        if (const Ptr<Widget> widget = child->AsWidget())
         {
             widget->ApplyStyles();
         }
@@ -148,13 +187,27 @@ Ref<Texture> Widget::GetTexture() const
     return _texture;
 }
 
+void Widget::SetRenderCallback(const Ref<WidgetRenderCallback>& callback)
+{
+    _renderCallback = callback;
+}
+
+void Widget::Render(const WidgetRenderContext& context) const
+{
+    if (_renderCallback)
+    {
+        _renderCallback->Render(*this, context);
+    }
+}
+
 bool Widget::_IsInside(FPoint position) const
 {
+    const float x = _properties.GlobalX();
+    const float y = _properties.GlobalY();
+
     // clang-format off
-    return (_properties.X->Value() < position.X) &&
-           (position.X < _properties.X->Value() + _properties.Width->Value()) &&
-           (_properties.Y->Value() < position.Y) &&
-           (position.Y < _properties.Y->Value() + _properties.Height->Value());
+    return (x < position.X) && (position.X < x + _properties.Width->Value()) &&
+           (y < position.Y) && (position.Y < y + _properties.Height->Value());
     // clang-format on
 }
 
@@ -169,10 +222,6 @@ void Widget::_ApplyWidth(const Widget& parent)
     {
         _properties.SetWidth(Math::ClampMin(width.Value * 0.01f * parent.GetProperties().Width->Value(), 0.0f));
     }
-    else
-    {
-        DGEX_CORE_WARN("Unsupported unit {} for width in widget '{}'", ToString(width.Unit), GetId());
-    }
 }
 
 void Widget::_ApplyHeight(const Widget& parent)
@@ -185,10 +234,6 @@ void Widget::_ApplyHeight(const Widget& parent)
     else if (height.Unit == MetricUnit::Percent)
     {
         _properties.SetHeight(Math::ClampMin(height.Value * 0.01f * parent.GetProperties().Height->Value(), 0.0f));
-    }
-    else
-    {
-        DGEX_CORE_WARN("Unsupported unit {} for height in widget '{}'", ToString(height.Unit), GetId());
     }
 }
 
@@ -205,54 +250,51 @@ void Widget::_Rearrange()
 
     for (const Ref<BaseWidget>& child : _children)
     {
-        Ref<Widget> widget = child->AsWidget();
+        const Ptr<Widget> widget = child->AsWidget();
         if (!widget)
         {
             continue;
         }
 
+        WidgetProperties& props = widget->GetProperties();
+
+        props.OffsetX = _properties.OffsetX + _properties.X->Value();
+        props.OffsetY = _properties.OffsetY + _properties.Y->Value();
+
         widget->_ApplyWidth(*this);
         widget->_ApplyHeight(*this);
 
-        if (widget->GetProperties().Position->Value() == "relative")
+        if (props.Position->Value() == PositionValues::Relative)
         {
             // The X and Y we set here is relative to its parent, and will be adjusted to global
             // position during rearrangement. So, there we use ForceSet to avoid transition.
             const MetricProperty x = GetStyleProperty<MetricProperty>("x");
             if (x.Unit == MetricUnit::Pixel || x.Unit == MetricUnit::Unspecified)
             {
-                _properties.SetX(x.Value);
+                props.SetX(x.Value);
             }
             else if (x.Unit == MetricUnit::Percent)
             {
-                _properties.SetX(x.Value * _properties.Width->Value());
-            }
-            else
-            {
-                DGEX_CORE_WARN("Unsupported unit {} for x in widget '{}'", ToString(x.Unit), GetId());
+                props.SetX(x.Value * _properties.Width->Value());
             }
 
             const MetricProperty y = GetStyleProperty<MetricProperty>("y");
             if (y.Unit == MetricUnit::Pixel || y.Unit == MetricUnit::Unspecified)
             {
-                _properties.SetY(y.Value);
+                props.SetY(y.Value);
             }
             else if (y.Unit == MetricUnit::Percent)
             {
-                _properties.SetY(y.Value * _properties.Height->Value());
-            }
-            else
-            {
-                DGEX_CORE_WARN("Unsupported unit {} for y in widget '{}'", ToString(y.Unit), GetId());
+                props.SetY(y.Value * _properties.Height->Value());
             }
         }
         else /* auto */
         {
-            widget->GetProperties().SetX(cursorX);
-            widget->GetProperties().SetY(cursorY);
+            props.SetX(cursorX);
+            props.SetY(cursorY);
 
-            float childWidth = widget->GetProperties().Width->Value();
-            float childHeight = widget->GetProperties().Height->Value();
+            float childWidth = props.Width->Value();
+            float childHeight = props.Height->Value();
             if (cursorX + childWidth > width)
             {
                 cursorX = 0;

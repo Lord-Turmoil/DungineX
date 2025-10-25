@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : October 4, 2025                           *
  *                                                                            *
- *                    Last Update : October 18, 2025                          *
+ *                    Last Update : October 25, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -20,6 +20,7 @@
 #include "DgeX/Application/UI/Style/WidgetProperty.h"
 
 #include "DgeX/Utils/Macros.h"
+#include "DgeX/Utils/Strings.h"
 
 #include <regex>
 
@@ -43,6 +44,16 @@ void WidgetProperties::Update(DeltaTime delta) const
     {
         FontSize->Update(delta);
     }
+}
+
+float WidgetProperties::GlobalX() const
+{
+    return OffsetX + X->Value();
+}
+
+float WidgetProperties::GlobalY() const
+{
+    return OffsetY + Y->Value();
 }
 
 IntegerProperty::IntegerProperty() : Value(0)
@@ -225,6 +236,157 @@ ColorProperty::ColorProperty(const char* value) : Value(Color::Black)
     else
     {
         DGEX_CORE_WARN("Invalid value '{}' for ColorProperty, defaulting to black", value);
+    }
+}
+
+DisplayProperty::DisplayProperty() : Value(DisplayValues::Block)
+{
+}
+
+DisplayProperty::DisplayProperty(DisplayValues value) : Value(value)
+{
+}
+
+DisplayProperty::DisplayProperty(const char* value) : Value(DisplayValues::Block)
+{
+    DGEX_ASSERT(value, "Null value for DisplayProperty");
+
+    if (Strings::Equals(value, "none"))
+    {
+        Value = DisplayValues::None;
+    }
+    else if (Strings::Equals(value, "block"))
+    {
+        Value = DisplayValues::Block;
+    }
+    else
+    {
+        DGEX_CORE_WARN("Invalid value '{}' for DisplayProperty, defaulting to 'block'", value);
+        Value = DisplayValues::Block;
+    }
+}
+
+PositionProperty::PositionProperty() : Value(PositionValues::Auto)
+{
+}
+
+PositionProperty::PositionProperty(PositionValues value) : Value(value)
+{
+}
+
+PositionProperty::PositionProperty(const char* value)
+{
+    DGEX_ASSERT(value, "Null value for PositionProperty");
+
+    if (Strings::Equals(value, "auto"))
+    {
+        Value = PositionValues::Auto;
+    }
+    else if (Strings::Equals(value, "relative"))
+    {
+        Value = PositionValues::Relative;
+    }
+    else
+    {
+        DGEX_CORE_WARN("Invalid value '{}' for PositionProperty, defaulting to 'auto'", value);
+        Value = PositionValues::Auto;
+    }
+}
+
+TextAlignProperty::TextAlignProperty() : Value(TextAlignValues::Left)
+{
+}
+
+TextAlignProperty::TextAlignProperty(TextAlignValues value) : Value(value)
+{
+}
+
+TextAlignProperty::TextAlignProperty(const char* value)
+{
+    DGEX_ASSERT(value, "Null value for TextAlignProperty");
+
+    if (Strings::Equals(value, "left"))
+    {
+        Value = TextAlignValues::Left;
+    }
+    else if (Strings::Equals(value, "center"))
+    {
+        Value = TextAlignValues::Center;
+    }
+    else if (Strings::Equals(value, "right"))
+    {
+        Value = TextAlignValues::Right;
+    }
+    else
+    {
+        DGEX_CORE_WARN("Invalid value '{}' for TextAlignProperty, defaulting to 'left'", value);
+        Value = TextAlignValues::Left;
+    }
+}
+
+VerticalAlignProperty::VerticalAlignProperty() : Value(VerticalAlignValues::Top)
+{
+}
+
+VerticalAlignProperty::VerticalAlignProperty(VerticalAlignValues value) : Value(value)
+{
+}
+
+VerticalAlignProperty::VerticalAlignProperty(const char* value)
+{
+    DGEX_ASSERT(value, "Null value for VerticalAlignProperty");
+
+    if (Strings::Equals(value, "top"))
+    {
+        Value = VerticalAlignValues::Top;
+    }
+    else if (Strings::Equals(value, "middle"))
+    {
+        Value = VerticalAlignValues::Middle;
+    }
+    else if (Strings::Equals(value, "bottom"))
+    {
+        Value = VerticalAlignValues::Bottom;
+    }
+    else
+    {
+        DGEX_CORE_WARN("Invalid value '{}' for VerticalAlignProperty, defaulting to 'top'", value);
+        Value = VerticalAlignValues::Top;
+    }
+}
+
+FontStyleProperty::FontStyleProperty() : Value(FontStyles::Regular)
+{
+}
+
+FontStyleProperty::FontStyleProperty(FontStyles value) : Value(value)
+{
+}
+
+FontStyleProperty::FontStyleProperty(const char* value)
+{
+    DGEX_ASSERT(value, "Null value for FontStyleProperty");
+
+    if (Strings::Equals(value, "Regular"))
+    {
+        Value = FontStyles::Regular;
+    }
+    else if (Strings::Equals(value, "Bold"))
+    {
+        Value = FontStyles::Bold;
+    }
+    else if (Strings::Equals(value, "Italic"))
+    {
+        Value = FontStyles::Italic;
+    }
+    else if (Strings::Equals(value, "Bold Italic") || Strings::Equals(value, "BoldItalic"))
+    {
+        Value = FontStyles::BoldItalic;
+    }
+    else
+    {
+        DGEX_CORE_WARN("Invalid value '{}' for FontStyleProperty, defaulting to 'Regular'", value);
+        Value = FontStyles::Regular;
     }
 }
 

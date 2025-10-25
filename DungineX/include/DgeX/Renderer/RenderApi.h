@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : June 2, 2025                              *
  *                                                                            *
- *                    Last Update : October 11, 2025                          *
+ *                    Last Update : October 25, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -21,12 +21,11 @@
 
 #include "DgeX/Error.h"
 #include "DgeX/Renderer/Color.h"
+#include "DgeX/Renderer/Font.h"
 #include "DgeX/Utils/Types.h"
 
 DGEX_BEGIN
 
-class Fontface;
-class FontFamily;
 class Renderer;
 class Texture;
 class TextureRenderCommandBuilder;
@@ -207,7 +206,7 @@ DGEX_API void SetFont(const Ref<FontFamily>& font);
  *
  * @param style Font style.
  */
-DGEX_API void SetFontStyle(const std::string& style);
+DGEX_API void SetFontStyle(FontStyles style);
 
 /**
  * @brief Get the current font.

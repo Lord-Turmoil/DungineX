@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : October 4, 2025                           *
  *                                                                            *
- *                    Last Update : October 4, 2025                           *
+ *                    Last Update : October 25, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -162,8 +162,11 @@ public:
      */
     DGEX_API int GetZIndex() const;
 
-    DGEX_API virtual Ref<Widget> AsWidget();
-    DGEX_API virtual Ref<FrameWidget> AsFrameWidget();
+    DGEX_API virtual Ptr<Widget> AsWidget();
+    DGEX_API virtual Ref<Widget> AsWidgetRef();
+
+    DGEX_API virtual Ptr<FrameWidget> AsFrameWidget();
+    DGEX_API virtual Ref<FrameWidget> AsFrameWidgetRef();
 
 public:
     /**
@@ -182,7 +185,7 @@ public:
      *
      * @param event On receiving event.
      */
-    virtual void OnEvent(const Ref<Event>& event);
+    virtual void OnEvent(Event& event);
 
     /**
      * @brief Update properties when the style changes.
@@ -226,7 +229,7 @@ protected:
      *
      * @param event Event to send.
      */
-    void _Notify(const Ref<Event>& event);
+    void _Notify(Event& event);
 
     /**
      * @brief Check if a position is inside the widget.
@@ -237,10 +240,10 @@ protected:
     virtual bool _IsInside(FPoint position) const;
 
 private:
-    void _OnEventNormal(const Ref<Event>& event);
-    void _OnEventHover(const Ref<Event>& event);
-    void _OnEventActive(const Ref<Event>& event);
-    void _OnEventDisabled(const Ref<Event>& event);
+    void _OnEventNormal(Event& event);
+    void _OnEventHover(Event& event);
+    void _OnEventActive(Event& event);
+    void _OnEventDisabled(Event& event);
 
 private:
     std::string _name; // The name of the widget, usually the XML element name.

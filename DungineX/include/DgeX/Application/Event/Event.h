@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : August 3, 2025                            *
  *                                                                            *
- *                    Last Update : August 15, 2025                           *
+ *                    Last Update : October 25, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -106,18 +106,18 @@ private:
  * @return Whether the event is dispatched or not.
  */
 template <typename T, typename F>
-DGEX_API bool DispatchEvent(const Ref<Event>& event, const F& func)
+DGEX_API bool DispatchEvent(Event& event, const F& func)
 {
-    if (event->IsHandled())
+    if (event.IsHandled())
     {
         return true;
     }
 
-    if (event->GetType() == T::GetStaticType())
+    if (event.GetType() == T::GetStaticType())
     {
-        if (func(static_cast<T&>(*event)))
+        if (func(static_cast<T&>(event)))
         {
-            event->SetHandled(true);
+            event.SetHandled(true);
         }
         return true;
     }
@@ -130,7 +130,7 @@ class EventListener
 public:
     virtual ~EventListener() = default;
 
-    DGEX_API virtual bool OnEvent(const Ref<Event>& event) const = 0;
+    DGEX_API virtual bool OnEvent(Event& event) const = 0;
 };
 
 template <typename T, typename F>
@@ -145,7 +145,7 @@ public:
     {
     }
 
-    bool OnEvent(const Ref<Event>& event) const override
+    bool OnEvent(Event& event) const override
     {
         // Ensure the type matches.
         return DispatchEvent<T, F>(event, _handler);

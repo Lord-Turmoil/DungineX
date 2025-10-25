@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : August 24, 2025                           *
  *                                                                            *
- *                    Last Update : October 18, 2025                          *
+ *                    Last Update : October 25, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -174,6 +174,10 @@ void BaseStyle::_DumpProperties(tinyxml2::XMLPrinter& printer) const
         printer.PushAttribute("value", propValue.c_str());
         printer.CloseElement();
     }
+}
+
+Style::Style() : BaseStyle(UUID().ToString())
+{
 }
 
 Style::Style(const std::string& name) : BaseStyle(name)

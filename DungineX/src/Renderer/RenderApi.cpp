@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : June 2, 2025                              *
  *                                                                            *
- *                    Last Update : October 18, 2025                          *
+ *                    Last Update : October 25, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -40,7 +40,7 @@ struct RenderApiContext
 
     Color FontColor;
     Ref<FontFamily> Font;
-    Ref<Fontface> ActiveFont;
+    Ref<FontFace> ActiveFont;
     float FontSize;
 };
 
@@ -53,12 +53,12 @@ static dgex_error_t InitDefaultFont()
 {
     if (int ret = InitFonts(); ret != DGEX_SUCCESS)
     {
-        DGEX_CORE_ERROR("Failed to initialize fonts: {");
+        DGEX_CORE_ERROR("Failed to initialize fonts: {0}", ret);
         return ret;
     }
 
     sContext.Font = GetDefaultFont();
-    sContext.ActiveFont = sContext.Font->GetFont("Regular");
+    sContext.ActiveFont = sContext.Font->GetFont(FontStyles::Regular);
 
     return DGEX_SUCCESS;
 }
@@ -200,10 +200,10 @@ void SetFont(const Ref<FontFamily>& font)
 {
     DGEX_ASSERT(font, "Cannot set nullptr font");
     sContext.Font = font;
-    SetFontStyle("Regular");
+    SetFontStyle(FontStyles::Regular);
 }
 
-void SetFontStyle(const std::string& style)
+void SetFontStyle(FontStyles style)
 {
     sContext.ActiveFont = sContext.Font->GetFont(style);
 }

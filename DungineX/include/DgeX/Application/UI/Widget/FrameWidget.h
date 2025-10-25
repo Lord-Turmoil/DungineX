@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : October 18, 2025                          *
  *                                                                            *
- *                    Last Update : October 18, 2025                          *
+ *                    Last Update : October 25, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -38,13 +38,14 @@ public:
     FrameWidget(std::string id);
     FrameWidget(const WidgetContext& context, const Ext::XmlElement& element);
 
-    Ref<FrameWidget> AsFrameWidget() override;
+    Ptr<FrameWidget> AsFrameWidget() override;
+    Ref<FrameWidget> AsFrameWidgetRef() override;
 
 public:
     /**
      * @brief Frame should not have parent, and only have one state.
      */
-    void OnEvent(const Ref<Event>& event) override;
+    void OnEvent(Event& event) override;
 
     void ApplyStyles() override;
 

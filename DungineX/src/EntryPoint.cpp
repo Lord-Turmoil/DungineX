@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : May 29, 2025                              *
  *                                                                            *
- *                    Last Update : June 1, 2025                              *
+ *                    Last Update : October 25, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -64,7 +64,7 @@ static bool OnUpdateImpl()
 }
 
 // OnEvent implementation.
-static void OnEventImpl(Ref<Event> event)
+static void OnEventImpl(Event& event)
 {
     sOnEvent(sAppContext, event);
 }
@@ -90,6 +90,7 @@ int DgeXMainImplWithCallbacks(CommandLineArgs args, const DgeXCallbackRegistrati
     if (dgex_error_t r = InitGraphics(); r != DGEX_SUCCESS)
     {
         DGEX_CORE_CRITICAL("Failed to initialize graphics device: {0}", r);
+        return r;
     }
 
     if (int r = callbacks.OnStart(sAppContext); r != 0)

@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : August 15, 2025                           *
  *                                                                            *
- *                    Last Update : August 15, 2025                           *
+ *                    Last Update : October 25, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -56,6 +56,7 @@ Ref<Event> ConvertSdlEvent(const SDL_Event* event)
 
     // currently ignore other events
     DGEX_CORE_WARN("Unhandled SDL event type: {}", event->type);
+
     return nullptr;
 }
 

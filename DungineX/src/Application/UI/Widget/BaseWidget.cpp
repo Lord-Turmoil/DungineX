@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : October 4, 2025                           *
  *                                                                            *
- *                    Last Update : October 4, 2025                           *
+ *                    Last Update : October 25, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -41,17 +41,21 @@ DGEX_BEGIN
 namespace UI
 {
 
-BaseWidget::BaseWidget() : _id(UUID().ToString()), _state(StyleState::Normal), _level(0), _zIndex(0), _hold(false)
+BaseWidget::BaseWidget()
+    : _id(UUID().ToString()), _state(StyleState::Normal), _style(CreateRef<Style>()), _level(0), _zIndex(0),
+      _hold(false)
 {
 }
 
 BaseWidget::BaseWidget(std::string name, std::string id)
-    : _name(std::move(name)), _id(std::move(id)), _state(StyleState::Normal), _level(0), _zIndex(0), _hold(false)
+    : _name(std::move(name)), _id(std::move(id)), _state(StyleState::Normal), _style(CreateRef<Style>()), _level(0),
+      _zIndex(0), _hold(false)
 {
 }
 
 BaseWidget::BaseWidget(const WidgetContext& context, Ext::XmlElement element)
-    : _id(UUID().ToString()), _state(StyleState::Normal), _level(0), _zIndex(0), _hold(false)
+    : _id(UUID().ToString()), _state(StyleState::Normal), _style(CreateRef<Style>()), _level(0), _zIndex(0),
+      _hold(false)
 {
     DGEX_ASSERT(element.IsValid(), "Invalid XML for widget construction");
 
@@ -60,22 +64,18 @@ BaseWidget::BaseWidget(const WidgetContext& context, Ext::XmlElement element)
     _zIndex = element.AttributeAs<IntegerProperty>("z-index", IntegerProperty(0)).Value;
 
     // Load styles.
-    const char* style = element.Attribute("style");
-    Ref<Style> baseStyle;
-    if (style)
+    if (const char* style = element.Attribute("style"))
     {
-        baseStyle = context.GetStyle(style);
+        if (Ref<Style> baseStyle = context.GetStyle(style))
+        {
+            _style->Merge(baseStyle);
+        }
+        else
+        {
+            DGEX_CORE_WARN("Missing base style {}", style);
+        }
     }
-
-    if (baseStyle)
-    {
-        _style = CreateRef<Style>(*baseStyle);
-        _style->Merge(element);
-    }
-    else
-    {
-        _style = CreateRef<Style>(element);
-    }
+    _style->Merge(element);
 }
 
 const std::string& BaseWidget::GetName() const
@@ -216,32 +216,39 @@ int BaseWidget::GetZIndex() const
     return _zIndex;
 }
 
-Ref<Widget> BaseWidget::AsWidget()
+Ptr<Widget> BaseWidget::AsWidget()
 {
     return nullptr;
 }
 
-Ref<FrameWidget> BaseWidget::AsFrameWidget()
+Ref<Widget> BaseWidget::AsWidgetRef()
+{
+    return nullptr;
+}
+
+Ptr<FrameWidget> BaseWidget::AsFrameWidget()
+{
+    return nullptr;
+}
+
+Ref<FrameWidget> BaseWidget::AsFrameWidgetRef()
 {
     return nullptr;
 }
 
 void BaseWidget::Update(DeltaTime delta)
 {
-    for (const auto& child : _children)
-    {
-        child->Update(delta);
-    }
+    DGEX_USED(delta);
 }
 
-void BaseWidget::OnEvent(const Ref<Event>& event)
+void BaseWidget::OnEvent(Event& event)
 {
-    if (!event->IsHandled())
+    if (!event.IsHandled())
     {
         _Notify(event);
     }
 
-    if (!event->IsHandled())
+    if (!event.IsHandled())
     {
         switch (_state)
         {
@@ -259,14 +266,6 @@ void BaseWidget::OnEvent(const Ref<Event>& event)
             break;
         case StyleState::NumStates:
             break;
-        }
-    }
-
-    if (!event->IsHandled())
-    {
-        if (auto parent = Parent())
-        {
-            parent->OnEvent(event);
         }
     }
 }
@@ -328,16 +327,16 @@ void BaseWidget::_SetParent(const Ref<BaseWidget>& parent)
     }
 }
 
-void BaseWidget::_Notify(const Ref<Event>& event)
+void BaseWidget::_Notify(Event& event)
 {
-    for (const auto& listener : _listeners[event->GetType()])
+    for (const auto& listener : _listeners[event.GetType()])
     {
         if (listener->OnEvent(event))
         {
-            event->SetHandled(true);
+            event.SetHandled(true);
         }
 
-        if (event->IsHandled())
+        if (event.IsHandled())
         {
             break;
         }
@@ -354,25 +353,27 @@ void BaseWidget::ApplyStyles()
 {
 }
 
-void BaseWidget::_OnEventNormal(const Ref<Event>& event)
+void BaseWidget::_OnEventNormal(Event& event)
 {
     DispatchEvent<MouseMovedEvent>(event, [this](const MouseMovedEvent& e) {
         if (_IsInside(e.GetPosition()))
         {
             _SetState(StyleState::Hover);
-            _Notify(CreateRef<MouseEnterEvent>());
+            auto event = MouseEnterEvent();
+            _Notify(event);
         }
         return false; // allow propagation
     });
 }
 
-void BaseWidget::_OnEventHover(const Ref<Event>& event)
+void BaseWidget::_OnEventHover(Event& event)
 {
     DispatchEvent<MouseMovedEvent>(event, [this](const MouseMovedEvent& e) {
         if (!_IsInside(e.GetPosition()))
         {
             _SetState(StyleState::Normal);
-            _Notify(CreateRef<MouseLeaveEvent>());
+            MouseLeaveEvent mouseLeaveEvent;
+            _Notify(mouseLeaveEvent);
         }
         return false; // allow propagation
     });
@@ -384,14 +385,15 @@ void BaseWidget::_OnEventHover(const Ref<Event>& event)
     });
 }
 
-void BaseWidget::_OnEventActive(const Ref<Event>& event)
+void BaseWidget::_OnEventActive(Event& event)
 {
     DispatchEvent<MouseMovedEvent>(event, [this](const MouseMovedEvent& e) {
         if (_IsInside(e.GetPosition()))
         {
             if (!_hold)
             {
-                _Notify(CreateRef<MouseEnterEvent>());
+                MouseEnterEvent mouseEnterEvent;
+                _Notify(mouseEnterEvent);
                 _hold = true;
             }
         }
@@ -399,7 +401,8 @@ void BaseWidget::_OnEventActive(const Ref<Event>& event)
         {
             if (_hold)
             {
-                _Notify(CreateRef<MouseLeaveEvent>());
+                MouseLeaveEvent mouseLeaveEvent;
+                _Notify(mouseLeaveEvent);
                 _hold = false;
             }
         }
@@ -411,7 +414,8 @@ void BaseWidget::_OnEventActive(const Ref<Event>& event)
         if (_hold)
         {
             _SetState(StyleState::Hover);
-            _Notify(CreateRef<MouseClickEvent>());
+            MouseClickedEvent mouseClickedEvent;
+            _Notify(mouseClickedEvent);
         }
         else
         {
@@ -421,7 +425,7 @@ void BaseWidget::_OnEventActive(const Ref<Event>& event)
     });
 }
 
-void BaseWidget::_OnEventDisabled(const Ref<Event>& event)
+void BaseWidget::_OnEventDisabled(Event& event)
 {
     DGEX_USED(event);
 }

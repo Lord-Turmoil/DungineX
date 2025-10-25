@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : June 2, 2025                              *
  *                                                                            *
- *                    Last Update : June 2, 2025                              *
+ *                    Last Update : October 25, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -26,7 +26,7 @@ DGEX_BEGIN
 class Event;
 
 using OnUpdateCallback = bool (*)(void);
-using OnEventCallback = void (*)(Ref<Event>);
+using OnEventCallback = void (*)(Event&);
 
 /**
  * @brief Run the main loop.

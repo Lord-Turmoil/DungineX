@@ -88,7 +88,7 @@ int OnUpdate(void* context)
 
     {
         USE_RENDERER(state->OrderedRenderer);
-        //SetFillColor(Color::Yellow);
+        // SetFillColor(Color::Yellow);
         SetFillColor(Color::FromHex(0xAAFFFF55));
         DrawFilledRect(310, 10, 200, 100, 10); // on top of red
         SetFillColor(Color::Red);
@@ -100,12 +100,13 @@ int OnUpdate(void* context)
     DrawLine(0, 0, 640, 480);
 
     SetFontColor(Color::LightMagenta);
-    SetFontStyle("Regular");
+    SetFontStyle(FontStyles::Regular);
     DrawText("Hello there!", 600, 10, L(TextFlag::AlignRight));
 
     if (IsKeyPressed(L(KeyCodes::A)))
     {
-        SetFontColor(Color::LightGreen);
+        SetFontColor(Color::Green);
+        SetFontStyle(FontStyles::Bold);
         DrawText("Key A is pressed!", 10, 10, L(TextFlag::AlignLeft));
     }
 
@@ -113,7 +114,7 @@ int OnUpdate(void* context)
     {
         FPoint pos = GetMousePosition();
         SetFontColor(Color::LightBlue);
-        SetFontStyle("Italic");
+        SetFontStyle(FontStyles::Italic);
         DrawText("Mouse Left Clicked!", static_cast<int>(pos.X), static_cast<int>(pos.Y), L(TextFlag::AlignRight));
     }
 
@@ -127,7 +128,7 @@ int OnUpdate(void* context)
     return state->Quit ? 1 : 0;
 }
 
-int OnEvent(void* context, Ref<Event> event)
+int OnEvent(void* context, Event& event)
 {
     auto state = static_cast<State*>(context);
     int value = (state->Count++) % 255;
@@ -138,7 +139,7 @@ int OnEvent(void* context, Ref<Event> event)
 
     SetClearColor(Color(r, g, b));
 
-    DGEX_LOG_DEBUG(NAME, "OnEvent: {0}", event->ToString());
+    DGEX_LOG_DEBUG(NAME, "OnEvent: {0}", event.ToString());
 
     DispatchEvent<WindowCloseEvent>(event, [&](const WindowCloseEvent& e) {
         DGEX_LOG_INFO(NAME, "Window close event received");

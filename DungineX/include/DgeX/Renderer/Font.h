@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : June 8, 2025                              *
  *                                                                            *
- *                    Last Update : October 18, 2025                          *
+ *                    Last Update : October 25, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -30,11 +30,38 @@
 
 DGEX_BEGIN
 
+enum class FontStyles : uint8_t
+{
+    Regular = 0,
+    Bold,
+    Italic,
+    BoldItalic,
+    Unknown
+};
+
+inline std::string ToString(FontStyles style)
+{
+    switch (style)
+    {
+    case FontStyles::Regular:
+        return "Regular";
+    case FontStyles::Bold:
+        return "Bold";
+    case FontStyles::Italic:
+        return "Italic";
+    case FontStyles::BoldItalic:
+        return "BoldItalic";
+    case FontStyles::Unknown:
+        return "Unknown";
+    }
+    return "Unknown";
+}
+
 struct FontfaceMeta
 {
     std::string Name;
-    std::string Style;
     std::filesystem::path Path;
+    FontStyles Style;
 };
 
 struct FontFamilyMeta
@@ -46,17 +73,17 @@ struct FontFamilyMeta
 /**
  * @brief A simple font wrapper.
  */
-class Fontface
+class FontFace
 {
 public:
-    explicit Fontface(TTF_Font* font);
+    explicit FontFace(TTF_Font* font);
 
-    Fontface(const Fontface& other) = delete;
-    Fontface(Fontface&& other) noexcept = delete;
-    Fontface& operator=(const Fontface& other) = delete;
-    Fontface& operator=(Fontface&& other) noexcept = delete;
+    FontFace(const FontFace& other) = delete;
+    FontFace(FontFace&& other) noexcept = delete;
+    FontFace& operator=(const FontFace& other) = delete;
+    FontFace& operator=(FontFace&& other) noexcept = delete;
 
-    ~Fontface() = default;
+    ~FontFace() = default;
 
     /**
      * @brief Get the name of the font face.
@@ -70,7 +97,16 @@ public:
      *
      * @return The style of the font face.
      */
-    DGEX_API const std::string& GetStyle() const;
+    DGEX_API FontStyles GetStyle() const;
+
+    /**
+     * @brief Get the style name of the font face.
+     *
+     * This may differ from the style enum as the style name may be more descriptive.
+     *
+     * @return The actual style name of the font face.
+     */
+    DGEX_API std::string GetStyleName() const;
 
     TTF_Font* GetNativeFont() const;
 
@@ -80,7 +116,7 @@ public:
 
 private:
     std::string _name;
-    std::string _style;
+    FontStyles _style;
 
     TTF_Font* _font;
 
@@ -96,7 +132,7 @@ private:
 class FontFamily
 {
 public:
-    explicit FontFamily(const std::vector<Ref<Fontface>>& fonts);
+    explicit FontFamily(const std::vector<Ref<FontFace>>& fonts);
     FontFamily(const FontFamily&) = delete;
     FontFamily(FontFamily&&) noexcept = delete;
     FontFamily& operator=(const FontFamily&) = delete;
@@ -115,11 +151,11 @@ public:
      * @param style Font with the given style.
      * @return The font, or default style if the style not found.
      */
-    Ref<Fontface> GetFont(const std::string& style) const;
+    Ref<FontFace> GetFont(FontStyles style) const;
 
 private:
     std::string _name;
-    std::vector<Ref<Fontface>> _fonts;
+    std::vector<Ref<FontFace>> _fonts;
 };
 
 /**

@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : October 19, 2025                          *
  *                                                                            *
- *                    Last Update : October 19, 2025                          *
+ *                    Last Update : October 25, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -21,6 +21,7 @@
 
 #include "DgeX/Application/UI/Widget/LabelWidget.h"
 #include "DgeX/Application/UI/Widget/Widget.h"
+#include "DgeX/Application/UI/Widget/WidgetContext.h"
 #include "DgeX/Renderer/RenderApi.h"
 
 DGEX_BEGIN
@@ -33,7 +34,7 @@ Ref<BaseWidget> BasicWidgetFactory::operator()(const WidgetContext& context, con
     return CreateRef<Widget>(context, element);
 }
 
-void BasicWidgetRenderer::operator()(Widget& widget, const WidgetRenderContext& context) const
+void BasicWidgetRenderer::operator()(const Widget& widget, const WidgetRenderContext& context) const
 {
     DGEX_USED(context);
 
@@ -48,7 +49,7 @@ Ref<BaseWidget> LabelWidgetFactory::operator()(const WidgetContext& context, con
     return CreateRef<LabelWidget>(context, element);
 }
 
-void LabelWidgetRenderer::operator()(LabelWidget& widget, const WidgetRenderContext& context) const
+void LabelWidgetRenderer::operator()(const LabelWidget& widget, const WidgetRenderContext& context) const
 {
     const WidgetProperties& props = widget.GetProperties();
 
@@ -58,12 +59,12 @@ void LabelWidgetRenderer::operator()(LabelWidget& widget, const WidgetRenderCont
     SetFontColor(context.FontColor);
 
     TextFlags flags;
-    const std::string& textAlign = props.TextAlign->Value();
-    if (textAlign == "center")
+    TextAlignValues textAlign = props.TextAlign->Value();
+    if (textAlign == TextAlignValues::Center)
     {
         flags = L(TextFlag::AlignCenter);
     }
-    else if (textAlign == "right")
+    else if (textAlign == TextAlignValues::Right)
     {
         flags = L(TextFlag::AlignRight);
     }
@@ -75,14 +76,14 @@ void LabelWidgetRenderer::operator()(LabelWidget& widget, const WidgetRenderCont
     Rect rect(static_cast<int>(props.X->Value()), static_cast<int>(props.Y->Value()),
               static_cast<int>(props.Width->Value()), static_cast<int>(props.Height->Value()));
 
-    const std::string& verticalAlign = props.VerticalAlign->Value();
-    if (verticalAlign == "middle")
+    VerticalAlignValues verticalAlign = props.VerticalAlign->Value();
+    if (verticalAlign == VerticalAlignValues::Middle)
     {
         Rect area = CalcTextArea(widget.GetText().c_str(), rect, flags);
         area.Y = rect.Y + (rect.Height - area.Height) / 2;
         DrawTextArea(widget.GetText().c_str(), area, flags);
     }
-    else if (verticalAlign == "bottom")
+    else if (verticalAlign == VerticalAlignValues::Bottom)
     {
         Rect area = CalcTextArea(widget.GetText().c_str(), rect, flags);
         area.Y = rect.Y + rect.Height - area.Height;

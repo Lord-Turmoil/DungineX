@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : October 4, 2025                           *
  *                                                                            *
- *                    Last Update : October 11, 2025                          *
+ *                    Last Update : October 25, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -28,6 +28,8 @@ class Texture;
 
 namespace UI
 {
+struct WidgetRenderContext;
+class WidgetRenderCallback;
 
 /**
  * @brief Base class for visible widgets.
@@ -41,7 +43,8 @@ public:
     Widget(const WidgetContext& context, Ext::XmlElement element);
     ~Widget() override = default;
 
-    DGEX_API Ref<Widget> AsWidget() override;
+    DGEX_API Ptr<Widget> AsWidget() override;
+    DGEX_API Ref<Widget> AsWidgetRef() override;
 
     DGEX_API Ref<Widget> ParentWidget() const;
     DGEX_API Ref<Widget> GetChildWidgetById(const std::string& id) const;
@@ -51,10 +54,27 @@ public:
 
     void ApplyStyles() override;
 
-    WidgetProperties& GetProperties();
-    const WidgetProperties& GetProperties() const;
+    DGEX_API WidgetProperties& GetProperties();
+    DGEX_API const WidgetProperties& GetProperties() const;
 
     Ref<Texture> GetTexture() const;
+
+    /**
+     * @brief Set the callback function for rendering this widget.
+     *
+     * Use `CreateWidgetRenderCallback<T>` to create the callback.
+     * This can make the rendering of this widget more customized.
+     *
+     * @param callback Render callback.
+     */
+    DGEX_API void SetRenderCallback(const Ref<WidgetRenderCallback>& callback);
+
+    /**
+     * @brief Render this widget.
+     *
+     * @param context Current render context.
+     */
+    void Render(const WidgetRenderContext& context) const;
 
 protected:
     bool _IsInside(FPoint position) const override;
@@ -74,6 +94,7 @@ protected:
 
 private:
     Ref<Texture> _texture;
+    Ref<WidgetRenderCallback> _renderCallback;
 };
 
 } // namespace UI

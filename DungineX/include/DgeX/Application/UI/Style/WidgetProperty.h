@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : October 5, 2025                           *
  *                                                                            *
- *                    Last Update : October 18, 2025                          *
+ *                    Last Update : October 25, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -21,6 +21,7 @@
 
 #include "DgeX/Application/UI/Style/Property.h"
 #include "DgeX/Renderer/Color.h"
+#include "DgeX/Renderer/Font.h"
 
 DGEX_BEGIN
 
@@ -84,6 +85,32 @@ DGEX_BEGIN
 namespace UI
 {
 
+enum class DisplayValues : uint8_t
+{
+    None,
+    Block
+};
+
+enum class PositionValues : uint8_t
+{
+    Auto,
+    Relative
+};
+
+enum class TextAlignValues : uint8_t
+{
+    Left,
+    Center,
+    Right
+};
+
+enum class VerticalAlignValues : uint8_t
+{
+    Top,
+    Middle,
+    Bottom
+};
+
 /**
  * @brief Properties of a widget for layout and rendering.
  *
@@ -92,8 +119,11 @@ namespace UI
  */
 struct WidgetProperties
 {
-    DEFINE_NON_TRANSITIONABLE_PROPERTY(Display, std::string)  // display: none, block
-    DEFINE_NON_TRANSITIONABLE_PROPERTY(Position, std::string) // position: auto, relative
+    float OffsetX; // global offset x
+    float OffsetY; // global offset y
+
+    DEFINE_NON_TRANSITIONABLE_PROPERTY(Display, DisplayValues)   // display: none, block
+    DEFINE_NON_TRANSITIONABLE_PROPERTY(Position, PositionValues) // position: auto, relative
 
     DEFINE_PROPERTY(X, float)      // x: px, % (relative to parent)
     DEFINE_PROPERTY(Y, float)      // y: px, % (relative to parent)
@@ -107,17 +137,20 @@ struct WidgetProperties
     DEFINE_PROPERTY(Rotation, float) // rotation: degrees
     DEFINE_PROPERTY(Scale, float)    // scale: 1.0 = 100%
 
-    DEFINE_NULLABLE_PROPERTY(FontSize, float)                           // font-size: px (inherited)
-    DEFINE_NULLABLE_NON_TRANSITIONABLE_PROPERTY(Font, std::string)      // font-family (inherited)
-    DEFINE_NULLABLE_NON_TRANSITIONABLE_PROPERTY(FontStyle, std::string) // font-style (inherited)
+    DEFINE_NULLABLE_PROPERTY(FontSize, float)                          // font-size: px (inherited)
+    DEFINE_NULLABLE_NON_TRANSITIONABLE_PROPERTY(Font, std::string)     // font-family (inherited)
+    DEFINE_NULLABLE_NON_TRANSITIONABLE_PROPERTY(FontStyle, FontStyles) // font-style (inherited)
 
-    DEFINE_NON_TRANSITIONABLE_PROPERTY(TextAlign, std::string)     // text-align: left, center, right
-    DEFINE_NON_TRANSITIONABLE_PROPERTY(VerticalAlign, std::string) // vertical-align: top, middle, bottom
+    DEFINE_NON_TRANSITIONABLE_PROPERTY(TextAlign, TextAlignValues)         // text-align: left, center, right
+    DEFINE_NON_TRANSITIONABLE_PROPERTY(VerticalAlign, VerticalAlignValues) // vertical-align: top, middle, bottom
 
     DEFINE_NON_TRANSITIONABLE_PROPERTY(TransitionTime, float)        // transition-time: e.g. 1s, 1000ms
     DEFINE_NON_TRANSITIONABLE_PROPERTY(TransitionStyle, std::string) // transition-style: see `StyleToEasingFn`
 
     void Update(DeltaTime delta) const;
+
+    float GlobalX() const;
+    float GlobalY() const;
 };
 
 enum class MetricUnit
@@ -231,6 +264,51 @@ struct ColorProperty
     explicit ColorProperty(const char* value);
 
     Color Value;
+};
+
+struct DisplayProperty
+{
+    DisplayProperty();
+    explicit DisplayProperty(DisplayValues value);
+    explicit DisplayProperty(const char* value);
+
+    DisplayValues Value;
+};
+
+struct PositionProperty
+{
+    PositionProperty();
+    explicit PositionProperty(PositionValues value);
+    explicit PositionProperty(const char* value);
+
+    PositionValues Value;
+};
+
+struct TextAlignProperty
+{
+    TextAlignProperty();
+    explicit TextAlignProperty(TextAlignValues value);
+    explicit TextAlignProperty(const char* value);
+
+    TextAlignValues Value;
+};
+
+struct VerticalAlignProperty
+{
+    VerticalAlignProperty();
+    explicit VerticalAlignProperty(VerticalAlignValues value);
+    explicit VerticalAlignProperty(const char* value);
+
+    VerticalAlignValues Value;
+};
+
+struct FontStyleProperty
+{
+    FontStyleProperty();
+    explicit FontStyleProperty(FontStyles value);
+    explicit FontStyleProperty(const char* value);
+
+    FontStyles Value;
 };
 
 } // namespace UI

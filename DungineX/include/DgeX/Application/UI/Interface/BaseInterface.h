@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : October 19, 2025                          *
  *                                                                            *
- *                    Last Update : October 19, 2025                          *
+ *                    Last Update : October 25, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -52,7 +52,7 @@ public:
 private:
     std::string _name;
 
-    Ref<FrameWidget> 
+    Ref<FrameWidget>
 };
 
 } // namespace UI

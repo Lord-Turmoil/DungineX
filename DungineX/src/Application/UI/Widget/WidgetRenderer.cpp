@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : October 11, 2025                          *
  *                                                                            *
- *                    Last Update : October 18, 2025                          *
+ *                    Last Update : October 25, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -21,64 +21,54 @@
 #include "DgeX/Application/UI/Widget/WidgetRenderer.h"
 
 #include "DgeX/Application/UI/Widget/Widget.h"
+#include "DgeX/Application/UI/Widget/WidgetContext.h"
+#include "DgeX/Renderer/Font.h"
 #include "DgeX/Renderer/RenderApi.h"
 #include "DgeX/Renderer/Texture.h"
-#include "DgeX/Utils/Macros.h"
 
 DGEX_BEGIN
 
 namespace UI
 {
 
-static WidgetRenderContext GetRootContext(Widget& widget);
-static WidgetRenderContext GetChildContext(Widget& widget, const WidgetRenderContext& parentContext);
+static WidgetRenderContext GetRootContext(const Widget& widget);
+static WidgetRenderContext GetChildContext(const Widget& widget, const WidgetRenderContext& parentContext);
 
-static void PreRender(WidgetRenderContext& context, const Ref<Widget>& widget);
-static void PostRender(const WidgetRenderContext& context, const Ref<Widget>& widget);
+static void PreRender(WidgetRenderContext& context, const Widget& widget);
+static void PostRender(const WidgetRenderContext& context, const Widget& widget);
 
-void WidgetRenderer::Render(const Ref<Widget>& widget) const
+void WidgetRenderer::Render(const Widget& widget) const
 {
-    DGEX_ASSERT(widget, "Render null widget");
-
-    WidgetRenderContext context = GetRootContext(*widget);
+    WidgetRenderContext context = GetRootContext(widget);
 
     Render(widget, context);
 }
 
-void WidgetRenderer::Render(const Ref<Widget>& widget, WidgetRenderContext& context) const
+void WidgetRenderer::Render(const Widget& widget, WidgetRenderContext& context) const
 {
-    DGEX_ASSERT(widget, "Render null widget");
-
     PreRender(context, widget);
 
-    if (const auto it = _callbacks.find(widget->GetName()); it != _callbacks.end())
-    {
-        it->second->Render(widget, context);
-    }
+    // Render parent widget first.
+    widget.Render(context);
 
     // Children are ordered by z-index from low to high, so we can just render them in order.
-    for (const Ref<BaseWidget>& child : widget->Children())
+    for (const Ref<BaseWidget>& child : widget.Children())
     {
-        if (const Ref<Widget> childWidget = child->AsWidget())
+        if (const Ptr<Widget> childWidget = child->AsWidget())
         {
             WidgetRenderContext childContext = GetChildContext(*childWidget, context);
-            Render(childWidget, childContext);
+            Render(*childWidget, childContext);
         }
     }
 
     PostRender(context, widget);
 }
 
-void WidgetRenderer::AddCallback(const std::string& name, const Ref<WidgetRendererCallback>& callback)
-{
-    _callbacks[name] = callback;
-}
-
 // ============================================================================
 // Internal function implementation.
 // ----------------------------------------------------------------------------
 
-WidgetRenderContext GetRootContext(Widget& widget)
+WidgetRenderContext GetRootContext(const Widget& widget)
 {
     const WidgetProperties& props = widget.GetProperties();
     WidgetRenderContext context;
@@ -92,7 +82,7 @@ WidgetRenderContext GetRootContext(Widget& widget)
     return context;
 }
 
-WidgetRenderContext GetChildContext(Widget& widget, const WidgetRenderContext& parentContext)
+WidgetRenderContext GetChildContext(const Widget& widget, const WidgetRenderContext& parentContext)
 {
     const WidgetProperties& properties = widget.GetProperties();
     WidgetRenderContext context;
@@ -138,10 +128,10 @@ WidgetRenderContext GetChildContext(Widget& widget, const WidgetRenderContext& p
     return context;
 }
 
-void PreRender(WidgetRenderContext& context, const Ref<Widget>& widget)
+void PreRender(WidgetRenderContext& context, const Widget& widget)
 {
-    const WidgetProperties& props = widget->GetProperties();
-    context.Canvas = widget->GetTexture();
+    const WidgetProperties& props = widget.GetProperties();
+    context.Canvas = widget.GetTexture();
 
     float width = props.Width->Value();
     float height = props.Height->Value();
@@ -155,9 +145,9 @@ void PreRender(WidgetRenderContext& context, const Ref<Widget>& widget)
     ClearDevice();
 }
 
-void PostRender(const WidgetRenderContext& context, const Ref<Widget>& widget)
+void PostRender(const WidgetRenderContext& context, const Widget& widget)
 {
-    const WidgetProperties& props = widget->GetProperties();
+    const WidgetProperties& props = widget.GetProperties();
 
     SetCurrentRenderTarget(context.Target);
 

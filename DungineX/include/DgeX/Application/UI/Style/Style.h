@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : August 24, 2025                           *
  *                                                                            *
- *                    Last Update : October 4, 2025                           *
+ *                    Last Update : October 25, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -31,7 +31,7 @@ DGEX_BEGIN
 namespace UI
 {
 
-enum class StyleState
+enum class StyleState : uint8_t
 {
     Normal = 0,
     Hover = 1,
@@ -210,6 +210,11 @@ T BaseStyle::GetPropertyAs(const std::string& name, const T& defaultValue) const
 class Style final : public BaseStyle
 {
 public:
+    /**
+     * @brief Create an empty style with a random name.
+     */
+    Style();
+
     /**
      * @brief Create an empty style with a name.
      *

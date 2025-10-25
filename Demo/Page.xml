@@ -1,13 +1,13 @@
 <Page name="main">
     <Styles>
         <Style name="box">
-            <Property name="width" value="200"/>
-            <Property name="height" value="100"/>
+            <Property name="width" value="200" />
+            <Property name="height" value="100" />
         </Style>
         <Style name="button">
-            <Property name="fontSize" value="20"/>
+            <Property name="fontSize" value="20" />
             <State name="hover">
-                
+
             </State>
         </Style>
     </Styles>
@@ -15,7 +15,7 @@
     <Box style="box" backgroundColor="#FF0000">
         <Button text="Click Me">
             <Hover>
-                <Property name="backgroundColor" value="#00FF00"/>
+                <Property name="backgroundColor" value="#00FF00" />
             </Hover>
         </Button>
     </Box>

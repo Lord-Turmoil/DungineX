@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : June 2, 2025                              *
  *                                                                            *
- *                    Last Update : June 2, 2025                              *
+ *                    Last Update : October 25, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -37,10 +37,9 @@ void MainLoop(OnUpdateCallback onUpdate, OnEventCallback onEvent)
         SDL_Event sdlEvent;
         while (SDL_PollEvent(&sdlEvent))
         {
-            Ref<Event> event = ConvertSdlEvent(&sdlEvent);
-            if (event)
+            if (Ref<Event> event = ConvertSdlEvent(&sdlEvent))
             {
-                onEvent(event);
+                onEvent(*event);
             }
         }
 

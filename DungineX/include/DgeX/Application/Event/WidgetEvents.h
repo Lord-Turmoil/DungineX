@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : October 4, 2025                           *
  *                                                                            *
- *                    Last Update : October 4, 2025                           *
+ *                    Last Update : October 25, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -41,10 +41,10 @@ public:
     DECL_EVENT_CLASS_TYPE(MouseLeave)
 };
 
-class MouseClickEvent final : public Event
+class MouseClickedEvent final : public Event
 {
 public:
-    MouseClickEvent() = default;
+    MouseClickedEvent() = default;
 
     DECL_EVENT_CLASS_TYPE(MouseClick)
 };

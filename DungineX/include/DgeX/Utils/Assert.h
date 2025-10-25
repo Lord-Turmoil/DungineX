@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : June 1, 2025                              *
  *                                                                            *
- *                    Last Update : June 1, 2025                              *
+ *                    Last Update : October 25, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -28,15 +28,18 @@
 
 #ifdef DGEX_PLATFORM_WINDOWS
 
-#define DGEX_DEBUG_BREAK()                                                                                             \
+#define DGEX_DEBUG_BREAK(EXPRESSION)                                                                                   \
     do                                                                                                                 \
     {                                                                                                                  \
         __debugbreak();                                                                                                \
-        abort();                                                                                                       \
     } while (0)
 #else
 
-#define DGEX_DEBUG_BREAK() abort()
+#define DGEX_DEBUG_BREAK(EXPRESSION)                                                                                   \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        assert(EXPRESSION);                                                                                            \
+    } while (0)
 
 #endif // DGEX_PLATFORM_WINDOWS
 
@@ -56,7 +59,7 @@
         if (!(EXPRESSION))                                                                                             \
         {                                                                                                              \
             _DGEX_ASSERT_LOGGER(MESSAGE, __VA_ARGS__);                                                                 \
-            DGEX_DEBUG_BREAK();                                                                                        \
+            DGEX_DEBUG_BREAK(EXPRESSION);                                                                              \
         }                                                                                                              \
     } while (0)
 
@@ -68,7 +71,7 @@
             _DGEX_ASSERT_LOGGER("Assertion '{0}' failed at {1}:{2}", DGEX_STRINGIFY_MACRO(EXPRESSION),                 \
                                 std::filesystem::path(__FILE__).filename().string(), __LINE__);                        \
             _DGEX_ASSERT_LOGGER(__VA_ARGS__);                                                                          \
-            DGEX_DEBUG_BREAK();                                                                                        \
+            DGEX_DEBUG_BREAK(EXPRESSION);                                                                              \
         }                                                                                                              \
     } while (0)
 

@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : June 8, 2025                              *
  *                                                                            *
- *                    Last Update : October 18, 2025                          *
+ *                    Last Update : October 25, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -28,39 +28,60 @@
 #include <sysfonts/sysfonts.h>
 
 #include <filesystem>
-#include <unordered_map>
 #include <vector>
 
 DGEX_BEGIN
 
-Fontface::Fontface(TTF_Font* font) : _font(font), _impl(FC_CreateFont())
+static FontStyles FontStyleFromString(const char* style)
+{
+    if (Strings::Equals(style, "Bold"))
+    {
+        return FontStyles::Bold;
+    }
+    if (Strings::Equals(style, "Italic"))
+    {
+        return FontStyles::Italic;
+    }
+    if (Strings::Equals(style, "Bold Italic") || Strings::Equals(style, "BoldItalic"))
+    {
+        return FontStyles::BoldItalic;
+    }
+    return FontStyles::Unknown;
+}
+
+FontFace::FontFace(TTF_Font* font) : _font(font), _impl(FC_CreateFont())
 {
     _name = TTF_GetFontFamilyName(_font);
-    _style = TTF_GetFontStyleName(_font);
+    _style = FontStyleFromString(TTF_GetFontStyleName(_font));
     FC_LoadFontFromTTF(static_cast<FC_Font*>(_impl), GetNativeRenderer(), font, FC_MakeColor(0, 0, 0, 255));
 }
 
-const std::string& Fontface::GetName() const
+const std::string& FontFace::GetName() const
 {
     return _name;
 }
 
-const std::string& Fontface::GetStyle() const
+FontStyles FontFace::GetStyle() const
 {
     return _style;
 }
 
-TTF_Font* Fontface::GetNativeFont() const
+std::string FontFace::GetStyleName() const
+{
+    return TTF_GetFontStyleName(_font);
+}
+
+TTF_Font* FontFace::GetNativeFont() const
 {
     return _font;
 }
 
-void* Fontface::GetImpl() const
+void* FontFace::GetImpl() const
 {
     return _impl;
 }
 
-void Fontface::Destroy()
+void FontFace::Destroy()
 {
     if (_impl)
     {
@@ -70,11 +91,41 @@ void Fontface::Destroy()
     }
 }
 
-FontFamily::FontFamily(const std::vector<Ref<Fontface>>& fonts)
+FontFamily::FontFamily(const std::vector<Ref<FontFace>>& fonts)
 {
     DGEX_ASSERT(!fonts.empty(), "Font family must have at least one fontface");
     _name = fonts[0]->GetName();
     _fonts = fonts;
+
+    // If there is Regular style, move it to the front.
+    for (size_t i = 0; i < _fonts.size(); i++)
+    {
+        if (_fonts[i]->GetStyle() == FontStyles::Regular)
+        {
+            if (i != 0)
+            {
+                std::swap(_fonts[0], _fonts[i]);
+            }
+            break;
+        }
+    }
+}
+
+const std::string& FontFamily::GetName() const
+{
+    return _name;
+}
+
+Ref<FontFace> FontFamily::GetFont(FontStyles style) const
+{
+    for (const Ref<FontFace>& font : _fonts)
+    {
+        if (font->GetStyle() == style)
+        {
+            return font;
+        }
+    }
+    return _fonts[0];
 }
 
 // ============================================================================
@@ -89,26 +140,9 @@ static Ref<FontFamily> sDefaultFont;
 static FontfaceMeta FontInfoToFontfaceMeta(const SF_FontInfo* info);
 static void AddFontFromFontfaceMeta(const FontfaceMeta& meta);
 
-static Ref<Fontface> LoadFontfaceFromFile(const std::string& path);
-static Ref<Fontface> LoadFontfaceFromMeta(const FontfaceMeta& meta);
+static Ref<FontFace> LoadFontfaceFromFile(const std::string& path);
+static Ref<FontFace> LoadFontfaceFromMeta(const FontfaceMeta& meta);
 static Ref<FontFamily> LoadFontFamilyFromMeta(const FontFamilyMeta& meta);
-
-const std::string& FontFamily::GetName() const
-{
-    return _name;
-}
-
-Ref<Fontface> FontFamily::GetFont(const std::string& style) const
-{
-    for (const Ref<Fontface>& font : _fonts)
-    {
-        if (font->GetStyle() == style)
-        {
-            return font;
-        }
-    }
-    return _fonts[0];
-}
 
 float GetFontScale(float pointSize)
 {
@@ -121,7 +155,7 @@ static int _SF_Callback(const SF_FontInfo* info, void* context)
 
 #ifdef DGEX_PLATFORM_WINDOWS
     // On Windows, loading a font is costly, so we only load selected fonts.
-    if (!Strings::StartsWith(info->style, "Arial", "Segoe UI"))
+    if (!Strings::StartsWith(info->family, "Arial", "Segoe UI"))
     {
         return SF_CONTINUE;
     }
@@ -131,10 +165,6 @@ static int _SF_Callback(const SF_FontInfo* info, void* context)
     {
         DGEX_CORE_WARN("Font with empty family name found, ignoring");
         return SF_CONTINUE;
-    }
-    if (meta.Style.empty())
-    {
-        meta.Style = "Regular";
     }
     if (meta.Path.empty())
     {
@@ -187,13 +217,13 @@ dgex_error_t InitFonts()
 
 dgex_error_t AddFont(const std::string& path, const std::string& name)
 {
-    Ref<Fontface> font = LoadFontfaceFromFile(path);
+    Ref<FontFace> font = LoadFontfaceFromFile(path);
     if (!font)
     {
         return DGEX_ERROR;
     }
 
-    FontfaceMeta meta = { name.empty() ? font->GetName() : name, font->GetStyle(), std::filesystem::path(path) };
+    FontfaceMeta meta = { name.empty() ? font->GetName() : name, std::filesystem::path(path), font->GetStyle() };
     AddFontFromFontfaceMeta(meta);
 
     font->Destroy();
@@ -232,17 +262,20 @@ const Ref<FontFamily>& GetDefaultFont()
 FontfaceMeta FontInfoToFontfaceMeta(const SF_FontInfo* info)
 {
 #ifdef DGEX_PLATFORM_WINDOWS
-    Ref<Fontface> font = LoadFontfaceFromFile(info->path);
+    Ref<FontFace> font = LoadFontfaceFromFile(info->path);
     if (!font)
     {
-        return { "", "", std::filesystem::path() };
+        return { "", std::filesystem::path(), FontStyles::Regular };
     }
-    FontfaceMeta meta = { font->GetName(), font->GetStyle(), std::filesystem::path(info->path) };
+    FontfaceMeta meta = { font->GetName(), std::filesystem::path(info->path), font->GetStyle() };
     font->Destroy();
     return meta;
 #else
-    return { info->family ? info->family : "", info->style ? info->style : "Regular",
-             info->path ? std::filesystem::path(info->path) : std::filesystem::path() };
+    return {
+        info->family ? info->family : "",
+        info->path ? std::filesystem::path(info->path) : std::filesystem::path(),
+        info->style ? FontStyleFromString(info->style) : FontStyles::Regular,
+    };
 #endif
 }
 
@@ -256,7 +289,7 @@ void AddFontFromFontfaceMeta(const FontfaceMeta& meta)
             {
                 if (fontface.Style == meta.Style)
                 {
-                    DGEX_CORE_WARN("Duplicated style {0} in font {1}, ignoring", meta.Style, meta.Name);
+                    DGEX_CORE_WARN("Duplicated style {0} in font {1}, ignoring", ToString(meta.Style), meta.Name);
                     return;
                 }
             }
@@ -268,7 +301,7 @@ void AddFontFromFontfaceMeta(const FontfaceMeta& meta)
     sFontFamilies.emplace_back(FontFamilyMeta{ meta.Name, { meta } });
 }
 
-Ref<Fontface> LoadFontfaceFromFile(const std::string& path)
+Ref<FontFace> LoadFontfaceFromFile(const std::string& path)
 {
     std::filesystem::path fontPath = path;
 
@@ -279,7 +312,7 @@ Ref<Fontface> LoadFontfaceFromFile(const std::string& path)
 
     if (TTF_Font* font = TTF_OpenFont(fontPath.string().c_str(), DEFAULT_POINT_SIZE))
     {
-        return CreateRef<Fontface>(font);
+        return CreateRef<FontFace>(font);
     }
 
     DGEX_CORE_ERROR("Failed to load font: {0}, {1}", fontPath.string(), SDL_GetError());
@@ -287,19 +320,18 @@ Ref<Fontface> LoadFontfaceFromFile(const std::string& path)
     return nullptr;
 }
 
-Ref<Fontface> LoadFontfaceFromMeta(const FontfaceMeta& meta)
+Ref<FontFace> LoadFontfaceFromMeta(const FontfaceMeta& meta)
 {
     return LoadFontfaceFromFile(meta.Path.string());
 }
 
 Ref<FontFamily> LoadFontFamilyFromMeta(const FontFamilyMeta& meta)
 {
-    std::vector<Ref<Fontface>> fonts;
+    std::vector<Ref<FontFace>> fonts;
 
     for (const FontfaceMeta& fontfaceMeta : meta.Fonts)
     {
-        Ref<Fontface> fontface = LoadFontfaceFromMeta(fontfaceMeta);
-        if (fontface)
+        if (Ref<FontFace> fontface = LoadFontfaceFromMeta(fontfaceMeta))
         {
             fonts.push_back(fontface);
         }

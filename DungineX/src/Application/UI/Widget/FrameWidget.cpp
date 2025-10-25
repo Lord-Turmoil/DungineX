@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : October 18, 2025                          *
  *                                                                            *
- *                    Last Update : October 18, 2025                          *
+ *                    Last Update : October 25, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -39,12 +39,17 @@ FrameWidget::FrameWidget(const WidgetContext& context, const Ext::XmlElement& el
     }
 }
 
-Ref<FrameWidget> FrameWidget::AsFrameWidget()
+Ptr<FrameWidget> FrameWidget::AsFrameWidget()
+{
+    return this;
+}
+
+Ref<FrameWidget> FrameWidget::AsFrameWidgetRef()
 {
     return enable_shared_from_this<FrameWidget>::shared_from_this();
 }
 
-void FrameWidget::OnEvent(const Ref<Event>& event)
+void FrameWidget::OnEvent(Event& event)
 {
     DispatchEvent<WindowResizedEvent>(event, [this](const WindowResizedEvent& e) { return _OnWindowResized(e); });
     _Notify(event);
@@ -55,7 +60,7 @@ void FrameWidget::ApplyStyles()
     _properties.SetTransitionTime(GetStyleProperty<NumberProperty>("transition-time").Value);
     _properties.SetTransitionStyle(GetStyleProperty<StringProperty>("transition-style", StringProperty("none")).Value);
 
-    _properties.SetPosition("auto");
+    _properties.SetPosition(PositionValues::Auto);
 
     _properties.SetForegroundColor(GetStyleProperty<ColorProperty>("color", ColorProperty(Color::Black)).Value);
     _properties.SetBackgroundColor(
@@ -71,15 +76,15 @@ void FrameWidget::ApplyStyles()
 
     _properties.SetFont(
         GetStyleProperty<StringProperty>("font-family", StringProperty(GetDefaultFont()->GetName())).Value);
-    _properties.SetFontStyle(GetStyleProperty<StringProperty>("font-style", StringProperty("Regular")).Value);
+    _properties.SetFontStyle(GetStyleProperty<FontStyleProperty>("font-style").Value);
 
-    _properties.SetTextAlign(GetStyleProperty<StringProperty>("text-align", StringProperty("left")).Value);
-    _properties.SetVerticalAlign(GetStyleProperty<StringProperty>("vertical-align", StringProperty("top")).Value);
+    _properties.SetTextAlign(GetStyleProperty<TextAlignProperty>("text-align").Value);
+    _properties.SetVerticalAlign(GetStyleProperty<VerticalAlignProperty>("vertical-align").Value);
 
     // Recursively apply styles to children.
     for (const Ref<BaseWidget>& child : _children)
     {
-        if (Ref<Widget> widget = child->AsWidget())
+        if (const Ptr<Widget> widget = child->AsWidget())
         {
             widget->ApplyStyles();
         }

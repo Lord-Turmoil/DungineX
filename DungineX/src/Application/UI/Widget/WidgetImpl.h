@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : October 19, 2025                          *
  *                                                                            *
- *                    Last Update : October 19, 2025                          *
+ *                    Last Update : October 25, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -42,7 +42,7 @@ struct BasicWidgetFactory
 
 struct BasicWidgetRenderer
 {
-    void operator()(Widget& widget, const WidgetRenderContext& context) const;
+    void operator()(const Widget& widget, const WidgetRenderContext& context) const;
 };
 
 // ============================================================================
@@ -57,7 +57,7 @@ struct LabelWidgetFactory
 
 struct LabelWidgetRenderer
 {
-    void operator()(LabelWidget& widget, const WidgetRenderContext& context) const;
+    void operator()(const LabelWidget& widget, const WidgetRenderContext& context) const;
 };
 
 } // namespace UI

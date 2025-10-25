@@ -9,7 +9,7 @@
  *                                                                            *
  *                     Start Date : October 19, 2025                          *
  *                                                                            *
- *                    Last Update : October 19, 2025                          *
+ *                    Last Update : October 25, 2025                          *
  *                                                                            *
  * -------------------------------------------------------------------------- *
  * OVERVIEW:                                                                  *
@@ -20,23 +20,22 @@
 
 #pragma once
 
-#include "DgeX/Application/UI/Widget/Widget.h"
+#include "DgeX/Core/Timer.h"
+#include "DgeX/Extension/XmlDocument.h"
+#include "DgeX/Utils/Types.h"
 
-#include <functional>
-#include <unordered_map>
+#include <vector>
 
 DGEX_BEGIN
+
+class Event;
 
 namespace UI
 {
 
-/**
- * @brief The callback to create widget.
- *
- * Return a Ref<BaseWidget> created from the context and XML element.
- * Return nullptr if creation fails.
- */
-using WidgetFactoryCallback = std::function<Ref<BaseWidget>(const WidgetContext&, Ext::XmlElement)>;
+class BaseWidget;
+class Widget;
+class WidgetContext;
 
 /**
  * @brief Manage widgets and their factories.
@@ -64,24 +63,9 @@ public:
      */
     Ref<Widget> GetRootWidget() const;
 
-    /**
-     * @brief Register a widget factory callback for a specific widget type.
-     *
-     * Will override existing callback if the name already exists.
-     *
-     * @param name Name of the widget, indicated by the XML tag name.
-     * @param callback The factory callback.
-     */
-    void RegisterWidget(const std::string& name, const WidgetFactoryCallback& callback);
-
 public:
     void Update(DeltaTime delta) const;
-    void OnEvent(const Ref<Event>& event) const;
-
-    /**
-     * @brief Manually reorder widgets.
-     */
-    void Reorder();
+    void OnEvent(Event& event) const;
 
 private:
     Ref<BaseWidget> _Load(const WidgetContext& context, Ext::XmlElement element);
@@ -91,13 +75,6 @@ private:
      * @brief The root widget should be a frame.
      */
     Ref<Widget> _root;
-
-    /**
-     * @brief All widgets sorted by their order to receive events.
-     */
-    std::vector<Ref<BaseWidget>> _widgets;
-
-    std::unordered_map<std::string, WidgetFactoryCallback> _callbacks;
 };
 
 } // namespace UI
