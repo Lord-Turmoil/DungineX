@@ -111,15 +111,6 @@ void WidgetManager::OnEvent(Event& event) const
     WidgetOnEvent(_root.get(), event);
 }
 
-static void AddAllWidgets(std::vector<Ref<BaseWidget>>& widgets, const Ref<BaseWidget>& widget)
-{
-    widgets.push_back(widget);
-    for (const Ref<BaseWidget>& child : widget->Children())
-    {
-        AddAllWidgets(widgets, child);
-    }
-}
-
 Ref<BaseWidget> WidgetManager::_Load(const WidgetContext& context, Ext::XmlElement element)
 {
     std::string name = element.Name();

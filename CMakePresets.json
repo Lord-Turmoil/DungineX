@@ -245,5 +245,148 @@
                 "DGEX_USE_SHARED": "OFF"
             }
         }
+    ],
+    "buildPresets": [
+        {
+            "name": "windows-base",
+            "description": "Base build preset for Windows",
+            "hidden": true,
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "windows-debug-shared",
+            "displayName": "Debug Build (Shared)",
+            "configurePreset": "windows-debug-shared",
+            "inherits": "windows-base"
+        },
+        {
+            "name": "windows-debug-static",
+            "displayName": "Debug Build (Static)",
+            "configurePreset": "windows-debug-static",
+            "inherits": "windows-base"
+        },
+        {
+            "name": "windows-release-shared",
+            "displayName": "Release Build (Shared)",
+            "configurePreset": "windows-release-shared",
+            "inherits": "windows-base"
+        },
+        {
+            "name": "windows-release-static",
+            "displayName": "Release Build (Static)",
+            "configurePreset": "windows-release-static",
+            "inherits": "windows-base"
+        },
+        {
+            "name": "windows-publish-shared",
+            "displayName": "Publish Build (Shared)",
+            "configurePreset": "windows-publish-shared",
+            "inherits": "windows-base"
+        },
+        {
+            "name": "windows-publish-static",
+            "displayName": "Publish Build (Static)",
+            "configurePreset": "windows-publish-static",
+            "inherits": "windows-base"
+        },
+        {
+            "name": "linux-base",
+            "description": "Base build preset for Linux",
+            "hidden": true,
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+        {
+            "name": "linux-debug-shared",
+            "hidden": true,
+            "displayName": "Debug Build (Shared)",
+            "configurePreset": "linux-debug-shared",
+            "inherits": "linux-base"
+        },
+        {
+            "name": "linux-debug-static",
+            "displayName": "Debug Build (Static)",
+            "configurePreset": "linux-debug-static",
+            "inherits": "linux-base"
+        },
+        {
+            "name": "linux-release-shared",
+            "hidden": true,
+            "displayName": "Release Build (Shared)",
+            "configurePreset": "linux-release-shared",
+            "inherits": "linux-base"
+        },
+        {
+            "name": "linux-release-static",
+            "displayName": "Release Build (Static)",
+            "configurePreset": "linux-release-static",
+            "inherits": "linux-base"
+        },
+        {
+            "name": "linux-publish-shared",
+            "hidden": true,
+            "displayName": "Publish Build (Shared)",
+            "configurePreset": "linux-publish-shared",
+            "inherits": "linux-base"
+        },
+        {
+            "name": "linux-publish-static",
+            "displayName": "Publish Build (Static)",
+            "configurePreset": "linux-publish-static",
+            "inherits": "linux-base"
+        },
+        {
+            "name": "macos-debug-shared",
+            "displayName": "Debug Build (Shared)",
+            "configurePreset": "macos-debug-shared",
+            "inherits": "macos-base"
+        },
+        {
+            "name": "macos-base",
+            "description": "Base build preset for macOS",
+            "hidden": true,
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Darwin"
+            }
+        },
+        {
+            "name": "macos-debug-static",
+            "displayName": "Debug Build (Static)",
+            "configurePreset": "macos-debug-static",
+            "inherits": "macos-base"
+        },
+        {
+            "name": "macos-release-shared",
+            "displayName": "Release Build (Shared)",
+            "configurePreset": "macos-release-shared",
+            "inherits": "macos-base"
+        },
+        {
+            "name": "macos-release-static",
+            "displayName": "Release Build (Static)",
+            "configurePreset": "macos-release-static",
+            "inherits": "macos-base"
+        },
+        {
+            "name": "macos-publish-shared",
+            "displayName": "Publish Build (Shared)",
+            "configurePreset": "macos-publish-shared",
+            "inherits": "macos-base"
+        },
+        {
+            "name": "macos-publish-static",
+            "displayName": "Publish Build (Static)",
+            "configurePreset": "macos-publish-static",
+            "inherits": "macos-base"
+        }
     ]
 }

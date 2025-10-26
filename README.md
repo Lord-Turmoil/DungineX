@@ -47,8 +47,11 @@ cmake --build build --parallel
 You can also use presets defined in `CMakePresets.json`.
 
 ```bash
-cmake --preset list # list avalable presets
+cmake --list-presets               # list configure presets
 cmake --preset linux-debug-static
+
+cmake --build --list-presets       # list build presets
+cmake --build --preset linux-debug-static
 ```
 
 > [!WARNING]
