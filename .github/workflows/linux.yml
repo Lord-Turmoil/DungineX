@@ -44,6 +44,7 @@ jobs:
         -DDGEX_BUILD_DEMO=OFF
         -DDGEX_USE_SHARED=OFF
         -DSDL_UNIX_CONSOLE_BUILD=ON
+        -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 
     - name: Build
       run: cmake --build build --config ${{ matrix.build_type }} --parallel
